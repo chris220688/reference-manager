@@ -1,0 +1,157 @@
+version: "3"
+
+services:
+  mongodb-primary:
+    hostname: mongodb-primary
+    container_name: mongodb-primary
+    image: 'bitnami/mongodb:4.0.10-debian-9-r53'
+    environment:
+      - MONGODB_USERNAME=referencemanager
+      - MONGODB_PASSWORD=referencemanager
+      - MONGODB_DATABASE=referencemanager
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_ROOT_PASSWORD=referencemanager
+      - MONGODB_REPLICA_SET_KEY=replicaset123
+      - MONGODB_REPLICA_SET_NAME=rs0
+    ports:
+      - "27017:27017"
+    networks:
+      - stack
+
+  mongodb-secondary:
+    hostname: mongodb-secondary
+    container_name: mongodb-secondary
+    image: 'bitnami/mongodb:4.0.10-debian-9-r53'
+    depends_on:
+      - mongodb-primary
+    environment:
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_PRIMARY_HOST=mongodb-primary
+      - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_PRIMARY_ROOT_PASSWORD=referencemanager
+      - MONGODB_REPLICA_SET_KEY=replicaset123
+      - MONGODB_REPLICA_SET_NAME=rs0
+    networks:
+      - stack
+
+  mongodb-arbiter:
+    hostname: mongodb-arbiter
+    container_name: mongodb-arbiter
+    image: 'bitnami/mongodb:4.0.10-debian-9-r53'
+    depends_on:
+      - mongodb-primary
+    environment:
+      - MONGODB_REPLICA_SET_MODE=arbiter
+      - MONGODB_PRIMARY_HOST=mongodb-primary
+      - MONGODB_PRIMARY_PORT_NUMBER=27017
+      - MONGODB_PRIMARY_ROOT_PASSWORD=referencemanager
+      - MONGODB_REPLICA_SET_KEY=replicaset123
+      - MONGODB_REPLICA_SET_NAME=rs0
+    networks:
+      - stack
+
+  elasticsearch:
+    hostname: elasticsearch
+    container_name: elasticsearch
+    image: "elasticsearch:7.6.2"
+    environment:
+    # - node.name=elasticsearch
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - cluster.name=elasticsearch
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - cluster.routing.allocation.disk.threshold_enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - stack
+
+  consumer:
+    hostname: consumer
+    container_name: consumer
+    build:
+      context: .
+      dockerfile: python/apps/consumer/Dockerfile
+    depends_on: ['elasticsearch']
+    working_dir: "/usr/src/apps/consumer"
+    environment:
+      - ELASTICSEARCH_HOST=elasticsearch
+    command:
+      pipenv run uvicorn consumer.main:app --host 0.0.0.0
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    ports:
+      - "8000:8000"
+    networks:
+      - stack
+
+  producer:
+    hostname: producer
+    container_name: producer
+    build:
+      context: .
+      dockerfile: python/apps/producer/Dockerfile
+    depends_on:
+      - mongodb-primary
+    working_dir: "/usr/src/apps/producer"
+    environment:
+      - DATABASE_TYPE=mongodb
+      - DATABASE_HOST=mongodb-primary
+      - DATABASE_PORT=27017
+      - DATABASE_USERNAME=referencemanager
+      - DATABASE_PASSWORD=referencemanager
+      - DATABASE_NAME=referencemanager
+      - WAIT_HOSTS=mongodb-primary:27017,mongodb-secondary:27017,mongodb-arbiter:27017
+      - WAIT_HOSTS_TIMEOUT=60
+    command:
+      sh -c "/wait && pipenv run uvicorn producer.main:app --host 0.0.0.0"
+    ports:
+      - "8001:8000"
+    networks:
+      - stack
+
+  monstache:
+    hostname: monstache
+    container_name: monstache
+    build: monstache/.
+    # image: rwynn/monstache:rel6
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      resources:
+        limits:
+          cpus: '1'
+          memory: 256M
+        reservations:
+          cpus: '1'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+    environment:
+      - WAIT_HOSTS=mongodb-primary:27017,elasticsearch:9200
+      - WAIT_HOSTS_TIMEOUT=60
+    #   - MONSTACHE_CHANGE_STREAM_NS=referencemanager.referencemanager
+    #   - MONSTACHE_DIRECT_READ_NS=referencemanager.referencemanager
+    #   - MONSTACHE_MONGO_URL=mongodb://root:referencemanager@mongodb-primary:27017
+    #   - MONSTACHE_ES_URLS=http://elasticsearch:9200
+    # ports:
+    #   - "8080:8080"
+    command:
+      sh -c "/wait && ./build/linux-amd64/monstache -f config.toml"
+    networks:
+      - stack
+
+networks:
+  stack: {}

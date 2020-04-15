@@ -1,0 +1,21 @@
+# Use an official Python runtime as a parent image
+FROM ubuntu
+
+#Create folder
+RUN mkdir app
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN apt-get update
+
+# Set privilege 
+RUN chmod a+x -R /app
+
+ENV WAIT_VERSION 2.7.2
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/$WAIT_VERSION/wait /wait
+RUN chmod +x /wait

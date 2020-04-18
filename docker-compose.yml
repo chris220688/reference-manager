@@ -77,16 +77,15 @@ services:
     build:
       context: .
       dockerfile: python/apps/consumer/Dockerfile
-    depends_on: ['elasticsearch']
     working_dir: "/usr/src/apps/consumer"
     environment:
       - ELASTICSEARCH_HOST=elasticsearch
     command:
       pipenv run uvicorn consumer.main:app --host 0.0.0.0
-    links:
-      - elasticsearch
-    depends_on:
-      - elasticsearch
+    # links:
+    #   - elasticsearch
+    # depends_on:
+    #   - elasticsearch
     ports:
       - "8000:8000"
     networks:
@@ -100,6 +99,8 @@ services:
       dockerfile: python/apps/producer/Dockerfile
     depends_on:
       - mongodb-primary
+      - mongodb-secondary
+      - mongodb-arbiter
     working_dir: "/usr/src/apps/producer"
     environment:
       - DATABASE_TYPE=mongodb
@@ -110,6 +111,7 @@ services:
       - DATABASE_NAME=referencemanager
       - WAIT_HOSTS=mongodb-primary:27017,mongodb-secondary:27017,mongodb-arbiter:27017
       - WAIT_HOSTS_TIMEOUT=60
+      - WAIT_AFTER_HOSTS=60
     command:
       sh -c "/wait && pipenv run uvicorn producer.main:app --host 0.0.0.0"
     ports:
@@ -150,6 +152,28 @@ services:
     #   - "8080:8080"
     command:
       sh -c "/wait && ./build/linux-amd64/monstache -f config.toml"
+    networks:
+      - stack
+
+  frontend:
+    hostname: frontend
+    container_name: frontend
+    build:
+      context: .
+      dockerfile: react/apps/referencemanager/Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - stack
+
+  nginx:
+    hostname: nginx
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "80:80"
     networks:
       - stack
 

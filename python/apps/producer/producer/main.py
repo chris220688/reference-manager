@@ -26,6 +26,6 @@ async def index():
 	return "Hello"
 
 
-@app.get("/insert")
+@app.get("/insert/")
 async def insert(title: str = Query(..., min_length=5)):
 	await db_client.insert({'title': title})

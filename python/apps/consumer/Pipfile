@@ -9,6 +9,7 @@ verify_ssl = true
 fastapi = "*"
 uvicorn = "*"
 elasticsearch-dsl = "==7.*"
+ndjson = "*"
 
 [requires]
 python_version = "3.7"

@@ -71,6 +71,23 @@ services:
     networks:
       - stack
 
+  elasticsearch-setup:
+    hostname: elasticsearch-setup
+    container_name: elasticsearch-setup
+    depends_on:
+      - elasticsearch
+    build:
+      context: .
+      dockerfile: elasticsearch/Dockerfile
+    environment:
+      - WAIT_HOSTS=elasticsearch:9200
+      - WAIT_HOSTS_TIMEOUT=60
+      - WAIT_AFTER_HOSTS=10
+    command: >
+      sh -c "/wait && curl -X PUT -H 'Content-Type: application/json' -d @referencemanager_template.json http://elasticsearch:9200/_template/referencemanager_template"
+    networks:
+      - stack
+
   consumer:
     hostname: consumer
     container_name: consumer

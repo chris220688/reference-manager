@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { ReactiveBase, DataSearch } from '@appbaseio/reactivesearch';
+import { ReactiveBase, ReactiveList, DataSearch, ResultList } from '@appbaseio/reactivesearch';
+
+const { ResultListWrapper } = ReactiveList;
 
 class App extends Component {
   render() {
@@ -14,10 +16,39 @@ class App extends Component {
             queryFormat="or"
             placeholder="Search"
             debounce={100}
-            highlight={true}
             fuzziness="AUTO"
             showFilter={true}
           />
+          <ReactiveList
+              react={{
+                  "and": ["mainSearch"]
+              }}
+              componentId="SearchResult"
+          >
+              {({ data, error, loading }) => (
+                  <ResultListWrapper>
+                      {
+                          data.map(item => (
+                              <ResultList key={item._id}>
+                                  <ResultList.Content>
+                                      <ResultList.Title>
+                                      {item.title}
+                                      </ResultList.Title>
+                                      <ResultList.Description>
+                                          <div>
+                                              <div>{item.description}</div>
+                                              <div>
+                                                  ({item.rating})
+                                              </div>
+                                          </div>
+                                      </ResultList.Description>
+                                  </ResultList.Content>
+                              </ResultList>
+                          ))
+                      }
+                  </ResultListWrapper>
+              )}
+          </ReactiveList>
         </ReactiveBase>
     );
   }

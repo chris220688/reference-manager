@@ -1,39 +1,89 @@
-from fastapi import FastAPI, Query, Request
+"""
+	This is FastAPI service that acts as a proxy between
+	the frontend and the elasticsearch cluster.
+
+	Requests are received, validated and forwarded to
+	elasticsearch using the elasticsearch_dsl library.
+"""
+from contextlib import contextmanager
+from contextvars import ContextVar
+import logging
+import ndjson
+import time
+from uuid import uuid4
+
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl import MultiSearch, Search
+from fastapi import FastAPI, Query, Request, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search, MultiSearch
 
-import ndjson
-import json
-
-from consumer import config
+from consumer import config, clogger, REQUEST_ID
 
 
-client = Elasticsearch([config.ELASTICSEARCH_HOST])
+logger = logging.getLogger(config.APP_NAME)
 
+client = Elasticsearch([config.ELASTICSEARCH_HOST], max_retries=3)
 app = FastAPI()
 
 
-@app.get("/")
-async def index():
-	return "Hello"
+@app.on_event("startup")
+async def startup_event():
+	logger.info("Starting up consumer service")
 
 
-@app.get("/auto_complete/")
-async def search(search_string: str = Query(..., min_length=3)):
-	return {"search_string": search_string}
+@app.on_event("shutdown")
+def shutdown_event():
+	logger.info("Shutting down consumer service")
 
 
-@app.post("/search/referencemanager/_msearch/")
-async def search(request: Request):
-	print(request.headers['content-type'])
+@app.middleware("http")
+async def setup_request(request: Request, call_next):
+	""" A middleware for setting up a request. It creates a new request_id
+		and adds some basic metrics.
 
-	ms = MultiSearch(using=client, index='referencemanager.referencemanager')
+		Args:
+			request (fastapi.Request): The incoming request
+			call_next (obj): The wrapper as per FastAPI docs
 
+		Returns:
+			response (fastapi.responses.JSONResponse): The json response
+	"""
+	REQUEST_ID.set(str(uuid4()))
+
+	start_time = time.time()
+
+	response = await call_next(request)
+
+	process_time = str(round(time.time() - start_time, 3))
+	clogger.info(f"Request took {process_time}s")
+
+	return response
+
+
+@app.post(config.ELASTICSEARCH_MSEARCH_ENDPOINT)
+async def msearch(request: Request):
+	""" API endpoint for making a search request to elasticsearch's
+		'_msearch' endpoint.
+
+		NOTE: The body might be ndjson object, including multiple
+		json objects. Needs to be parsed in order to reconstruct
+		a new elasticsearch request, compatible with the
+		elasticsearch_dsl library.
+
+		Args:
+			request (fastapi.Request): The incoming request
+
+		Returns:
+			response (fastapi.responses.JSONResponse): The json response
+	"""
+	ms = MultiSearch(using=client, index=config.ELASTICSEARCH_INDEX)
+
+	# Decode the body of the request
 	body = await request.body()
-
 	decoded_body = ndjson.loads(body)
+
+	clogger.info(f"Received - {decoded_body}")
 
 	params = None
 	for item in decoded_body:
@@ -51,15 +101,22 @@ async def search(request: Request):
 
 			ms = ms.add(search)
 
-	response = ms.execute()
+	clogger.info(f"Requested - {ms.to_dict()}")
+
+	try:
+		response = ms.execute()
+	except Exception as exc:
+		clogger.exception(exc)
+		raise HTTPException(
+			status_code=500,
+			detail="Cannot serve results at the moment. Please try again."
+		)
 
 	responses = {'responses': []}
-
-	print(ms.to_dict())
 
 	for item in response:
 		responses['responses'].append(item.to_dict())
 
-	print(response)
+	clogger.info(f"Responded - {response}")
 
 	return JSONResponse(content=responses)

@@ -96,7 +96,10 @@ services:
       dockerfile: python/apps/consumer/Dockerfile
     working_dir: "/usr/src/apps/consumer"
     environment:
+      - APP_NAME=referencemanager
       - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_INDEX=referencemanager.referencemanager
+      - ELASTICSEARCH_MSEARCH_ENDPOINT=/msearch/referencemanager/_msearch/
     command:
       pipenv run uvicorn consumer.main:app --host 0.0.0.0
     # links:

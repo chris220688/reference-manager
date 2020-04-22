@@ -6,9 +6,6 @@ stack:
 frontend:
 	docker-compose up -d --build nginx frontend consumer elasticsearch
 
-consumer:
-	docker-compose up -d --build consumer
-
 clean:
 	docker-compose down
 	docker container prune -f

@@ -8,7 +8,7 @@ class App extends Component {
     return (
         <ReactiveBase
           app="referencemanager"
-          url="http://localhost:80/api/consumer/search/"
+          url="http://localhost:80/api/consumer/msearch/"
         >
           <DataSearch
             componentId="mainSearch"

@@ -10,6 +10,7 @@ fastapi = "*"
 uvicorn = "*"
 elasticsearch-dsl = "==7.*"
 ndjson = "*"
+contextlog = {path = "./../../shared/contextlog"}
 
 [requires]
 python_version = "3.7"

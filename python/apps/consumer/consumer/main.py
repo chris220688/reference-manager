@@ -18,14 +18,14 @@ from fastapi import FastAPI, Query, Request, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from consumer import config, clogger, REQUEST_ID
+from consumer import config
+from contextlog import contextlog
 
 
-logger = logging.getLogger(config.APP_NAME)
+logger = contextlog.get_contextlog()
 
 client = Elasticsearch([config.ELASTICSEARCH_HOST], max_retries=3)
 app = FastAPI()
-
 
 @app.on_event("startup")
 async def startup_event():
@@ -33,7 +33,7 @@ async def startup_event():
 
 
 @app.on_event("shutdown")
-def shutdown_event():
+async def shutdown_event():
 	logger.info("Shutting down consumer service")
 
 
@@ -49,19 +49,19 @@ async def setup_request(request: Request, call_next):
 		Returns:
 			response (fastapi.responses.JSONResponse): The json response
 	"""
-	REQUEST_ID.set(str(uuid4()))
+	contextlog.REQUEST_ID.set(str(uuid4()))
 
 	start_time = time.time()
 
 	response = await call_next(request)
 
 	process_time = str(round(time.time() - start_time, 3))
-	clogger.info(f"Request took {process_time}s")
+	logger.info(f"Request took {process_time}s")
 
 	return response
 
 
-@app.post(config.ELASTICSEARCH_MSEARCH_ENDPOINT)
+@app.post(config.MSEARCH_ENDPOINT)
 async def msearch(request: Request):
 	""" API endpoint for making a search request to elasticsearch's
 		'_msearch' endpoint.
@@ -83,7 +83,7 @@ async def msearch(request: Request):
 	body = await request.body()
 	decoded_body = ndjson.loads(body)
 
-	clogger.info(f"Received - {decoded_body}")
+	logger.info(f"Received - {decoded_body}")
 
 	params = None
 	for item in decoded_body:
@@ -101,12 +101,12 @@ async def msearch(request: Request):
 
 			ms = ms.add(search)
 
-	clogger.info(f"Requested - {ms.to_dict()}")
+	logger.info(f"Requested - {ms.to_dict()}")
 
 	try:
 		response = ms.execute()
 	except Exception as exc:
-		clogger.exception(exc)
+		logger.exception(exc)
 		raise HTTPException(
 			status_code=500,
 			detail="Cannot serve results at the moment. Please try again."
@@ -117,6 +117,6 @@ async def msearch(request: Request):
 	for item in response:
 		responses['responses'].append(item.to_dict())
 
-	clogger.info(f"Responded - {response}")
+	logger.info(f"Responded - {response}")
 
 	return JSONResponse(content=responses)

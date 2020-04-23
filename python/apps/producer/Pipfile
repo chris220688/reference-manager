@@ -9,6 +9,7 @@ verify_ssl = true
 fastapi = "*"
 uvicorn = "*"
 motor = "*"
+contextlog = {path = "./../../shared/contextlog"}
 
 [requires]
 python_version = "3.7"

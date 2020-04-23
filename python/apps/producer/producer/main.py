@@ -1,14 +1,18 @@
 from fastapi import FastAPI, Query
-from pydantic import BaseModel
 
+from contextlog import contextlog
 from producer import config
 from producer.db_clients import get_db_client
+from producer.models import Reference
 
+
+logger = contextlog.get_contextlog()
 
 app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
+	logger.info("Starting up producer service")
 	global db_client
 
 	db_client = await get_db_client(config.DATABASE_TYPE)
@@ -17,15 +21,14 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    await db_client.end_session()
-    await db_client.close_connection()
+	await db_client.end_session()
+	await db_client.close_connection()
+	logger.info("Shutting down producer service")
 
 
-@app.get("/")
-async def index():
-	return "Hello"
+@app.post(config.INSERT_ENDPOINT)
+async def insert(reference: Reference):
+	""" API endpoint for inserting a new reference in the database """
+	logger.info(f"Received - {reference.dict()}")
 
-
-@app.get("/insert/")
-async def insert(title: str = Query(..., min_length=5)):
-	await db_client.insert({'title': title})
+	await db_client.insert(reference.dict())

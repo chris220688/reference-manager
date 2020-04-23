@@ -2,10 +2,14 @@ from abc import ABC, abstractmethod
 from contextlib import asynccontextmanager, closing
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorClientSession
+from pymongo.errors import ServerSelectionTimeoutError
 
+from contextlog import contextlog
 from producer import config
 from producer.exceptions import UnknownDatabaseType
 
+
+logger = contextlog.get_contextlog()
 
 async def get_db_client(db_type):
 	for client_cls in DBClient.__subclasses__():
@@ -70,16 +74,19 @@ class MongoDBClient(DBClient):
 		return db_type == config.MONGO_DB
 
 	async def close_connection(self):
-		print("Closing MongoDB connection")
+		logger.info("Closing MongoDB connection")
 		await self._motor_client.close()
 
 	async def start_session(self):
 		""" Starts a client session """
-		print("Starting MongoDB session")
-		self._session = await self._motor_client.start_session()
+		logger.info("Starting MongoDB session")
+		try:
+			self._session = await self._motor_client.start_session()
+		except ServerSelectionTimeoutError as exc:
+			raise ConnectionError()
 
 	async def end_session(self):
-		print("Ending MongoDB session")
+		logger.info("Ending MongoDB session")
 		await self._session.end_session()
 
 	async def find(self, query):
@@ -88,4 +95,3 @@ class MongoDBClient(DBClient):
 
 	async def insert(self, document):
 		await self._reference_manager_coll.insert_one(document)
-

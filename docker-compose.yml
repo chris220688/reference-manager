@@ -194,6 +194,10 @@ services:
     build:
       context: .
       dockerfile: nginx/Dockerfile
+    depends_on:
+      # Nginx should be deployed after the apps
+      - consumer
+      - producer
     ports:
       - "80:80"
     networks:

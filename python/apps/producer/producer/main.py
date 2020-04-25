@@ -71,10 +71,6 @@ async def setup_request(request: Request, call_next):
 
 	return response
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
 @app.put(config.INSERT_ENDPOINT)
 async def insert(reference: Reference):
 	""" API endpoint for inserting a new reference in the database """

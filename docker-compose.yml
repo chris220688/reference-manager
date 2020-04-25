@@ -133,7 +133,7 @@ services:
       - DATABASE_NAME=referencemanager
       - WAIT_HOSTS=mongodb-primary:27017,mongodb-secondary:27017,mongodb-arbiter:27017
       - WAIT_HOSTS_TIMEOUT=60
-      - WAIT_AFTER_HOSTS=60
+      - WAIT_AFTER_HOSTS=30
     command:
       sh -c "/wait && pipenv run uvicorn producer.main:app --host 0.0.0.0"
     ports:

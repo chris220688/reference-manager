@@ -6,6 +6,12 @@ stack:
 frontend:
 	docker-compose up -d --build nginx frontend consumer elasticsearch
 
+replica-set:
+	docker-compose up -d --build mongodb-arbiter mongodb-secondary mongodb-primary
+
+test:
+	docker-compose up -d --build nginx producer
+
 clean:
 	docker-compose down
 	docker container prune -f

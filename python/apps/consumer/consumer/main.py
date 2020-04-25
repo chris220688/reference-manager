@@ -13,23 +13,35 @@ import time
 from uuid import uuid4
 
 from elasticsearch import Elasticsearch
-from elasticsearch_dsl import MultiSearch, Search
-from fastapi import FastAPI, Query, Request, HTTPException
+from elasticsearch_dsl import (
+	MultiSearch,
+	Search,
+)
+from fastapi import (
+	FastAPI,HTTPException,
+	Query,
+	Request,
+)
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from consumer import config
+from consumer.exceptions import (
+	exception_handling,
+	ElasticSearchConnectionError,
+)
 from contextlog import contextlog
 
 
 logger = contextlog.get_contextlog()
 
-client = Elasticsearch([config.ELASTICSEARCH_HOST], max_retries=3)
 app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
 	logger.info("Starting up consumer service")
+	global es_client
+	es_client = Elasticsearch([config.ELASTICSEARCH_HOST], max_retries=3)
 
 
 @app.on_event("shutdown")
@@ -77,46 +89,43 @@ async def msearch(request: Request):
 		Returns:
 			response (fastapi.responses.JSONResponse): The json response
 	"""
-	ms = MultiSearch(using=client, index=config.ELASTICSEARCH_INDEX)
+	async with exception_handling():
+		ms = MultiSearch(using=es_client, index=config.ELASTICSEARCH_INDEX)
 
-	# Decode the body of the request
-	body = await request.body()
-	decoded_body = ndjson.loads(body)
+		# Decode the body of the request
+		body = await request.body()
+		decoded_body = ndjson.loads(body)
 
-	logger.info(f"Received - {decoded_body}")
+		logger.info(f"Received - {decoded_body}")
 
-	params = None
-	for item in decoded_body:
-		if item and 'query' not in item:
-			# This has to be a header (param)
-			params = item
-			continue
-		else:
-			# This has to be the query
-			search = Search().update_from_dict(item)
+		params = None
+		for item in decoded_body:
+			if item and 'query' not in item:
+				# This has to be a header (param)
+				params = item
+				continue
+			else:
+				# This has to be the query
+				search = Search().update_from_dict(item)
 
-			if params is not None:
-				search = search.params(**params)
-				params = None
+				if params is not None:
+					search = search.params(**params)
+					params = None
 
-			ms = ms.add(search)
+				ms = ms.add(search)
 
-	logger.info(f"Requested - {ms.to_dict()}")
+		logger.info(f"Requested - {ms.to_dict()}")
 
-	try:
-		response = ms.execute()
-	except Exception as exc:
-		logger.exception(exc)
-		raise HTTPException(
-			status_code=500,
-			detail="Cannot serve results at the moment. Please try again."
-		)
+		try:
+			response = ms.execute()
+		except Exception as exc:
+			raise ElasticSearchConnectionError(exc)
 
-	responses = {'responses': []}
+		responses = {'responses': []}
 
-	for item in response:
-		responses['responses'].append(item.to_dict())
+		for item in response:
+			responses['responses'].append(item.to_dict())
 
-	logger.info(f"Responded - {response}")
+		logger.info(f"Responded - {response}")
 
-	return JSONResponse(content=responses)
+		return JSONResponse(content=responses)

@@ -18,7 +18,7 @@ from elasticsearch_dsl import (
 	Search,
 )
 from fastapi import (
-	FastAPI,HTTPException,
+	FastAPI,
 	Query,
 	Request,
 )

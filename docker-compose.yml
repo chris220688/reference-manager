@@ -13,8 +13,8 @@ services:
       - MONGODB_ROOT_PASSWORD=referencemanager
       - MONGODB_REPLICA_SET_KEY=replicaset123
       - MONGODB_REPLICA_SET_NAME=rs0
-    ports:
-      - "27017:27017"
+    # ports:
+    #   - "27017:27017"
     networks:
       - stack
 
@@ -65,9 +65,9 @@ services:
       memlock:
         soft: -1
         hard: -1
-    ports:
-      - "9200:9200"
-      - "9300:9300"
+    # ports:
+    #   - "9200:9200"
+    #   - "9300:9300"
     networks:
       - stack
 
@@ -106,8 +106,8 @@ services:
     #   - elasticsearch
     # depends_on:
     #   - elasticsearch
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     networks:
       - stack
 
@@ -124,7 +124,6 @@ services:
     working_dir: "/usr/src/apps/producer"
     environment:
       - APP_NAME=producer
-      - INSERT_ENDPOINT=/insert/
       - DATABASE_TYPE=mongodb
       - DATABASE_HOST=mongodb-primary
       - DATABASE_PORT=27017
@@ -134,10 +133,14 @@ services:
       - WAIT_HOSTS=mongodb-primary:27017,mongodb-secondary:27017,mongodb-arbiter:27017
       - WAIT_HOSTS_TIMEOUT=60
       - WAIT_AFTER_HOSTS=30
+      - GOOGLE_CLIENT_ID=
+      - GOOGLE_CLIENT_SECRET=
+      - GOOGLE_DISCOVERY_URL=https://accounts.google.com/.well-known/openid-configuration
+      - GOOGLE_REDIRECT_URL=http://localhost:80/api/producer/google-login-callback/
     command:
       sh -c "/wait && pipenv run uvicorn producer.main:app --host 0.0.0.0"
-    ports:
-      - "8001:8000"
+    # ports:
+    #   - "8001:8000"
     networks:
       - stack
 
@@ -183,6 +186,9 @@ services:
     build:
       context: .
       dockerfile: react/apps/referencemanager/Dockerfile
+    environment:
+      # Doesn't work. Needs to be set in .env file
+      - REACT_APP_GOOGLE_LOGIN_ENDPOINT=http://localhost:80/api/producer/google-login-redirect/
     ports:
       - "3000:3000"
     networks:

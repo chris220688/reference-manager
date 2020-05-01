@@ -10,6 +10,8 @@ fastapi = "*"
 uvicorn = "*"
 motor = "*"
 contextlog = {path = "./../../shared/contextlog"}
+requests = "*"
+oauthlib = "*"
 
 [requires]
 python_version = "3.7"

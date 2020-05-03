@@ -137,6 +137,10 @@ services:
       - GOOGLE_CLIENT_SECRET=
       - GOOGLE_DISCOVERY_URL=https://accounts.google.com/.well-known/openid-configuration
       - GOOGLE_REDIRECT_URL=http://localhost:80/api/producer/google-login-callback/
+      - FRONTEND_URL=http://localhost:3000
+      - ALGORITHM=HS256
+      - JWT_SECRET_KEY=
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
     command:
       sh -c "/wait && pipenv run uvicorn producer.main:app --host 0.0.0.0"
     # ports:
@@ -188,7 +192,7 @@ services:
       dockerfile: react/apps/referencemanager/Dockerfile
     environment:
       # Doesn't work. Needs to be set in .env file
-      - REACT_APP_GOOGLE_LOGIN_ENDPOINT=http://localhost:80/api/producer/google-login-redirect/
+      - REACT_APP_PRODUCER_LOGIN_ENDPOINT=http://localhost:80/api/producer/login-redirect
     ports:
       - "3000:3000"
     networks:

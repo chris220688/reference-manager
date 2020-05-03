@@ -10,10 +10,11 @@ from fastapi import (
 	Query,
 	Request,
 )
+from jwt import encode as jwt_encode, PyJWTError
 from starlette.responses import RedirectResponse
-from oauthlib.oauth2 import WebApplicationClient
 
 from contextlog import contextlog
+from producer.auth_providers import auth_providers
 from producer import config
 from producer.db_clients import get_db_client
 from producer.exceptions import (
@@ -21,18 +22,20 @@ from producer.exceptions import (
 	DatabaseConnectionError,
 	DocumentExists,
 )
-from producer.models import (
+from producer.models.db_models import (
+	InternalUser,
 	Reference,
 	ReferenceMetadata,
+)
+from producer.models.auth_models import (
+	ExternalAuthToken,
+	InternalAccessTokenData,
 )
 
 
 logger = contextlog.get_contextlog()
 
 app = FastAPI()
-
-# OAuth 2 client setup
-client = WebApplicationClient(config.GOOGLE_CLIENT_ID)
 
 @app.on_event("startup")
 async def startup_event():
@@ -79,6 +82,7 @@ async def setup_request(request: Request, call_next):
 
 	return response
 
+
 @app.put("/insert/")
 async def insert(reference: Reference):
 	""" API endpoint for inserting a new reference in the database """
@@ -95,71 +99,140 @@ async def insert(reference: Reference):
 
 		# Inject metadata related to the reference
 		metadata = ReferenceMetadata(
-			creation_date=datetime.datetime.now()
+			created_at=datetime.datetime.now()
 		)
 
 		await db_client.insert(reference, metadata)
 
-@app.get("/google-login-redirect/")
-async def google_login_redirect(request: Request):
-	""" Redirects the user to the Google authentication popup """
-	discovery_document = await _get_discovery_document()
-	authorization_endpoint = discovery_document["authorization_endpoint"]
 
-	request_uri = client.prepare_request_uri(
-		authorization_endpoint,
-		redirect_uri=config.GOOGLE_REDIRECT_URL,
-		scope=["openid", "email", "profile"],
-	)
+@app.get("/login-redirect")
+async def login_redirect(auth_provider: str):
+	""" Redirects the user to the external authentication pop-up """
+	provider = await auth_providers.get_auth_provider(auth_provider)
+
+	request_uri = await provider.get_request_uri()
 
 	return RedirectResponse(url=request_uri)
 
+
 @app.get("/google-login-callback/")
 async def google_login_callback(request: Request):
-	""" Callback triggered when the user logs in to the Google pop-up.
+	""" Callback triggered when the user logs in to Google's pop-up.
 
 		Receives an authentication_token from Google which then
 		exchanges for an access_token. The latter is used to
 		gain user information from Google's userinfo_endpoint.
 	"""
-	auth_code = request.query_params.get("code")
+	code = request.query_params.get("code")
 
-	discovery_document = await _get_discovery_document()
-	token_endpoint = discovery_document["token_endpoint"]
-	userinfo_endpoint = discovery_document["userinfo_endpoint"]
+	provider = await auth_providers.get_auth_provider(config.GOOGLE)
 
-	# Request access_token from Google
-	token_url, headers, body = client.prepare_token_request(
-		token_endpoint,
-		redirect_url=config.GOOGLE_REDIRECT_URL,
-		code=auth_code
-	)
-	token_response = requests.post(
-		token_url,
-		headers=headers,
-		data=body,
-		auth=(config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET),
+	# Authenticate token and get user's info from external provider
+	external_user = await provider.get_user(
+		auth_token=ExternalAuthToken(code=code)
 	)
 
-	client.parse_request_body_response(json.dumps(token_response.json()))
+	# Get or create the internal user
+	internal_user = await _get_internal_user(
+		external_sub_id=external_user.sub_id
+	)
 
-	# Request user's information from Google
-	uri, headers, body = client.add_token(userinfo_endpoint)
-	userinfo_response = requests.get(uri, headers=headers, data=body)
-
-	if userinfo_response.json().get("email_verified"):
-		subject_id = userinfo_response.json()["sub"]
-		user_email = userinfo_response.json()["email"]
-		user_name = userinfo_response.json()["given_name"]
-	else:
-		raise HTTPException(
-			status_code=400,
-			detail="User email not verified by Google."
+	access_token = await _create_internal_access_token(
+		InternalAccessTokenData(
+			sub=internal_user.internal_sub_id,
+			username=external_user.username,
 		)
+	)
 
-	logger.info(f"user_email: {user_email}")
-	logger.info(f"user_name: {user_name}")
+	# Redirect the user to the home page
+	return RedirectResponse(url=f"{config.FRONTEND_URL}?token={access_token}")
 
-async def _get_discovery_document():
-	""" Returns the openid configuration information from Google """
-	return requests.get(config.GOOGLE_DISCOVERY_URL).json()
+
+async def _get_internal_user(external_sub_id: str) -> InternalUser:
+	""" Returns an internal user object as defined by this application.
+
+		If the user cannot be found in the database, it gets created.
+
+		Args:
+			external_sub_id: Unique identifier for a user in the external
+							provider's system (i.e Google's, FaceBook's).
+
+		Returns:
+			internal_user: A user object that has meaning in this application
+	"""
+	internal_user = await _get_user_by_external_sub_id(external_sub_id)
+
+	if internal_user is None:
+		internal_user = await _create_user_with_external_sub_id(external_sub_id)
+
+	return internal_user
+
+
+async def _get_user_by_external_sub_id(external_sub_id: str) -> InternalUser:
+	""" Returns an internal user from the database based on the subject
+		id that is used by the external authentication provider.
+
+		Args:
+			external_sub_id: Unique identifier for a user in the external
+							provider's system (i.e Google's, FaceBook's).
+
+		Returns:
+			internal_user: A user object that has meaning in this application
+	"""
+	internal_user = await db_client.get_user_by_external_sub_id(
+		external_sub_id=external_sub_id
+	)
+	return internal_user
+
+
+async def _get_user_by_internal_sub_id(internal_sub_id) -> InternalUser:
+	""" Returns an internal user from the database based on the subject
+		id that is used by the internal system (this application)
+
+		Args:
+			internal_sub_id: Unique identifier for a user in this application
+
+		Returns:
+			internal_user: A user object that has meaning in this application
+	"""
+	internal_user = await db_client.get_user_by_internal_sub_id(
+		internal_sub_id=internal_sub_id
+	)
+	return internal_user
+
+
+async def _create_user_with_external_sub_id(external_sub_id: str) -> InternalUser:
+	""" Creates an internal user to store in the database, using the
+		subject id of the external authentication provider as a
+		reference for future identification.
+
+		Args:
+			external_sub_id: The subject id of the external provider
+	"""
+	internal_user = await db_client.create_user_with_external_sub_id(
+		external_sub_id=external_sub_id
+	)
+	return internal_user
+
+
+async def _create_internal_access_token(access_token_data: InternalAccessTokenData) -> str:
+	""" Creates a JWT access token to return to the user.
+
+		Args:
+			access_token_data: The data to be included in the JWT access token
+
+		Returns:
+			encoded_jwt: The encoded JWT token
+
+	"""
+	expires_delta = datetime.timedelta(minutes=int(config.ACCESS_TOKEN_EXPIRE_MINUTES))
+
+	to_encode = access_token_data.dict()
+
+	expire = datetime.datetime.utcnow() + expires_delta
+
+	to_encode.update(dict(exp=expire))
+
+	encoded_jwt = jwt_encode(to_encode, config.JWT_SECRET_KEY, algorithm=config.ALGORITHM)
+
+	return encoded_jwt

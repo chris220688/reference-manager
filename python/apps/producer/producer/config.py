@@ -4,6 +4,9 @@ import os
 # Supported database types by name
 MONGO_DB = "mongodb"
 
+# Supported authentication providers by name
+GOOGLE = "google-oidc"
+
 # Selected database type to use
 DATABASE_TYPE = os.getenv("DATABASE_TYPE")
 
@@ -21,3 +24,11 @@ GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = os.environ.get("GOOGLE_DISCOVERY_URL", None)
 GOOGLE_REDIRECT_URL = os.environ.get("GOOGLE_REDIRECT_URL", None)
+
+# Front end endpoint
+FRONTEND_URL = os.environ.get("FRONTEND_URL", None)
+
+# JWT access token configuration
+JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", None)
+ALGORITHM = os.environ.get("ALGORITHM", None)
+ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 15)

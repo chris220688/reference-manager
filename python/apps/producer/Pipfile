@@ -12,6 +12,7 @@ motor = "*"
 contextlog = {path = "./../../shared/contextlog"}
 requests = "*"
 oauthlib = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.7"

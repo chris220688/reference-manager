@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
+import datetime
 from typing import List
+from uuid import uuid4
 
 from motor.motor_asyncio import (
 	AsyncIOMotorClient,
@@ -13,7 +15,8 @@ from producer.exceptions import (
 	DatabaseConnectionError,
 	UnknownDatabaseType,
 )
-from producer.models import (
+from producer.models.db_models import (
+	InternalUser,
 	Reference,
 	ReferenceMetadata,
 )
@@ -82,6 +85,28 @@ class DatabaseClient(ABC):
 		""" Inserts a reference in the database. """
 		...
 
+	@abstractmethod
+	async def get_user_by_external_sub_id(self, external_sub_id: str) -> InternalUser:
+		""" Returns a user from the database, based on the external sub_id of
+			the current authentication provider (i.e Google, FaceBook etc)
+		"""
+		...
+
+	@abstractmethod
+	async def get_user_by_internal_sub_id(self, internal_sub_id: str) -> InternalUser:
+		""" Returns a user from the database, based on the internal sub_id """
+		...
+
+	@abstractmethod
+	async def create_user_with_external_sub_id(self, external_sub_id: str) -> InternalUser:
+		""" Creates a user in the database based on the external sub_id of
+			the current authentication provider (i.e Google, FaceBook etc)
+
+			The user will also be assigned an internal sub_id for authentication
+			within the internal system (reference manager application)
+		"""
+		...
+
 
 class MongoDBClient(DatabaseClient):
 	""" Wrapper around an AsyncIOMotorClient object. """
@@ -101,6 +126,7 @@ class MongoDBClient(DatabaseClient):
 		self._db = self._motor_client[config.MONGODB_DATABASE]
 		# Mongo collections
 		self._reference_manager_coll = self._db[config.MONGODB_REFERENCE_MANAGER_COLLECTION]
+		self._users_coll = self._db["users"]
 		self._session = None
 
 	@staticmethod
@@ -140,3 +166,54 @@ class MongoDBClient(DatabaseClient):
 
 		logger.info(f"Inserting {document}")
 		await self._reference_manager_coll.insert_one(document)
+
+	async def get_user_by_external_sub_id(self, external_sub_id: str) -> InternalUser:
+		internal_user = None
+
+		mongo_user = await self._users_coll.find_one({'external_sub_id': external_sub_id})
+
+		if mongo_user:
+			internal_user = InternalUser(
+				internal_sub_id=mongo_user.get("internal_sub_id"),
+				external_sub_id=mongo_user.get("external_sub_id"),
+				created_at=mongo_user.get("created_at"),
+			)
+
+		return internal_user
+
+	async def get_user_by_internal_sub_id(self, internal_sub_id: str) -> InternalUser:
+		internal_user = None
+
+		mongo_user = await self._users_coll.find_one({'_id': internal_sub_id})
+
+		if mongo_user:
+			internal_user = InternalUser(
+				internal_sub_id=mongo_user.get("internal_sub_id"),
+				external_sub_id=mongo_user.get("external_sub_id"),
+				created_at=mongo_user.get("created_at"),
+			)
+
+		return internal_user
+
+	async def create_user_with_external_sub_id(self, external_sub_id: str) -> InternalUser:
+		unique_identifier = str(uuid4())
+		result = await self._users_coll.insert_one(
+			dict(
+				_id=unique_identifier,
+				internal_sub_id=unique_identifier,
+				external_sub_id=external_sub_id,
+				created_at=datetime.datetime.utcnow(),
+			)
+		)
+
+		mongo_user_id = result.inserted_id
+
+		mongo_user = await self._users_coll.find_one({'_id': mongo_user_id})
+
+		internal_user = InternalUser(
+			internal_sub_id=mongo_user.get("internal_sub_id"),
+			external_sub_id=mongo_user.get("external_sub_id"),
+			created_at=mongo_user.get("created_at"),
+		)
+
+		return internal_user

@@ -19,9 +19,17 @@ class DatabaseConnectionError(DatabaseException):
 
 
 class DocumentExists(DatabaseException):
-    def __init__(self, title):
-        super(DocumentExists, self).__init__()
-        self.title = title
+	def __init__(self, title):
+		super(DocumentExists, self).__init__()
+		self.title = title
+
+
+class AuthenticationException(Exception):
+	pass
+
+
+class UnknownAuthenticationProvider(AuthenticationException):
+	pass
 
 
 @asynccontextmanager

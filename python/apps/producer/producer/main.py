@@ -134,6 +134,7 @@ async def google_login_callback(request: Request):
 
 	# Get or create the internal user
 	internal_user = await _get_internal_user(
+		username=external_user.username,
 		external_sub_id=external_user.sub_id
 	)
 
@@ -148,31 +149,39 @@ async def google_login_callback(request: Request):
 	return RedirectResponse(url=f"{config.FRONTEND_URL}?token={access_token}")
 
 
-async def _get_internal_user(external_sub_id: str) -> InternalUser:
+async def _get_internal_user(username: str, external_sub_id: str) -> InternalUser:
 	""" Returns an internal user object as defined by this application.
 
 		If the user cannot be found in the database, it gets created.
 
 		Args:
+			username: The username used in the external provider's system.
 			external_sub_id: Unique identifier for a user in the external
 							provider's system (i.e Google's, FaceBook's).
 
 		Returns:
 			internal_user: A user object that has meaning in this application
 	"""
-	internal_user = await _get_user_by_external_sub_id(external_sub_id)
+	internal_user = await _get_user_by_external_sub_id(
+		username=username,
+		external_sub_id=external_sub_id,
+	)
 
 	if internal_user is None:
-		internal_user = await _create_user_with_external_sub_id(external_sub_id)
+		internal_user = await _create_user_with_external_sub_id(
+			username=username,
+			external_sub_id=external_sub_id,
+		)
 
 	return internal_user
 
 
-async def _get_user_by_external_sub_id(external_sub_id: str) -> InternalUser:
+async def _get_user_by_external_sub_id(username: str, external_sub_id: str) -> InternalUser:
 	""" Returns an internal user from the database based on the subject
 		id that is used by the external authentication provider.
 
 		Args:
+			username: The username used in the external provider's system.
 			external_sub_id: Unique identifier for a user in the external
 							provider's system (i.e Google's, FaceBook's).
 
@@ -180,6 +189,7 @@ async def _get_user_by_external_sub_id(external_sub_id: str) -> InternalUser:
 			internal_user: A user object that has meaning in this application
 	"""
 	internal_user = await db_client.get_user_by_external_sub_id(
+		username=username,
 		external_sub_id=external_sub_id
 	)
 	return internal_user
@@ -201,15 +211,20 @@ async def _get_user_by_internal_sub_id(internal_sub_id) -> InternalUser:
 	return internal_user
 
 
-async def _create_user_with_external_sub_id(external_sub_id: str) -> InternalUser:
+async def _create_user_with_external_sub_id(username: str, external_sub_id: str) -> InternalUser:
 	""" Creates an internal user to store in the database, using the
 		subject id of the external authentication provider as a
 		reference for future identification.
 
 		Args:
+			username: The username used in the external provider's system.
 			external_sub_id: The subject id of the external provider
+
+		Returns:
+			internal_user: A user object that has meaning in this application
 	"""
 	internal_user = await db_client.create_user_with_external_sub_id(
+		username=username,
 		external_sub_id=external_sub_id
 	)
 	return internal_user

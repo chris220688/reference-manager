@@ -13,6 +13,7 @@ contextlog = {path = "./../../shared/contextlog"}
 requests = "*"
 oauthlib = "*"
 pyjwt = "*"
+passlib = {extras = ["bcrypt"],version = "*"}
 
 [requires]
 python_version = "3.7"

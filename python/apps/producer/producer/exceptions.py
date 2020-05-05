@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from contextlog import contextlog
 
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 
 logger = contextlog.get_contextlog()
@@ -32,6 +32,14 @@ class UnknownAuthenticationProvider(AuthenticationException):
 	pass
 
 
+class AuthorizationException(Exception):
+	pass
+
+
+class UnauthorizedUser(AuthorizationException):
+	pass
+
+
 @asynccontextmanager
 async def exception_handling():
 	try:
@@ -45,6 +53,9 @@ async def exception_handling():
 	except DocumentExists as exc:
 		logger.warning(f"Failed to insert document: {repr(exc)}")
 		raise HTTPException(status_code=409, detail=f"Reference '{exc.title}' exists.")
+	except UnauthorizedUser as exc:
+		logger.warning(f"Failed to authorize user: {repr(exc)}")
+		raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
 	except Exception as exc:
 		logger.exception(repr(exc))
 		raise HTTPException(status_code=500, detail="An error has occurred. Please try again.")

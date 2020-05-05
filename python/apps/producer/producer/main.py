@@ -18,9 +18,10 @@ from producer.auth_providers import auth_providers
 from producer import config
 from producer.db_clients import get_db_client
 from producer.exceptions import (
-	exception_handling,
 	DatabaseConnectionError,
 	DocumentExists,
+	UnauthorizedUser,
+	exception_handling,
 )
 from producer.models.db_models import (
 	InternalUser,

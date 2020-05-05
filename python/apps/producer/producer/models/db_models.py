@@ -22,7 +22,7 @@ class Reference(BaseModel):
 	event_date: datetime.datetime
 	description: constr(min_length=50, max_length=300)
 	books: conlist(Book, min_items=1, max_items=50)
-	rating: Optional[conint(gt=0, lt=5)]
+	rating: Optional[conint(gt=0, lt=6)]
 
 
 class ReferenceMetadata(BaseModel):

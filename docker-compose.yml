@@ -141,6 +141,7 @@ services:
       - ALGORITHM=HS256
       - JWT_SECRET_KEY=
       - ACCESS_TOKEN_EXPIRE_MINUTES=30
+      - AUTH_TOKEN_EXPIRE_MINUTES=3
     command:
       sh -c "/wait && pipenv run uvicorn producer.main:app --host 0.0.0.0"
     # ports:

@@ -28,8 +28,7 @@ class Reference(BaseModel):
 class ReferenceMetadata(BaseModel):
 	""" Reference metadata """
 	created_at: datetime.datetime
-	user_name: Optional[str]  # Requires auth to be implemented
-	user_email: Optional[str] # Requires auth to be implemented
+	author_id: str
 
 class InternalUser(BaseModel):
 	external_sub_id: str

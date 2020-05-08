@@ -22,6 +22,10 @@ from producer.models.db_models import (
 	Reference,
 	ReferenceMetadata,
 )
+from producer.models.auth_models import (
+	ExternalUser,
+)
+
 
 
 logger = contextlog.get_contextlog()
@@ -90,7 +94,7 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
-	async def insert(self, document: Reference, metadata: ReferenceMetadata):
+	async def insert_reference(self, document: Reference, metadata: ReferenceMetadata):
 		""" Inserts a reference in the database.
 
 			Args:
@@ -99,13 +103,13 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
-	async def get_user_by_external_sub_id(self, username: str, external_sub_id: str) -> InternalUser:
+	async def get_user_by_external_sub_id(self, external_user: ExternalUser) -> InternalUser:
 		""" Returns a user from the database, based on the external sub_id of
 			the current authentication provider (i.e Google, FaceBook etc)
 
 			Args:
-				username: The username used in the external provider's system. Used as a salt
-				external_sub_id: The unique id of the user in the external provider's system
+				external_user: An object representing a user with information
+								based on the external provider's service.
 
 			Returns:
 				internal_user: A user objects as defined in this application
@@ -125,7 +129,7 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
-	async def create_user_with_external_sub_id(self, username: str, external_sub_id: str) -> InternalUser:
+	async def create_internal_user(self, external_user: ExternalUser) -> InternalUser:
 		""" Creates a user in the database based on the external sub_id of
 			the current authentication provider (i.e Google, FaceBook etc)
 
@@ -133,27 +137,27 @@ class DatabaseClient(ABC):
 			within the internal system (reference manager application)
 
 			Args:
-				username: The username used in the external provider's system. Used as a salt
-				external_sub_id: The unique id of the user in the external provider's system
+				external_user: An object representing a user with information
+								based on the external provider's service.
 
 			Returns:
 				internal_user: A user objects as defined in this application
 		"""
 		...
 
-	async def _encrypt_external_sub_id(sefl, username: str, external_sub_id: str) -> str:
+	async def _encrypt_external_sub_id(sefl, external_user: ExternalUser) -> str:
 		""" It encrypts the subject id received from the external provider. These ids are
 			used to uniquely identify a user in the system of the external provider and
 			are usually public. However, it is better to be stored encrypted just in case.
 
 			Args:
-				username: The username used in the external provider's system
-				external_sub_id: The unique id of the user in the external provider's system
+				external_user: An object representing a user with information
+								based on the external provider's service.
 
 			Returns:
 				encrypted_external_sub_id: The encrypted external subject id
 		"""
-		salt = username.lower()
+		salt = external_user.username.lower()
 		salt = salt.replace(" ", "")
 		# Hash the salt so that the username is not plain text visible in the database
 		salt = hashlib.sha256(salt.encode()).hexdigest()
@@ -164,7 +168,7 @@ class DatabaseClient(ABC):
 		# As per passlib the last character of the salt should always be one of [.Oeu]
 		salt = salt + "O"
 
-		encrypted_external_sub_id = bcrypt.using(salt=salt).hash(external_sub_id)
+		encrypted_external_sub_id = bcrypt.using(salt=salt).hash(external_user.external_sub_id)
 		return encrypted_external_sub_id
 
 
@@ -219,21 +223,18 @@ class MongoDBClient(DatabaseClient):
 
 		return references
 
-	async def insert(self, document: Reference, metadata: ReferenceMetadata):
+	async def insert_reference(self, document: Reference, metadata: ReferenceMetadata):
 		document = document.dict()
-
+		document["_id"] = str(uuid4())
 		document["metadata"] = metadata.dict()
 
 		logger.info(f"Inserting {document}")
 		await self._reference_manager_coll.insert_one(document)
 
-	async def get_user_by_external_sub_id(self, username: str, external_sub_id: str) -> InternalUser:
+	async def get_user_by_external_sub_id(self, external_user: ExternalUser) -> InternalUser:
 		internal_user = None
 
-		encrypted_external_sub_id = await self._encrypt_external_sub_id(
-			username=username,
-			external_sub_id=external_sub_id
-		)
+		encrypted_external_sub_id = await self._encrypt_external_sub_id(external_user)
 
 		mongo_user = await self._users_coll.find_one({'external_sub_id': encrypted_external_sub_id})
 
@@ -260,13 +261,9 @@ class MongoDBClient(DatabaseClient):
 
 		return internal_user
 
-	async def create_user_with_external_sub_id(self, username: str, external_sub_id: str) -> InternalUser:
+	async def create_internal_user(self, external_user: ExternalUser) -> InternalUser:
+		encrypted_external_sub_id = await self._encrypt_external_sub_id(external_user)
 		unique_identifier = str(uuid4())
-
-		encrypted_external_sub_id = await self._encrypt_external_sub_id(
-			username=username,
-			external_sub_id=external_sub_id
-		)
 
 		result = await self._users_coll.insert_one(
 			dict(

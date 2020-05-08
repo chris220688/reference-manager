@@ -32,28 +32,69 @@ var testReference = {
 class App extends Component {
 
 	state = {
-		token: null,
+		userLoggedIn: false,
+		username: null,
+		permissions: [],
+		producerLoginRedirectEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_REDIRECT_ENDPOINT,
 		producerLoginEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_ENDPOINT,
+		producerLoginCheckEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_CHECK_ENDPOINT,
 		producerInsertEndpoint: process.env.REACT_APP_PRODUCER_INSERT_ENDPOINT,
 	}
 
 	componentDidMount() {
-		var token = (window.location.search.match(/token=([^&]+)/) || [])[1]
+		this.authenticate()
+	}
 
-		if (typeof token === 'undefined') {
-			this.setState({
-				token: null
-			})
-		} else {
-			this.setState({
-				token: decodeURI(token)
-			})
+	authenticate = () => {
+		var authToken = (window.location.search.match(/authToken=([^&]+)/) || [])[1]
+		window.history.pushState('object', document.title, "http://localhost:3000/");
+
+		if (authToken) {
+			this.getAccessToken(authToken)
 		}
+
+		this.userLoggedIn()
+	}
+
+	getAccessToken = (authToken) => {
+		console.log("Found auth token: " + authToken)
+
+		const request = {
+			method: 'GET',
+			headers: {
+				"Authorization": "Bearer " + authToken
+			},
+			credentials: 'include'
+		}
+
+		fetch(this.state.producerLoginEndpoint, request)
+		.then(response => response.json())
+		.then(data => console.log(data))
+		.catch(err => console.log(err))
+	}
+
+	userLoggedIn = () => {
+		console.log("Checking logged in")
+
+		const request = {
+			method: 'GET',
+			credentials: 'include'
+		}
+
+		fetch(this.state.producerLoginCheckEndpoint, request)
+		.then(response => response.json())
+		.then(data => {
+			console.log("userLoggedIn: " + data['userLoggedIn'])
+			this.setState({
+				userLoggedIn: data['userLoggedIn']
+			})
+		})
+		.catch(err => console.log(err))
 	}
 
 	googleLogin = () => {
 		var auth_provider = "google-oidc"
-		var login_url = this.state.producerLoginEndpoint + "?auth_provider=" + auth_provider
+		var login_url = this.state.producerLoginRedirectEndpoint + "?auth_provider=" + auth_provider
 		window.location.href = login_url
 	}
 
@@ -63,7 +104,7 @@ class App extends Component {
 		const putReference = {
 			method: 'PUT',
 			headers: {
-				"WWW-Authenticate": "Bearer " + this.state.token
+				"Authorization": "Bearer " + this.state.authToken
 			},
 			body: JSON.stringify(testReference)
 		}
@@ -79,9 +120,9 @@ class App extends Component {
 		return (
 			<section>
 				<Search/>
-				{this.state.token === null ?
-					<button onClick={this.googleLogin}>Google Login</button> :
-					<button onClick={this.addReference}>Add Reference</button>
+				{this.state.userLoggedIn ?
+					<button onClick={this.addReference}>Add Reference</button> :
+					<button onClick={this.googleLogin}>Google Login</button>
 				}
 			</section>
 		);

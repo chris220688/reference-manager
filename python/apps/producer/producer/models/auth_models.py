@@ -4,6 +4,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
+class InternalAuthToken(BaseModel):
+	code: str
+
 class ExternalAuthToken(BaseModel):
 	code: str
 
@@ -15,4 +18,4 @@ class InternalAccessTokenData(BaseModel):
 
 class ExternalUser(BaseModel):
 	username: str
-	sub_id: str
+	external_sub_id: str

@@ -32,7 +32,7 @@ async def get_auth_provider(auth_provider: str):
 	for provider_cls in AuthProvider.__subclasses__():
 		try:
 			if await provider_cls.meets_condition(auth_provider):
-				return provider_cls()
+				return provider_cls(client_id=provider_cls.client_id)
 		except KeyError:
 			continue
 
@@ -40,10 +40,11 @@ async def get_auth_provider(auth_provider: str):
 
 
 class AuthProvider(ABC):
+
 	""" Authentication providers interface """
-	def __init__(self):
+	def __init__(self, client_id: str):
 		# OAuth 2 client setup
-		self.auth_client = WebApplicationClient(config.GOOGLE_CLIENT_ID)
+		self.auth_client = WebApplicationClient(client_id)
 
 	@abstractmethod
 	async def meets_condition(self):
@@ -87,6 +88,8 @@ class GoogleAuthProvider(AuthProvider):
 	""" Google authentication class for authenticating users and
 		requesting user's information via and OpenIdConnect flow.
 	"""
+	client_id = config.GOOGLE_CLIENT_ID
+
 	@staticmethod
 	async def meets_condition(auth_provider):
 		return auth_provider == config.GOOGLE
@@ -126,7 +129,7 @@ class GoogleAuthProvider(AuthProvider):
 
 		external_user = ExternalUser(
 			username=username,
-			sub_id=sub_id
+			external_sub_id=sub_id
 		)
 
 		return external_user

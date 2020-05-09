@@ -1,7 +1,4 @@
-import asyncio
 import datetime
-import json
-import requests
 import time
 from uuid import uuid4
 
@@ -9,24 +6,28 @@ from aiocache import Cache
 from fastapi import (
 	Depends,
 	FastAPI,
-	HTTPException,
-	Query,
 	Request,
 )
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer
-from jwt import encode as jwt_encode, decode as jwt_decode, PyJWTError
-from starlette.responses import RedirectResponse, Response, JSONResponse
+from starlette.responses import (
+	RedirectResponse,
+	Response,
+	JSONResponse,
+)
 
 from contextlog import contextlog
-from producer.auth_providers import auth_providers
+from producer.auth import (
+	providers as auth_providers,
+	schemes as auth_schemes,
+	util as auth_util,
+)
+
 from producer import config
-from producer.db_clients import get_db_client
+from producer import db_client
 from producer.exceptions import (
-	DatabaseConnectionError,
+	AuthorizationException,
 	DocumentExists,
-	UnauthorizedUser,
 	exception_handling,
 )
 from producer.models.db_models import (
@@ -38,7 +39,6 @@ from producer.models.auth_models import (
 	ExternalAuthToken,
 	ExternalUser,
 	InternalAccessTokenData,
-	InternalAuthToken,
 )
 
 
@@ -58,19 +58,16 @@ app = FastAPI()
 # )
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login-redirect")
-cache = Cache()
+auth_token_scheme = auth_schemes.AuthTokenBearer()
+access_token_cookie_scheme = auth_schemes.AccessTokenCookieBearer()
 
 
 @app.on_event("startup")
 async def startup_event():
 	""" Startup functionality """
 	logger.info("Starting up producer service")
-	global db_client
 
 	async with exception_handling():
-		db_client = await get_db_client(config.DATABASE_TYPE)
-
 		await db_client.start_session()
 
 
@@ -85,16 +82,16 @@ async def shutdown_event():
 
 
 @app.middleware("http")
-async def setup_request(request: Request, call_next):
+async def setup_request(request: Request, call_next) -> JSONResponse:
 	""" A middleware for setting up a request. It creates a new request_id
 		and adds some basic metrics.
 
 		Args:
-			request (fastapi.Request): The incoming request
+			request: The incoming request
 			call_next (obj): The wrapper as per FastAPI docs
 
 		Returns:
-			response (fastapi.responses.JSONResponse): The json response
+			response: The JSON response
 	"""
 	contextlog.REQUEST_ID.set(str(uuid4()))
 
@@ -108,14 +105,128 @@ async def setup_request(request: Request, call_next):
 	return response
 
 
-@app.put("/insert/")
-async def insert_reference(reference: Reference, internal_access_token: str = Depends(oauth2_scheme)):
-	""" API endpoint for inserting a new reference in the database """
-	internal_user = await _validate_internal_access_token(internal_access_token)
+@app.get("/login-redirect")
+async def login_redirect(auth_provider: str):
+	""" Redirects the user to the external authentication pop-up
 
-	logger.info(f"Received - {reference.dict()}")
+		Args:
+			auth_provider: The authentication provider (i.e google-iodc)
 
+		Returns:
+			Redirect response to the external provider's auth endpoint
+	"""
 	async with exception_handling():
+		provider = await auth_providers.get_auth_provider(auth_provider)
+
+		request_uri = await provider.get_request_uri()
+		return RedirectResponse(url=request_uri)
+
+
+@app.get("/google-login-callback/")
+async def google_login_callback(request: Request):
+	""" Callback triggered when the user logs in to Google's pop-up.
+
+		Receives an authentication_token from Google which then
+		exchanges for an access_token. The latter is used to
+		gain user information from Google's userinfo_endpoint.
+
+		Args:
+			request: The incoming request as redirected by Google
+	"""
+	async with exception_handling():
+		code = request.query_params.get("code")
+
+		if not code:
+			raise AuthorizationException("Missing external authentication token")
+
+		provider = await auth_providers.get_auth_provider(config.GOOGLE)
+
+		# Authenticate token and get user's info from external provider
+		external_user = await provider.get_user(
+			auth_token=ExternalAuthToken(code=code)
+		)
+
+		# Get or create the internal user
+		internal_user = await db_client.get_user_by_external_sub_id(external_user)
+
+		if internal_user is None:
+			internal_user = await db_client.create_internal_user(external_user)
+
+		internal_auth_token = await auth_util.create_internal_auth_token(internal_user)
+
+		# Redirect the user to the home page
+		redirect_url = f"{config.FRONTEND_URL}?authToken={internal_auth_token}"
+		return RedirectResponse(url=redirect_url)
+
+
+@app.get("/login/")
+async def login(
+	response: JSONResponse,
+	internal_user: str = Depends(auth_token_scheme)
+) -> JSONResponse:
+	""" Login endpoint for authenticating a user after he has received
+		an authentication token. If the token is valid it generates
+		an access token and inserts it in a HTTPOnly cookie.
+
+		Args:
+			internal_auth_token: Internal authentication token
+
+		Returns:
+			response: A JSON response with the status of the user's session
+	"""
+	async with exception_handling():
+		access_token = await auth_util.create_internal_access_token(
+			InternalAccessTokenData(
+				sub=internal_user.internal_sub_id,
+				username="TEST USER FOR NOW UNTIL I FIX THE USERNAMES WITH SOMETHING MORE CLEVER THAN PASSING IN THE CACHE. DON'T FORGET IT!",
+			)
+		)
+
+		response = JSONResponse(
+			content=jsonable_encoder({"userLoggedIn": True}),
+		)
+
+		response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
+
+		return response
+
+
+@app.get("/user-session-status/")
+async def user_session_status(
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+) -> JSONResponse:
+	""" User status endpoint for checking whether the user currently holds
+		an HTTPOnly cookie with a valid access token.
+
+		Args:
+			internal_user: A user object that has meaning in this application
+
+		Returns:
+			response: A JSON response with the status of the user's session
+	"""
+	logged_id = True if internal_user else False
+
+	response = JSONResponse(
+		content=jsonable_encoder({"userLoggedIn": logged_id}),
+	)
+
+	return response
+
+
+@app.put("/insert-reference/")
+async def insert_reference(
+	reference: Reference,
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	""" API endpoint for inserting a new reference in the database
+
+		Args:
+			reference: A reference document to be inserted in the database
+			internal_user: A user objects as defined in this application
+	"""
+	async with exception_handling():
+		logger.info(f"Received - {reference.dict()}")
+
 		title = reference.title
 		existing_references = await db_client.find_by_title(title)
 
@@ -131,181 +242,3 @@ async def insert_reference(reference: Reference, internal_access_token: str = De
 		)
 
 		await db_client.insert_reference(reference, metadata)
-
-
-@app.get("/login-redirect")
-async def login_redirect(auth_provider: str):
-	""" Redirects the user to the external authentication pop-up """
-	provider = await auth_providers.get_auth_provider(auth_provider)
-
-	request_uri = await provider.get_request_uri()
-
-	return RedirectResponse(url=request_uri)
-
-
-@app.get("/google-login-callback/")
-async def google_login_callback(request: Request):
-	""" Callback triggered when the user logs in to Google's pop-up.
-
-		Receives an authentication_token from Google which then
-		exchanges for an access_token. The latter is used to
-		gain user information from Google's userinfo_endpoint.
-	"""
-	code = request.query_params.get("code")
-
-	provider = await auth_providers.get_auth_provider(config.GOOGLE)
-
-	# Authenticate token and get user's info from external provider
-	external_user = await provider.get_user(
-		auth_token=ExternalAuthToken(code=code)
-	)
-
-	# Get or create the internal user
-	internal_user = await _get_internal_user(external_user=external_user)
-
-	internal_auth_token = await _create_internal_auth_token(internal_user)
-
-	# Redirect the user to the home page
-	return RedirectResponse(url=f"{config.FRONTEND_URL}?authToken={internal_auth_token}")
-
-
-@app.get("/login/")
-async def login(response: JSONResponse, internal_auth_token: str = Depends(oauth2_scheme)):
-	""" Login endpoint for authenticating a user after he has received
-		and access token.
-	"""
-	internal_user = await _validate_internal_auth_token(internal_auth_token)
-
-	access_token = await _create_internal_access_token(
-		InternalAccessTokenData(
-			sub=internal_user.internal_sub_id,
-			username="TEST USER FOR NOW UNTIL I FIX THE USERNAMES WITH SOMETHING MORE CLEVER THAN PASSING IN THE CACHE. DON'T FORGET IT!",
-		)
-	)
-
-	response = JSONResponse(
-		content=jsonable_encoder({"userLoggedIn": True}),
-	)
-
-	response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
-
-	return response
-
-
-@app.get("/user-logged/")
-async def user_logged(request: Request):#internal_access_token: str = Depends(oauth2_scheme)):
-	userLoggedIn = False
-
-	internal_access_token = request.cookies.get('access_token')
-
-	if not internal_access_token:
-		userLoggedIn = False
-	else:
-		# Remove Bearer
-		internal_access_token = internal_access_token.split()[1]
-
-		await _validate_internal_access_token(internal_access_token)
-		userLoggedIn = True
-
-	response = JSONResponse(
-		content=jsonable_encoder({"userLoggedIn": userLoggedIn}),
-	)
-
-	return response
-
-
-async def _get_internal_user(external_user: ExternalUser) -> InternalUser:
-	""" Returns an internal user object as defined by this application.
-
-		If the user cannot be found in the database, it gets created.
-
-		Args:
-			external_user: An object representing a user with information
-							based on the external provider's service.
-
-		Returns:
-			internal_user: A user object that has meaning in this application
-	"""
-	internal_user = await db_client.get_user_by_external_sub_id(external_user)
-
-	if internal_user is None:
-		internal_user = await db_client.create_internal_user(external_user)
-
-	return internal_user
-
-
-async def _create_internal_auth_token(internal_user: InternalUser) -> InternalAuthToken:
-	""" Creates a JWT authentication token to return to the user.
-
-		Args:
-			internal_user: A user object that has meaning in this application
-
-		Returns:
-			encoded_jwt: The encoded JWT authentication token
-
-	"""
-	expires_delta = datetime.timedelta(minutes=int(config.AUTH_TOKEN_EXPIRE_MINUTES))
-	expire = datetime.datetime.utcnow() + expires_delta
-	to_encode = dict(exp=expire)
-	encoded_jwt = jwt_encode(
-		to_encode, config.JWT_SECRET_KEY, algorithm=config.ALGORITHM
-	).decode('utf-8')
-
-	# Add token/user pair in the cache
-	await cache.set(encoded_jwt, internal_user.internal_sub_id)
-
-	return encoded_jwt
-
-
-async def _validate_internal_auth_token(internal_auth_token: str) -> InternalUser:
-	try:
-		jwt_decode(internal_auth_token, config.JWT_SECRET_KEY, algorithms=[config.ALGORITHM])
-	except PyJWTError:
-		raise UnauthorizedUser("Token expired")
-
-	internal_sub_id = await cache.get(internal_auth_token)
-
-	if not internal_sub_id:
-		raise UnauthorizedUser("Invalid auth token")
-
-	internal_user = await db_client.get_user_by_internal_sub_id(internal_sub_id)
-
-	return internal_user
-
-
-async def _create_internal_access_token(access_token_data: InternalAccessTokenData) -> str:
-	""" Creates a JWT access token to return to the user.
-
-		Args:
-			access_token_data: The data to be included in the JWT access token
-
-		Returns:
-			encoded_jwt: The encoded JWT access token
-
-	"""
-	expires_delta = datetime.timedelta(minutes=int(config.ACCESS_TOKEN_EXPIRE_MINUTES))
-	to_encode = access_token_data.dict()
-	expire = datetime.datetime.utcnow() + expires_delta
-	to_encode.update(dict(exp=expire))
-	encoded_jwt = jwt_encode(to_encode, config.JWT_SECRET_KEY, algorithm=config.ALGORITHM)
-
-	return encoded_jwt.decode('utf-8')
-
-
-async def _validate_internal_access_token(internal_access_token: str) -> InternalUser:
-	try:
-		payload = jwt_decode(internal_access_token, config.JWT_SECRET_KEY, algorithms=[config.ALGORITHM])
-
-		internal_sub_id: str = payload.get("sub")
-		if internal_sub_id is None:
-			raise UnauthorizedUser()
-
-	except PyJWTError:
-		raise UnauthorizedUser()
-
-	internal_user = await db_client.get_user_by_internal_sub_id(internal_sub_id)
-
-	if internal_user is None:
-		raise UnauthorizedUser()
-
-	return internal_user

@@ -10,6 +10,9 @@ from starlette.responses import RedirectResponse
 from contextlog import contextlog
 from producer import config
 from producer.exceptions import (
+	DiscoveryDocumentError,
+	ProviderConnectionError,
+	UnauthorizedUser,
 	UnknownAuthenticationProvider,
 )
 from producer.models.auth_models import (
@@ -95,9 +98,13 @@ class GoogleAuthProvider(AuthProvider):
 		return auth_provider == config.GOOGLE
 
 	async def get_user(self, auth_token: ExternalAuthToken) -> ExternalUser:
+		# Get Google's endpoints from discovery document
 		discovery_document = await self._get_discovery_document()
-		token_endpoint = discovery_document["token_endpoint"]
-		userinfo_endpoint = discovery_document["userinfo_endpoint"]
+		try:
+			token_endpoint = discovery_document["token_endpoint"]
+			userinfo_endpoint = discovery_document["userinfo_endpoint"]
+		except KeyError as exc:
+			raise DiscoveryDocumentError(f"Could not parse Google's discovery document: {repr(exc)}")
 
 		# Request access_token from Google
 		token_url, headers, body = self.auth_client.prepare_token_request(
@@ -105,12 +112,16 @@ class GoogleAuthProvider(AuthProvider):
 			redirect_url=config.GOOGLE_REDIRECT_URL,
 			code=auth_token.code
 		)
-		token_response = requests.post(
-			token_url,
-			headers=headers,
-			data=body,
-			auth=(config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET),
-		)
+
+		try:
+			token_response = requests.post(
+				token_url,
+				headers=headers,
+				data=body,
+				auth=(config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET),
+			)
+		except Exception as exc:
+			raise ProviderConnectionError(f"Could not get Google's access token: {repr(exc)}")
 
 		self.auth_client.parse_request_body_response(json.dumps(token_response.json()))
 
@@ -122,10 +133,7 @@ class GoogleAuthProvider(AuthProvider):
 			sub_id = userinfo_response.json()["sub"]
 			username = userinfo_response.json()["given_name"]
 		else:
-			raise HTTPException(
-				status_code=400,
-				detail="User email not verified by Google."
-			)
+			raise UnauthorizedUser("User email not verified by Google.")
 
 		external_user = ExternalUser(
 			username=username,
@@ -136,7 +144,11 @@ class GoogleAuthProvider(AuthProvider):
 
 	async def get_request_uri(self) -> str:
 		discovery_document = await self._get_discovery_document()
-		authorization_endpoint = discovery_document["authorization_endpoint"]
+
+		try:
+			authorization_endpoint = discovery_document["authorization_endpoint"]
+		except KeyError as exc:
+			raise ProviderConnectionError(f"Could not parse Google's discovery document: {repr(exc)}")
 
 		request_uri = self.auth_client.prepare_request_uri(
 			authorization_endpoint,
@@ -157,5 +169,9 @@ class GoogleAuthProvider(AuthProvider):
 			Returns:
 				discovery_document: The configuration dictionary
 		"""
-		discovery_document = requests.get(config.GOOGLE_DISCOVERY_URL).json()
+		try:
+			discovery_document = requests.get(config.GOOGLE_DISCOVERY_URL).json()
+		except Exception as exc:
+			raise ProviderConnectionError(f"Could not get Google's discovery document: {repr(exc)}")
+
 		return discovery_document

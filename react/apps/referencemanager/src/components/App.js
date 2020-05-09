@@ -47,18 +47,18 @@ class App extends Component {
 
 	authenticate = () => {
 		var authToken = (window.location.search.match(/authToken=([^&]+)/) || [])[1]
-		window.history.pushState('object', document.title, "http://localhost:3000/");
+		window.history.pushState('object', document.title, "/");
 
 		if (authToken) {
+			// Try to get an access token from the server
 			this.getAccessToken(authToken)
+		} else {
+			// Check user is logged in
+			this.checkUserSessionStatus()
 		}
-
-		this.userLoggedIn()
 	}
 
 	getAccessToken = (authToken) => {
-		console.log("Found auth token: " + authToken)
-
 		const request = {
 			method: 'GET',
 			headers: {
@@ -68,14 +68,15 @@ class App extends Component {
 		}
 
 		fetch(this.state.producerLoginEndpoint, request)
-		.then(response => response.json())
+		.then(response => {
+			// Check user is logged in
+			this.checkUserSessionStatus()
+		})
 		.then(data => console.log(data))
 		.catch(err => console.log(err))
 	}
 
-	userLoggedIn = () => {
-		console.log("Checking logged in")
-
+	checkUserSessionStatus = () => {
 		const request = {
 			method: 'GET',
 			credentials: 'include'
@@ -106,6 +107,7 @@ class App extends Component {
 			headers: {
 				"Authorization": "Bearer " + this.state.authToken
 			},
+			credentials: 'include',
 			body: JSON.stringify(testReference)
 		}
 

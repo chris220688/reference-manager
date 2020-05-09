@@ -30,7 +30,7 @@ from producer.models.auth_models import (
 
 logger = contextlog.get_contextlog()
 
-async def get_db_client(db_type):
+def get_db_client(db_type):
 	""" Works out the correct database client based on
 		the database type provided in the configuration
 
@@ -39,7 +39,7 @@ async def get_db_client(db_type):
 	"""
 	for client_cls in DatabaseClient.__subclasses__():
 		try:
-			if await client_cls.meets_condition(db_type):
+			if client_cls.meets_condition(db_type):
 				return client_cls()
 		except KeyError:
 			continue
@@ -51,7 +51,7 @@ class DatabaseClient(ABC):
 	""" Database client interface """
 
 	@abstractmethod
-	async def meets_condition(self):
+	def meets_condition(self):
 		""" Checks whether this type of database client matches
 			the one defined in the configuration.
 
@@ -194,7 +194,7 @@ class MongoDBClient(DatabaseClient):
 		self._session = None
 
 	@staticmethod
-	async def meets_condition(db_type):
+	def meets_condition(db_type):
 		return db_type == config.MONGO_DB
 
 	async def close_connection(self):
@@ -240,9 +240,9 @@ class MongoDBClient(DatabaseClient):
 
 		if mongo_user:
 			internal_user = InternalUser(
-				internal_sub_id=mongo_user.get("internal_sub_id"),
-				external_sub_id=mongo_user.get("external_sub_id"),
-				created_at=mongo_user.get("created_at"),
+				internal_sub_id=mongo_user["internal_sub_id"],
+				external_sub_id=mongo_user["external_sub_id"],
+				created_at=mongo_user["created_at"],
 			)
 
 		return internal_user
@@ -254,9 +254,9 @@ class MongoDBClient(DatabaseClient):
 
 		if mongo_user:
 			internal_user = InternalUser(
-				internal_sub_id=mongo_user.get("internal_sub_id"),
-				external_sub_id=mongo_user.get("external_sub_id"),
-				created_at=mongo_user.get("created_at"),
+				internal_sub_id=mongo_user["internal_sub_id"],
+				external_sub_id=mongo_user["external_sub_id"],
+				created_at=mongo_user["created_at"],
 			)
 
 		return internal_user
@@ -279,9 +279,9 @@ class MongoDBClient(DatabaseClient):
 		mongo_user = await self._users_coll.find_one({'_id': mongo_user_id})
 
 		internal_user = InternalUser(
-			internal_sub_id=mongo_user.get("internal_sub_id"),
-			external_sub_id=mongo_user.get("external_sub_id"),
-			created_at=mongo_user.get("created_at"),
+			internal_sub_id=mongo_user["internal_sub_id"],
+			external_sub_id=mongo_user["external_sub_id"],
+			created_at=mongo_user["created_at"],
 		)
 
 		return internal_user

@@ -1,6 +1,6 @@
 FROM node:13.12.0-alpine AS builder
 WORKDIR /app
-COPY react/apps/referencemanager .
+COPY react/apps/frontend .
 RUN yarn run build
 
 FROM node:13.12.0-alpine

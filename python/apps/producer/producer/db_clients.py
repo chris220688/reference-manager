@@ -94,6 +94,18 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
+	async def find_by_author(self, internal_sub_id: str) -> List[Reference]:
+		""" Searches for reference documents by author.
+
+			Args:
+				internal_sub_id: The unique id of the user as defined in this application
+
+			Returns:
+				references: A list of references that match the author
+		"""
+		...
+
+	@abstractmethod
 	async def insert_reference(self, document: Reference, metadata: ReferenceMetadata):
 		""" Inserts a reference in the database.
 
@@ -216,6 +228,17 @@ class MongoDBClient(DatabaseClient):
 		references = []
 
 		async for document in self._reference_manager_coll.find({"title": title}):
+			# Clear DB specific data
+			del document["metadata"]
+			del document["_id"]
+			references.append(Reference(**document))
+
+		return references
+
+	async def find_by_author(self, internal_sub_id: str) -> List[Reference]:
+		references = []
+
+		async for document in self._reference_manager_coll.find({"metadata.author_id": internal_sub_id}):
 			# Clear DB specific data
 			del document["metadata"]
 			del document["_id"]

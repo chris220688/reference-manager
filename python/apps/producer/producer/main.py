@@ -46,16 +46,16 @@ logger = contextlog.get_contextlog()
 
 app = FastAPI()
 
-# origins = [
-# 	"http://localhost:3000",
-# ]
-# app.add_middleware(
-# 	CORSMiddleware,
-# 	allow_origins=origins,
-# 	allow_credentials=True,
-# 	allow_methods=["*"],
-# 	allow_headers=["*"],
-# )
+origins = [
+	"http://localhost:3000",
+]
+app.add_middleware(
+	CORSMiddleware,
+	allow_origins=origins,
+	allow_credentials=True,
+	allow_methods=["*"],
+	allow_headers=["*"],
+)
 
 
 auth_token_scheme = auth_schemes.AuthTokenBearer()
@@ -211,6 +211,36 @@ async def user_session_status(
 	)
 
 	return response
+
+
+@app.get("/get-references/")
+async def get_references(
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	""" API endpoint for getting the references of a specific author
+
+		Args:
+			internal_user: A user objects as defined in this application
+	"""
+	async with exception_handling():
+
+		#
+		# TODO: Check whether the user has author privileges
+		#
+
+		references = await db_client.find_by_author(internal_user.internal_sub_id)
+
+		if references:
+			logger.info(f"Found references for {internal_user.internal_sub_id}")
+			logger.info(jsonable_encoder({"references": references}))
+		else:
+			logger.info(f"References not found")
+
+		response = JSONResponse(
+			content=jsonable_encoder({"references": references}),
+		)
+
+		return response
 
 
 @app.put("/insert-reference/")

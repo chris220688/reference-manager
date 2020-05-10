@@ -1,33 +1,14 @@
 import React, { Component } from 'react';
 
 import Search from './Search';
+import Login from './Login';
+import References from './References';
 
-var testReference = {
-	title: "The battle of the Waterloo",
-	event_date: "1780-05-18T16:00:00Z",
-	description: "A battle between France and England, A battle between France and England",
-	books: [
-		{
-			name: "Book of English literature",
-			book_sections: [
-				{
-					starting_page: 2,
-					ending_page: 3
-				}
-			]
-		},
-		{
-			name: "Another book",
-			book_sections: [
-				{
-					starting_page: 7,
-					ending_page: 8
-				}
-			]
-		}
-	],
-	rating: 5
-}
+import {
+	Button, Form, Navbar,
+} from 'react-bootstrap'
+
+
 
 class App extends Component {
 
@@ -39,6 +20,8 @@ class App extends Component {
 		producerLoginEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_ENDPOINT,
 		producerLoginCheckEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_CHECK_ENDPOINT,
 		producerInsertEndpoint: process.env.REACT_APP_PRODUCER_INSERT_ENDPOINT,
+		producerReferencesEndpoint: process.env.REACT_APP_PRODUCER_REFERENCES_ENDPOINT,
+		referencesOn: false,
 	}
 
 	componentDidMount() {
@@ -93,38 +76,41 @@ class App extends Component {
 		.catch(err => console.log(err))
 	}
 
-	googleLogin = () => {
-		var auth_provider = "google-oidc"
-		var login_url = this.state.producerLoginRedirectEndpoint + "?auth_provider=" + auth_provider
-		window.location.href = login_url
+	openReferences = () => {
+		this.setState({
+			referencesOn: true
+		})
 	}
 
-	addReference = () => {
-		console.log(testReference)
-
-		const putReference = {
-			method: 'PUT',
-			headers: {
-				"Authorization": "Bearer " + this.state.authToken
-			},
-			credentials: 'include',
-			body: JSON.stringify(testReference)
-		}
-
-		fetch(this.state.producerInsertEndpoint, putReference)
-		.then(response => response.json())
-		.then(data => console.log(data))
-		.catch(err => console.log(err))
+	closeReferences = () => {
+		this.setState({
+			referencesOn: false
+		})
 	}
 
 	render() {
 
 		return (
 			<section>
-				<Search/>
-				{this.state.userLoggedIn ?
-					<button onClick={this.addReference}>Add Reference</button> :
-					<button onClick={this.googleLogin}>Google Login</button>
+				<Navbar bg="light" expand="lg">
+					<Navbar.Brand href="/">Reference Manager</Navbar.Brand>
+					<Navbar.Toggle aria-controls="basic-navbar-nav" />
+					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+						{this.state.userLoggedIn ?
+							<Button variant="secondary" onClick={this.openReferences}>My References</Button> :
+							<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
+						}
+					</Navbar.Collapse>
+				</Navbar>
+				{!this.state.referencesOn ?
+					<Search/> : <span></span>
+				}
+				{this.state.userLoggedIn && this.state.referencesOn ?
+					<References
+						producerInsertEndpoint={this.state.producerInsertEndpoint}
+						producerReferencesEndpoint={this.state.producerReferencesEndpoint}
+						closeReferences={this.closeReferences}
+					/> : <span></span>
 				}
 			</section>
 		);

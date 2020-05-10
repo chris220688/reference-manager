@@ -68,6 +68,9 @@ async def validate_internal_auth_token(internal_auth_token: str) -> InternalUser
 	if not internal_sub_id:
 		raise UnauthorizedUser(f"User {internal_sub_id} not cached")
 
+	# Invalidate cache. Authentication token can only be used once
+	await cache.delete(internal_auth_token)
+
 	internal_user = await db_client.get_user_by_internal_sub_id(internal_sub_id)
 
 	return internal_user

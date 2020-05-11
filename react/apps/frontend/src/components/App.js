@@ -5,7 +5,7 @@ import Login from './Login';
 import References from './References';
 
 import {
-	Button, Form, Navbar,
+	Button, Container, Form, Navbar,
 } from 'react-bootstrap'
 
 
@@ -102,9 +102,11 @@ class App extends Component {
 						}
 					</Navbar.Collapse>
 				</Navbar>
-				{!this.state.referencesOn ?
-					<Search/> : <span></span>
-				}
+				<Container>
+					{!this.state.referencesOn ?
+						<Search/> : <span></span>
+					}
+
 				{this.state.userLoggedIn && this.state.referencesOn ?
 					<References
 						producerInsertEndpoint={this.state.producerInsertEndpoint}
@@ -112,6 +114,7 @@ class App extends Component {
 						closeReferences={this.closeReferences}
 					/> : <span></span>
 				}
+				</Container>
 			</section>
 		);
 	}

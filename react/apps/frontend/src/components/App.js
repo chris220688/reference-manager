@@ -102,6 +102,7 @@ class App extends Component {
 						}
 					</Navbar.Collapse>
 				</Navbar>
+				<br/>
 				<Container>
 					{!this.state.referencesOn ?
 						<Search/> : <span></span>

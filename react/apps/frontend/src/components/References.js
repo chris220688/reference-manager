@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 
-import { Button, Col, Container, Form, Row } from 'react-bootstrap'
+import { Alert, Button, Card, Col, Container, Form, InputGroup, ListGroup, Row, Tab, Tabs, FormControl } from 'react-bootstrap'
+
+import { IoIosTrash } from "react-icons/io";
+
+import '../styles/References.css'
 
 
 class References extends Component {
@@ -9,16 +13,15 @@ class References extends Component {
 		producerInsertEndpoint: this.props.producerInsertEndpoint,
 		producerReferencesEndpoint: this.props.producerReferencesEndpoint,
 		closeReferences: this.props.closeReferences,
+		references: [],
+		books: {},
+		currentBook: '',
+		currentSections: {},
 		title: null,
 		date: null,
 		description: null,
-		bookName: null,
-		startingPage: null,
-		endingPage: null,
-		books: [],
-		bookSections: [],
 		loading: true,
-		references: [],
+		error: null
 	}
 
 	componentDidMount() {
@@ -34,88 +37,162 @@ class References extends Component {
 				references: data['references'],
 				loading: false
 			})
-			console.log(data['references'])
 		})
 		.catch(err => console.log(err))
 	}
 
-	handleTitleChange = (e) => {
+	addError = (error) => {
 		this.setState({
-			title: e.target.value
+			error: error,
 		})
 	}
 
-	handleDateChange = (e) => {
+	handleTitleChange = (event) => {
 		this.setState({
-			date: e.target.value
+			title: event.target.value,
 		})
 	}
 
-	handleDescriptionChange = (e) => {
+	handleDateChange = (event) => {
 		this.setState({
-			description: e.target.value
+			date: event.target.value,
 		})
 	}
 
-	handleBookChange = (e) => {
+	handleDescriptionChange = (event) => {
 		this.setState({
-			bookName: e.target.value
+			description: event.target.value,
 		})
 	}
 
-	handleStartingPageChange = (e) => {
+	handleBookChange = (event) => {
 		this.setState({
-			startingPage: e.target.value
+			currentBook: event.target.value,
 		})
 	}
 
-	handleEndingPageChange = (e) => {
+	handleStartingPageChange = (event, bookname) => {
+		var currentSections = this.state.currentSections
+		currentSections[bookname].startingPage = event.target.value
+
 		this.setState({
-			endingPage: e.target.value
+			currentSections: currentSections,
 		})
 	}
 
-	addSection = () => {
-		var bookSections = this.state.bookSections
-		bookSections.push(
-			{
-				starting_page: this.state.startingPage,
-				ending_page: this.state.endingPage,
-			}
-		)
+	handleEndingPageChange = (event, bookname) => {
+		var currentSections = this.state.currentSections
+		currentSections[bookname].endingPage = event.target.value
 
 		this.setState({
-			bookSections: bookSections,
-			startingPage: null,
-			endingPage: null
+			currentSections: currentSections,
 		})
-
-		console.log(this.state.bookSections)
 	}
 
 	addBook = () => {
 		var books = this.state.books
-		books.push(
-			{
-				name: this.state.bookName,
-				book_sections: this.state.bookSections,
-			}
-		)
+
+		if (this.state.currentBook == null || this.state.currentBook == '') {
+			this.addError("Please provide a name for the book")
+			return
+		}
+
+		books[this.state.currentBook] = []
+
+		var currentSections = this.state.currentSections
+		currentSections[this.state.currentBook] = {
+			startingPage: '',
+			endingPage: ''
+		}
 
 		this.setState({
 			books: books,
-			bookName: null,
-			bookSections: []
+			currentBook: '',
+			currentSections: currentSections,
 		})
 	}
 
-	addReference = () => {
+	removeBook = (bookName) => {
+		var books = this.state.books
+
+		delete books[bookName]
+
+		this.setState({
+			books: books,
+		})
+	}
+
+	addSection = (bookName) => {
+		var books = this.state.books
+		var currentBook = books[bookName]
+
+		var currentSections = this.state.currentSections
+		var startingPage = currentSections[bookName].startingPage
+		var endingPage = currentSections[bookName].endingPage
+
+		if (startingPage < 0 || endingPage < 0) {
+			this.addError("Page numbers should be positive numbers")
+			return
+		}
+
+		if (startingPage > endingPage) {
+			this.addError("Starting page should be less than the ending page")
+			return
+		}
+
+		if (!Number.isInteger(parseFloat(startingPage)) || !Number.isInteger(parseFloat(endingPage))) {
+			this.addError("Pages should be integer numbers")
+			return
+		}
+
+		currentBook.push(
+			{
+				starting_page: startingPage,
+				ending_page: endingPage,
+			}
+		)
+
+		currentSections[bookName] = {
+			startingPage: '',
+			endingPage: ''
+		}
+
+		this.setState({
+			books: books,
+			currentSections: currentSections,
+		})
+	}
+
+	addReference = (event) => {
+		const form = event.currentTarget;
+		if (form.checkValidity() === false) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+
+		if (this.state.title == null || this.state.title == '') {
+			this.addError("Please provide a title for the event")
+			return
+		}
+
+		if (this.state.description == null || this.state.description == '') {
+			this.addError("Please provide a description for the event")
+			return
+		}
+
+		if (Object.keys(this.state.books).length == 0) {
+			this.addError("Please provide at least one book as a reference")
+			return
+		}
+
 		var reference = {
 			title: this.state.title,
 			event_date: this.state.date,
 			description: this.state.description,
 			books: this.state.books
 		}
+
+		console.log(reference)
 
 		const putReference = {
 			method: 'PUT',
@@ -138,107 +215,169 @@ class References extends Component {
 	render() {
 		return (
 			<section>
-				<Container fluid>
-					<Row>
-						<Col></Col>
-						<Col></Col>
-						<Col className="text-right">
-							<Button variant="secondary" onClick={this.props.closeReferences}>
-								Back
-							</Button>
-						</Col>
-					</Row>
-					<Row>
-						<Col>
+					<Container fluid>
+						<Row>
+							<Col className="text-right">
+								<Button size="sm" variant="secondary" onClick={this.props.closeReferences}>
+									Back
+								</Button>
+							</Col>
+						</Row>
+					</Container>
+					<Tabs defaultActiveKey="references">
+						<Tab eventKey="references" title="My References">
 							<Container fluid>
 								<Row>
-									<Col>
-										<Form>
-											<Form.Group controlId="reference.Title">
-												<Form.Label>Event title</Form.Label>
-												<Form.Control type="text" onChange={this.handleTitleChange}/>
-											</Form.Group>
-											<Form.Group controlId="reference.Date">
-												<Form.Label>Event date</Form.Label>
-												<Form.Control type="datetime-local" onChange={this.handleDateChange}/>
-											</Form.Group>
-											<Form.Group controlId="reference.Description">
-												<Form.Label>Event description</Form.Label>
-												<Form.Control as="textarea" rows="5" onChange={this.handleDescriptionChange}/>
-											</Form.Group>
-										</Form>
-									</Col>
-								</Row>
-								<Row  style={{border: '1px solid black' }}>
-									<Col>
-										<Form.Group controlId="reference.Book">
-											<Form.Label>Book name</Form.Label>
-											<Form.Control type="text" onChange={this.handleBookChange}/>
-										</Form.Group>
-										<Container fluid>
-											<Row>
-												<Col>
-												<Form.Group controlId="reference.StartingPage">
-													<Form.Label>Starting page</Form.Label>
-													<Form.Control type="number" onChange={this.handleStartingPageChange}/>
-												</Form.Group>
-												</Col>
-												<Col>
-												<Form.Group controlId="reference.EndingPage">
-													<Form.Label>Ending page</Form.Label>
-													<Form.Control type="number" onChange={this.handleEndingPageChange}/>
-												</Form.Group>
-												</Col>
-											</Row>
-										</Container>
-										<Button variant="secondary" onClick={this.addSection}>
-											Add section
-										</Button>
-											<ul>
-												{this.state.bookSections.map(({ starting_page, ending_page }, index) => (
-													<li key={index}>
-														{starting_page}-{ending_page}
-													</li>
-												))}
-											</ul>
-										<Button variant="secondary" onClick={this.addBook}>
-											Add book
-										</Button>
-									</Col>
+									<br/>
 								</Row>
 								<Row>
-								<ul>
-									{this.state.books.map(({ name }, index) => (
-										<li key={index}>
-											{name}
-										</li>
-									))}
-								</ul>
-								</Row>
-								<Row className="text-right">
 									<Col>
-										<Button variant="secondary" onClick={this.addReference}>
-											Add reference
-										</Button>
+										{this.state.loading ? (
+											"Loading..."
+										) : (
+											<ListGroup>
+												{this.state.references.map(({ title, description }, index) => (
+													<ListGroup.Item key={index}>
+														<Container>
+															<Row>
+																<Col className="text-left">
+																	{title}
+																</Col>
+																<Col className="text-right">
+																	<Button size="sm" variant="secondary">
+																		<IoIosTrash/>
+																	</Button>
+																</Col>
+															</Row>
+														</Container>
+													</ListGroup.Item>
+												))}
+											</ListGroup>
+										)}
 									</Col>
 								</Row>
 							</Container>
-						</Col>
-						<Col>
-							{this.state.loading ? (
-								"Loading..."
-							) : (
-								<ul>
-									{this.state.references.map(({ title, description }, index) => (
-										<li key={index}>
-											{title}
-										</li>
-									))}
-								</ul>
-							)}
-						</Col>
-					</Row>
-				</Container>
+						</Tab>
+
+						<Tab eventKey="addReference" title="New Reference">
+							<br/>
+								{this.state.error ?
+									<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
+										{this.state.error}
+									</Alert> : <span></span>
+								}
+							<Form>
+								<Form.Row>
+									<Form.Group as={Col} md="6" controlId="titleValidation">
+										<Form.Control
+											required
+											type="text"
+											onChange={this.handleTitleChange}
+											placeholder="Event title"
+											className="form-control:invalid form-control"
+										/>
+									</Form.Group>
+
+									<Form.Group as={Col} md="6" controlId="dateValidation">
+										<Form.Control
+											type="date"
+											onChange={this.handleDateChange}
+											placeholder="Event date"
+										/>
+									</Form.Group>
+								</Form.Row>
+
+								<Form.Row>
+									<Form.Group as={Col} controlId="descriptionValidation">
+										<Form.Control
+											required
+											as="textarea"
+											rows="5"
+											onChange={this.handleDescriptionChange}
+											placeholder="Event description"
+										/>
+									</Form.Group>
+								</Form.Row>
+
+								<Form.Row>
+									<Form.Group as={Col} sm="8" md="10">
+										<Form.Control
+											type="text"
+											value={this.state.currentBook}
+											onChange={this.handleBookChange}
+											placeholder="Book title"
+										/>
+									</Form.Group>
+
+									<div as={Col} sm="4" md="2">
+										<Button variant="link" onClick={this.addBook}>Add new book</Button>
+									</div>
+								</Form.Row>
+
+								<Form.Row>
+									<ListGroup as={Col}>
+										{Object.entries(this.state.books).map(([bookName, sections], bookIndex) => (
+											<ListGroup.Item key={bookIndex}>
+												<Form.Row>
+												<Container>
+													<Row>
+														<Col xs={11} className="limited-text">
+															<b>Book:</b> {bookName}
+														</Col>
+														<Col xs={1}>
+															<Button className="float-right" variant="danger" onClick={() => this.removeBook(bookName)}><IoIosTrash/></Button>
+														</Col>
+													</Row>
+												</Container>
+												</Form.Row>
+
+												<Form.Row>
+												<Container fluid>
+													<Row>
+														<Col className="limited-text">
+															<div className="limited-text"><b>Pages: </b>
+															{sections.map(({ starting_page, ending_page }, sectionIndex) => (
+																<span key={sectionIndex}>|{starting_page}-{ending_page}| </span>
+															))}
+															</div>
+														</Col>
+													</Row>
+												</Container>
+												</Form.Row>
+												<hr/>
+												<Form.Row>
+													<Form.Group as={Col} sm="4" md="2" controlId="startingPageValidation">
+														<Form.Control
+															type="number"
+															min="0"
+															value={this.state.currentSections[bookName].startingPage}
+															onChange={(event) => this.handleStartingPageChange(event, bookName)}
+															placeholder="Starting page"
+														/>
+													</Form.Group>
+
+													<Form.Group as={Col} sm="4" md="2" controlId="endingPageValidation">
+														<Form.Control
+															type="number"
+															min="0"
+															value={this.state.currentSections[bookName].endingPage}
+															onChange={(event) => this.handleEndingPageChange(event, bookName)}
+															placeholder="Ending page"
+														/>
+													</Form.Group>
+
+													<div as={Col} sm="4" md="2">
+														<Button variant="link" onClick={() => this.addSection(bookName)}>Add new section</Button>
+													</div>
+												</Form.Row>
+											</ListGroup.Item>
+										))}
+									</ListGroup>
+								</Form.Row>
+								<Button onClick={this.addReference}>Submit form</Button>
+							</Form>
+						</Tab>
+					</Tabs>
 			</section>
 		);
 	}

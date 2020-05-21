@@ -97,7 +97,7 @@ class App extends Component {
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
 						{this.state.userLoggedIn ?
-							<Button variant="secondary" onClick={this.openReferences}>My References</Button> :
+							<Button variant="outline-dark" onClick={this.openReferences}>My Account</Button> :
 							<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
 						}
 					</Navbar.Collapse>

@@ -19,8 +19,8 @@ class Book(BaseModel):
 class Reference(BaseModel):
 	""" A reference of an event """
 	title: constr(min_length=5, max_length=100)
-	event_date: datetime.datetime
-	description: constr(min_length=50, max_length=300)
+	event_date: Optional[datetime.datetime]
+	description: constr(min_length=30, max_length=300)
 	books: conlist(Book, min_items=1, max_items=50)
 	rating: Optional[conint(gt=0, lt=6)]
 

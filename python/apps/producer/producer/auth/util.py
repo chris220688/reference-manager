@@ -56,7 +56,7 @@ async def validate_internal_auth_token(internal_auth_token: str) -> InternalUser
 			internal_auth_token: Internal authentication token
 
 		Returns:
-			internal_user: A user objects as defined in this application
+			internal_user: A user object as defined in this application
 	"""
 	try:
 		jwt_decode(internal_auth_token, config.JWT_SECRET_KEY, algorithms=[config.ALGORITHM])
@@ -103,7 +103,7 @@ async def validate_internal_access_token(internal_access_token: str) -> Internal
 			internal_access_token: Internal access token
 
 		Returns:
-			internal_user: A user objects as defined in this application
+			internal_user: A user object as defined in this application
 	"""
 	try:
 		payload = jwt_decode(internal_access_token, config.JWT_SECRET_KEY, algorithms=[config.ALGORITHM])

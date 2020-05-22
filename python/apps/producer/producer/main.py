@@ -230,12 +230,6 @@ async def get_references(
 
 		references = await db_client.find_by_author(internal_user.internal_sub_id)
 
-		if references:
-			logger.info(f"Found references for {internal_user.internal_sub_id}")
-			logger.info(jsonable_encoder({"references": references}))
-		else:
-			logger.info(f"References not found")
-
 		response = JSONResponse(
 			content=jsonable_encoder({"references": references}),
 		)
@@ -255,7 +249,7 @@ async def insert_reference(
 			internal_user: A user objects as defined in this application
 	"""
 	async with exception_handling():
-		logger.info(f"Received - {reference.dict()}")
+		logger.info(f"Received insert request - {reference.dict()}")
 
 		title = reference.title
 		existing_references = await db_client.find_by_title(title)
@@ -271,4 +265,36 @@ async def insert_reference(
 			author_id=internal_user.internal_sub_id,
 		)
 
-		await db_client.insert_reference(reference, metadata)
+		inserted_reference = await db_client.insert_reference(reference, metadata)
+
+		response = JSONResponse(
+			content=jsonable_encoder({"reference": inserted_reference}),
+		)
+
+		return response
+
+
+@app.delete("/delete-reference/")
+async def delete_reference(
+	reference: Reference,
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	""" API endpoint for deleting a reference from the database
+
+		Args:
+			reference: A reference document to be deleted from the database
+			internal_user: A user objects as defined in this application
+	"""
+	async with exception_handling():
+		logger.info(f"Received delete request - {reference.dict()}")
+
+		if reference.reference_id:
+			deleted_count = await db_client.delete_by_id(reference.reference_id)
+
+		deleted = True if deleted_count else False
+
+		response = JSONResponse(
+			content=jsonable_encoder({"deleted": deleted}),
+		)
+
+		return response

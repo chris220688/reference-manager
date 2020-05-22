@@ -18,6 +18,7 @@ class Book(BaseModel):
 
 class Reference(BaseModel):
 	""" A reference of an event """
+	reference_id: Optional[constr(min_length=36, max_length=36)]
 	title: constr(min_length=5, max_length=100)
 	event_date: Optional[datetime.datetime]
 	description: constr(min_length=30, max_length=300)

@@ -39,7 +39,7 @@ export default function Login(props) {
 							<Col sm="8">
 								<div class="google-div" onClick={googleLogin}>
 									<span>
-										<img width="20" height="20" class="google-image" src={glogo}/>
+										<img width="20" height="20" class="google-image" alt="google" src={glogo}/>
 									</span>
 									<span class="google-btn-text">
 										Continue with Google

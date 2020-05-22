@@ -5,7 +5,7 @@ import Login from './Login';
 import References from './References';
 
 import {
-	Button, Container, Form, Navbar,
+	Button, Container, Navbar,
 } from 'react-bootstrap'
 
 
@@ -20,6 +20,7 @@ class App extends Component {
 		producerLoginEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_ENDPOINT,
 		producerLoginCheckEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_CHECK_ENDPOINT,
 		producerInsertEndpoint: process.env.REACT_APP_PRODUCER_INSERT_ENDPOINT,
+		producerDeleteEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ENDPOINT,
 		producerReferencesEndpoint: process.env.REACT_APP_PRODUCER_REFERENCES_ENDPOINT,
 		referencesOn: false,
 	}
@@ -68,7 +69,6 @@ class App extends Component {
 		fetch(this.state.producerLoginCheckEndpoint, request)
 		.then(response => response.json())
 		.then(data => {
-			console.log("userLoggedIn: " + data['userLoggedIn'])
 			this.setState({
 				userLoggedIn: data['userLoggedIn']
 			})
@@ -111,6 +111,7 @@ class App extends Component {
 				{this.state.userLoggedIn && this.state.referencesOn ?
 					<References
 						producerInsertEndpoint={this.state.producerInsertEndpoint}
+						producerDeleteEndpoint={this.state.producerDeleteEndpoint}
 						producerReferencesEndpoint={this.state.producerReferencesEndpoint}
 						closeReferences={this.closeReferences}
 					/> : <span></span>

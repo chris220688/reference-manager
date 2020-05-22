@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Accordion, Alert, Button, Card, Col, Container, Form, InputGroup, ListGroup, Row, Tab, Tabs, FormControl } from 'react-bootstrap'
+import { Accordion, Alert, Button, Card, Col, Container, Form, ListGroup, Row, Tab, Tabs } from 'react-bootstrap'
 
 import { IoIosTrash } from "react-icons/io";
 
@@ -11,6 +11,7 @@ class References extends Component {
 
 	state = {
 		producerInsertEndpoint: this.props.producerInsertEndpoint,
+		producerDeleteEndpoint: this.props.producerDeleteEndpoint,
 		producerReferencesEndpoint: this.props.producerReferencesEndpoint,
 		closeReferences: this.props.closeReferences,
 		references: [],
@@ -92,7 +93,7 @@ class References extends Component {
 	addBook = () => {
 		var books = this.state.books
 
-		if (this.state.currentBook == null || this.state.currentBook == '') {
+		if (this.state.currentBook === null || this.state.currentBook === '') {
 			this.addError("Please provide a name for the book")
 			return
 		}
@@ -216,30 +217,60 @@ class References extends Component {
 			books: booksList
 		}
 
-		const putReference = {
+		const request = {
 			method: 'PUT',
 			credentials: 'include',
 			body: JSON.stringify(reference)
 		}
 
-		fetch(this.state.producerInsertEndpoint, putReference)
+		fetch(this.state.producerInsertEndpoint, request)
 		.then(response => {
 			if (!response.ok) {
-				if (response.status === 422)
-				this.addError("Something went wrong. Please make sure you follow the instructions on how to create a reference")
+				if (response.status === 422) {
+					this.addError("Something went wrong. Please make sure you follow the instructions on how to create a reference")
+				}
+				if (response.status === 409) {
+					this.addError("This reference already exists. Please try with a different name and description")
+				}
 			}
-			response.json()
+			return response.json()
 		})
 		.then(data => {
-			var references = this.state.references
-			references.push(reference)
-			this.setState({
-				references: references
-			})
+			if (data['reference']) {
+				var references = this.state.references
+				references.push(data['reference'])
+				this.setState({
+					references: references
+				})
+			}
 		})
 		.catch(err => {
 			this.addError("Something went wrong. Please try again")
 		})
+	}
+
+	deleteReference = (reference) => {
+		const request = {
+			method: 'DELETE',
+			credentials: 'include',
+			body: JSON.stringify(reference)
+		}
+
+		fetch(this.state.producerDeleteEndpoint, request)
+		.then(response => response.json())
+		.then(data => {
+			if (data.deleted) {
+				var references = this.state.references
+				var filteredReferences = references.filter(function(e) { return e !== reference })
+				this.setState({
+					references: filteredReferences
+				})
+			}
+		})
+		.catch(err => {
+			this.addError("Something went wrong. Please try again")
+		})
+
 	}
 
 	render() {
@@ -249,7 +280,10 @@ class References extends Component {
 					<Tab eventKey="references" title="My References">
 						<Container fluid>
 							<Row>
-								<br/>
+								<Col>
+									<br/>
+									{this.state.references.length === 0 ? <span>You have no references yet!</span> : <span></span>}
+								</Col>
 							</Row>
 							<Row>
 								<Col>
@@ -257,28 +291,28 @@ class References extends Component {
 										"Loading..."
 									) : (
 										<Accordion defaultActiveKey="0">
-											{this.state.references.map(({ title, description, event_date, books }, index) => (
+											{this.state.references.map((reference, index) => (
 												<Card>
 													<Accordion.Toggle as={Card.Header} eventKey={index}>
-														{title}
+														{reference.title}
 													</Accordion.Toggle>
 													<Accordion.Collapse eventKey={index}>
 														<Card.Body>
 															<Container>
 																<Row>
 																	<Col className="text-left">
-																		Description: {description}
+																		Description: {reference.description}
 																	</Col>
 																</Row>
 																<Row>
 																	<Col>
-																		Event date: {event_date}
+																		Event date: {reference.event_date}
 																	</Col>
 																</Row>
 																<Row>
 																	<Col>
 																		<ul>
-																		{books.map(({ name, book_sections }) => (
+																		{reference.books.map(({ name, book_sections }) => (
 																			<li>
 																				{name}
 																				<ul>
@@ -295,7 +329,12 @@ class References extends Component {
 																</Row>
 																<Row>
 																	<Col>
-																		<Button className="float-right" size="sm" variant="danger">
+																		<Button
+																			className="float-right"
+																			size="sm"
+																			variant="danger"
+																			onClick={() => this.deleteReference(reference)}
+																		>
 																			<IoIosTrash/>
 																		</Button>
 																	</Col>

@@ -82,6 +82,30 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
+	async def find_by_id(self, reference_id: str) -> Reference:
+		""" Searches for reference documents by id.
+
+			Args:
+				reference_id: The unique id of the reference
+
+			Returns:
+				reference: The reference item, if found
+		"""
+		...
+
+	@abstractmethod
+	async def delete_by_id(self, reference_id: str) -> int:
+		""" Deletes reference documents by id.
+
+			Args:
+				reference_id: The unique id of the reference
+
+			Returns:
+				deleted_count: Number of deleted items
+		"""
+		...
+
+	@abstractmethod
 	async def find_by_title(self, title: str) -> List[Reference]:
 		""" Searches for reference documents by title.
 
@@ -106,11 +130,14 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
-	async def insert_reference(self, document: Reference, metadata: ReferenceMetadata):
+	async def insert_reference(self, document: Reference, metadata: ReferenceMetadata) -> Reference:
 		""" Inserts a reference in the database.
 
 			Args:
 				document: A reference to insert in the database
+
+			Returns:
+				reference_id: The id of the inserted item
 		"""
 		...
 
@@ -224,6 +251,21 @@ class MongoDBClient(DatabaseClient):
 		logger.info("Ending MongoDB session")
 		await self._session.end_session()
 
+	async def find_by_id(self, reference_id: str) -> Reference:
+		reference = None
+		reference_doc = await self._reference_manager_coll.find_one({'_id': reference_id})
+
+		if reference_doc:
+			del reference_doc["metadata"]
+			del reference_doc["_id"]
+			reference = Reference(**reference_doc)
+
+		return reference
+
+	async def delete_by_id(self, reference_id: str) -> int:
+		result = await self._reference_manager_coll.delete_one({'_id': reference_id})
+		return result.deleted_count
+
 	async def find_by_title(self, title: str) -> List[Reference]:
 		references = []
 
@@ -246,13 +288,21 @@ class MongoDBClient(DatabaseClient):
 
 		return references
 
-	async def insert_reference(self, document: Reference, metadata: ReferenceMetadata):
+	async def insert_reference(self, document: Reference, metadata: ReferenceMetadata) -> Reference:
+		inserted_reference = None
+
 		document = document.dict()
 		document["_id"] = str(uuid4())
+		document["reference_id"] = document["_id"]
 		document["metadata"] = metadata.dict()
 
 		logger.info(f"Inserting {document}")
-		await self._reference_manager_coll.insert_one(document)
+		result = await self._reference_manager_coll.insert_one(document)
+
+		if result:
+			inserted_reference = await self.find_by_id(result.inserted_id)
+
+		return inserted_reference
 
 	async def get_user_by_external_sub_id(self, external_user: ExternalUser) -> InternalUser:
 		internal_user = None

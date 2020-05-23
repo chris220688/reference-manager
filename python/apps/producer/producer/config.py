@@ -6,6 +6,7 @@ MONGO_DB = "mongodb"
 
 # Supported authentication providers by name
 GOOGLE = "google-oidc"
+AZURE = "azure-oidc"
 
 # Selected database type to use
 DATABASE_TYPE = os.getenv("DATABASE_TYPE")
@@ -24,6 +25,14 @@ GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = os.environ.get("GOOGLE_DISCOVERY_URL", None)
 GOOGLE_REDIRECT_URL = os.environ.get("GOOGLE_REDIRECT_URL", None)
+
+# Azure login
+AZURE_CLIENT_ID = os.environ.get("AZURE_CLIENT_ID", None)
+AZURE_CLIENT_SECRET = os.environ.get("AZURE_CLIENT_SECRET", None)
+AZURE_TENANT_ID = os.environ.get("AZURE_TENANT_ID", None)
+AZURE_AUTHORITY = f"https://login.microsoftonline.com/common"
+AZURE_DISCOVERY_URL = os.environ.get("AZURE_DISCOVERY_URL", None)
+AZURE_REDIRECT_URL = os.environ.get("AZURE_REDIRECT_URL", None)
 
 # Front end endpoint
 FRONTEND_URL = os.environ.get("FRONTEND_URL", None)

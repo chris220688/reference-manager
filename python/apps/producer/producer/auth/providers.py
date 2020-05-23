@@ -4,6 +4,7 @@ import requests
 from abc import ABC, abstractmethod
 
 from fastapi import HTTPException
+from msal import ConfidentialClientApplication
 from oauthlib.oauth2 import WebApplicationClient
 from starlette.responses import RedirectResponse
 
@@ -60,7 +61,7 @@ class AuthProvider(ABC):
 
 	@abstractmethod
 	async def get_user(self, auth_token: ExternalAuthToken) -> ExternalUser:
-		""" Receives an authentication token from an external provider (i.e Google, FaceBook)
+		""" Receives an authentication token from an external provider (i.e Google, Microsoft)
 			and exchanges it for an access token. Then, it retrieves the user's details from
 			the external providers user-info endpoint.
 
@@ -120,10 +121,11 @@ class GoogleAuthProvider(AuthProvider):
 				data=body,
 				auth=(config.GOOGLE_CLIENT_ID, config.GOOGLE_CLIENT_SECRET),
 			)
+
+			self.auth_client.parse_request_body_response(json.dumps(token_response.json()))
+
 		except Exception as exc:
 			raise ProviderConnectionError(f"Could not get Google's access token: {repr(exc)}")
-
-		self.auth_client.parse_request_body_response(json.dumps(token_response.json()))
 
 		# Request user's information from Google
 		uri, headers, body = self.auth_client.add_token(userinfo_endpoint)
@@ -133,7 +135,7 @@ class GoogleAuthProvider(AuthProvider):
 			sub_id = userinfo_response.json()["sub"]
 			username = userinfo_response.json()["given_name"]
 		else:
-			raise UnauthorizedUser("User email not verified by Google.")
+			raise UnauthorizedUser("User account not verified by Google.")
 
 		external_user = ExternalUser(
 			username=username,
@@ -173,5 +175,99 @@ class GoogleAuthProvider(AuthProvider):
 			discovery_document = requests.get(config.GOOGLE_DISCOVERY_URL).json()
 		except Exception as exc:
 			raise ProviderConnectionError(f"Could not get Google's discovery document: {repr(exc)}")
+
+		return discovery_document
+
+
+class AzureAuthProvider(AuthProvider):
+	""" Azure authentication class for authenticating users and
+		requesting user's information via and OpenIdConnect flow.
+	"""
+	client_id = config.AZURE_CLIENT_ID
+
+	@staticmethod
+	async def meets_condition(auth_provider):
+		return auth_provider == config.AZURE
+
+	async def get_user(self, auth_token: ExternalAuthToken) -> ExternalUser:
+		# Get Azure's endpoints from discovery document
+		discovery_document = await self._get_discovery_document()
+		try:
+			token_endpoint = discovery_document["token_endpoint"]
+			userinfo_endpoint = discovery_document["userinfo_endpoint"]
+		except KeyError as exc:
+			raise DiscoveryDocumentError(f"Could not parse Azure's discovery document: {repr(exc)}")
+
+		msal_client = ConfidentialClientApplication(
+			config.AZURE_CLIENT_ID,
+			authority=config.AZURE_AUTHORITY,
+			client_credential=config.AZURE_CLIENT_SECRET
+		)
+
+		# Request access_token from Azure
+		try:
+			result = msal_client.acquire_token_by_authorization_code(
+				auth_token.code,
+				redirect_uri=config.AZURE_REDIRECT_URL,
+				scopes=["User.Read"],
+			)
+
+			access_token = result['access_token']
+
+		except Exception as exc:
+			raise ProviderConnectionError(f"Could not get Azure's access token: {repr(exc)}")
+
+		# Request user's information from Azure
+		userinfo_response = requests.get(
+			# Currently userinfo_endpoint only returns "sub". We need to use v1.0/users for other info
+			"https://graph.microsoft.com/v1.0/users",
+			headers={'Authorization': 'Bearer ' + access_token}
+		)
+
+		if userinfo_response.json().get("value"):
+			sub_id = result["id_token_claims"]["sub"]
+			username = None
+			if userinfo_response.json()["value"]:
+				username = userinfo_response.json()["value"][0].get("givenName")
+		else:
+			raise UnauthorizedUser("User account not verified by Azure.")
+
+		external_user = ExternalUser(
+			username=username,
+			external_sub_id=sub_id
+		)
+
+		return external_user
+
+	async def get_request_uri(self) -> str:
+		msal_client = ConfidentialClientApplication(
+			config.AZURE_CLIENT_ID,
+			authority=config.AZURE_AUTHORITY,
+			client_credential=config.AZURE_CLIENT_SECRET
+		)
+
+		request_uri = msal_client.get_authorization_request_url(
+			scopes=["User.Read"],
+			# state=state or str(uuid.uuid4()),
+			redirect_uri=config.AZURE_REDIRECT_URL
+		)
+
+		return request_uri
+
+	async def _get_discovery_document(self) -> dict:
+		""" Returns the OpenId configuration information from Azure.
+
+			This is handy in order to get the:
+				1. token endpoint
+				2. authorization endpoint
+				3. user info endpoint
+
+			Returns:
+				discovery_document: The configuration dictionary
+		"""
+		try:
+			discovery_document = requests.get(config.AZURE_DISCOVERY_URL).json()
+		except Exception as exc:
+			raise ProviderConnectionError(f"Could not get Azure's discovery document: {repr(exc)}")
 
 		return discovery_document

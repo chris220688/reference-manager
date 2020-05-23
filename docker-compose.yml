@@ -137,6 +137,11 @@ services:
       - GOOGLE_CLIENT_SECRET=
       - GOOGLE_DISCOVERY_URL=https://accounts.google.com/.well-known/openid-configuration
       - GOOGLE_REDIRECT_URL=http://localhost:80/api/producer/google-login-callback/
+      - AZURE_CLIENT_ID=
+      - AZURE_CLIENT_SECRET=
+      - AZURE_TENANT_ID=
+      - AZURE_DISCOVERY_URL=https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration
+      - AZURE_REDIRECT_URL=http://localhost:8000/azure-login-callback/
       - FRONTEND_URL=http://localhost:80/frontend/
       - ALGORITHM=HS256
       - JWT_SECRET_KEY=

@@ -15,6 +15,7 @@ oauthlib = "*"
 pyjwt = "*"
 passlib = {extras = ["bcrypt"],version = "*"}
 aiocache = "*"
+msal = "*"
 
 [requires]
 python_version = "3.7"

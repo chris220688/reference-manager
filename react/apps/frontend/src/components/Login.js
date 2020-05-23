@@ -18,6 +18,12 @@ export default function Login(props) {
 		window.location.href = login_url
 	}
 
+	const azureLogin = () => {
+		var auth_provider = "azure-oidc"
+		var login_url = props.producerLoginRedirectEndpoint + "?auth_provider=" + auth_provider
+		window.location.href = login_url
+	}
+
 	return (
 		<section>
 			<Button variant="outline-dark" onClick={handleShow}>
@@ -43,6 +49,20 @@ export default function Login(props) {
 									</span>
 									<span class="google-btn-text">
 										Continue with Google
+									</span>
+								</div>
+							</Col>
+							<Col sm="2"></Col>
+						</Row>
+						<Row>
+							<Col sm="2"></Col>
+							<Col sm="8">
+								<div class="google-div" onClick={azureLogin}>
+									<span>
+										<img width="20" height="20" class="google-image" alt="google" src={glogo}/>
+									</span>
+									<span class="google-btn-text">
+										Continue with Azure
 									</span>
 								</div>
 							</Col>

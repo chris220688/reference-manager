@@ -158,6 +158,42 @@ async def google_login_callback(request: Request):
 		redirect_url = f"{config.FRONTEND_URL}?authToken={internal_auth_token}"
 		return RedirectResponse(url=redirect_url)
 
+@app.get("/azure-login-callback/")
+async def azure_login_callback(request: Request):
+	""" Callback triggered when the user logs in to Azure's pop-up.
+
+		Receives an authentication_token from Azure which then
+		exchanges for an access_token. The latter is used to
+		gain user information from Azure's userinfo_endpoint.
+
+		Args:
+			request: The incoming request as redirected by Azure
+	"""
+	async with exception_handling():
+		code = request.query_params.get("code")
+
+		if not code:
+			raise AuthorizationException("Missing external authentication token")
+
+		provider = await auth_providers.get_auth_provider(config.AZURE)
+
+		# Authenticate token and get user's info from external provider
+		external_user = await provider.get_user(
+			auth_token=ExternalAuthToken(code=code)
+		)
+
+		# Get or create the internal user
+		internal_user = await db_client.get_user_by_external_sub_id(external_user)
+
+		if internal_user is None:
+			internal_user = await db_client.create_internal_user(external_user)
+
+		internal_auth_token = await auth_util.create_internal_auth_token(internal_user)
+
+		# Redirect the user to the home page
+		redirect_url = f"{config.FRONTEND_URL}?authToken={internal_auth_token}"
+		return RedirectResponse(url=redirect_url)
+
 
 @app.get("/login/")
 async def login(

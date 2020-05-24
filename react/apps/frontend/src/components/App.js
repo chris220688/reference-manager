@@ -23,6 +23,7 @@ class App extends Component {
 		producerDeleteEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ENDPOINT,
 		producerReferencesEndpoint: process.env.REACT_APP_PRODUCER_REFERENCES_ENDPOINT,
 		referencesOn: false,
+		searchOn: true,
 	}
 
 	componentDidMount() {
@@ -78,18 +79,19 @@ class App extends Component {
 
 	openReferences = () => {
 		this.setState({
-			referencesOn: true
+			referencesOn: true,
+			searchOn: false,
 		})
 	}
 
-	closeReferences = () => {
+	openSearch = () => {
 		this.setState({
-			referencesOn: false
+			referencesOn: false,
+			searchOn: true,
 		})
 	}
 
 	render() {
-
 		return (
 			<section>
 				<Navbar bg="light" expand="lg">
@@ -97,14 +99,20 @@ class App extends Component {
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
 						{this.state.userLoggedIn ?
-							<Button variant="outline-dark" onClick={this.openReferences}>My Account</Button> :
+							<div>
+								{this.state.searchOn ?
+									<Button variant="outline-dark" onClick={this.openReferences}>My Account</Button> :
+									<Button variant="outline-dark" onClick={this.openSearch}>Search</Button>
+								}
+							</div>
+							:
 							<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
 						}
 					</Navbar.Collapse>
 				</Navbar>
 				<br/>
 				<Container>
-					{!this.state.referencesOn ?
+					{this.state.searchOn ?
 						<Search/> : <span></span>
 					}
 
@@ -113,7 +121,6 @@ class App extends Component {
 						producerInsertEndpoint={this.state.producerInsertEndpoint}
 						producerDeleteEndpoint={this.state.producerDeleteEndpoint}
 						producerReferencesEndpoint={this.state.producerReferencesEndpoint}
-						closeReferences={this.closeReferences}
 					/> : <span></span>
 				}
 				</Container>

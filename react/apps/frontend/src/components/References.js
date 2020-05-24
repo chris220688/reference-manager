@@ -13,7 +13,6 @@ class References extends Component {
 		producerInsertEndpoint: this.props.producerInsertEndpoint,
 		producerDeleteEndpoint: this.props.producerDeleteEndpoint,
 		producerReferencesEndpoint: this.props.producerReferencesEndpoint,
-		closeReferences: this.props.closeReferences,
 		references: [],
 		books: {},
 		currentBook: '',
@@ -472,11 +471,6 @@ class References extends Component {
 							<Form.Row>
 								<Col>
 									<Button size="sm" variant="outline-dark" onClick={this.addReference}>Create reference</Button>
-								</Col>
-								<Col className="text-right">
-									<Button size="sm" variant="outline-dark" onClick={this.props.closeReferences}>
-										Back
-									</Button>
 								</Col>
 							</Form.Row>
 						</Form>

@@ -59,18 +59,17 @@
   font-size: 25px;
   font-weight: bolder;
   letter-spacing: .2px;
-  font-family: Roboto;
-  text-align: center !important;
+  text-align: center;
 }
 
-.google-div {
+.login-btn-div {
   border: 1px solid;
   border-color: #a8a8a8;
   border-radius: 5px;
   cursor:pointer;
 }
 
-.google-btn-text {
+.login-btn-text {
   color: #757575;
   font-size: 15px;
   font-weight: bolder;
@@ -78,9 +77,21 @@
   font-family: Roboto;
 }
 
-.google-image {
+.login-btn-image {
   margin: 15px 15px 15px 15px;
 }
 
+.login-footer-text {
+  color: #0000008a;
+  font-size: 12px;
+  text-align: center;
+}
 
+.modal-header {
+  border-bottom: none;
+}
+
+.modal-footer {
+  border-top: none;
+}
 

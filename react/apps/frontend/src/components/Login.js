@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button, Container, Col, Row, Modal } from 'react-bootstrap'
 
 import glogo from '../icons/google_logo.svg'
+import mlogo from '../icons/microsoft_logo.svg'
 import '../styles/Login.css'
 
 
@@ -27,51 +28,76 @@ export default function Login(props) {
 	return (
 		<section>
 			<Button variant="outline-dark" onClick={handleShow}>
-				Log in
+				Sign in
 			</Button>
 			<Modal show={show} onHide={handleClose}>
+				<Modal.Header>
+					<Container fluid>
+						<Row>
+							<Col xs="2"></Col>
+							<Col xs="8">
+								<div class="login-title">
+									<p>
+										Welcome!
+									</p>
+								</div>
+							</Col>
+							<Col xs="2"></Col>
+						</Row>
+						<Row>
+							<Col xs="1"></Col>
+							<Col xs="10">
+							<div>
+								<p>
+									Please sign in with one of the listed providers below.
+								</p>
+							</div>
+							</Col>
+							<Col xs="1"></Col>
+						</Row>
+					</Container>
+				</Modal.Header>
 				<Modal.Body>
 					<Container fluid>
 						<Row>
-							<div class="login-title">
-								<p>
-									Welcome!
-								</p>
-							</div>
+							<Col xs="2"></Col>
+							<Col xs="8">
+								<div class="login-btn-div" onClick={googleLogin}>
+									<span>
+										<img width="20" height="20" class="login-btn-image" alt="google" src={glogo}/>
+									</span>
+									<span class="login-btn-text">
+										Sign in with Google
+									</span>
+								</div>
+							</Col>
+							<Col xs="2"></Col>
 						</Row>
 						<br/>
 						<Row>
-							<Col sm="2"></Col>
-							<Col sm="8">
-								<div class="google-div" onClick={googleLogin}>
+							<Col xs="2"></Col>
+							<Col xs="8">
+								<div class="login-btn-div" onClick={azureLogin}>
 									<span>
-										<img width="20" height="20" class="google-image" alt="google" src={glogo}/>
+										<img width="20" height="20" class="login-btn-image" alt="microsoft" src={mlogo}/>
 									</span>
-									<span class="google-btn-text">
-										Continue with Google
+									<span class="login-btn-text">
+										Sign in with Microsoft
 									</span>
 								</div>
 							</Col>
-							<Col sm="2"></Col>
+							<Col xs="2"></Col>
 						</Row>
-						<Row>
-							<Col sm="2"></Col>
-							<Col sm="8">
-								<div class="google-div" onClick={azureLogin}>
-									<span>
-										<img width="20" height="20" class="google-image" alt="google" src={glogo}/>
-									</span>
-									<span class="google-btn-text">
-										Continue with Azure
-									</span>
-								</div>
-							</Col>
-							<Col sm="2"></Col>
-						</Row>
+						<br/>
 					</Container>
 				</Modal.Body>
 				<Modal.Footer>
-					We log user data and share it with service providers. Click “Sign In” above to accept the Terms of Service & Privacy Policy.
+					<div class="login-footer-text">
+						<p>
+							You do not need to Sign in to search for references!
+							Sign in only if you want to access extra features or submit a request to become an author.
+						</p>
+					</div>
 				</Modal.Footer>
 			</Modal>
 		</section>

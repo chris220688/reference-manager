@@ -44,12 +44,12 @@ async def get_auth_provider(auth_provider: str):
 
 
 class AuthProvider(ABC):
-
 	""" Authentication providers interface """
 	def __init__(self, client_id: str):
 		# OAuth 2 client setup
 		self.auth_client = WebApplicationClient(client_id)
 
+	@staticmethod
 	@abstractmethod
 	async def meets_condition(self):
 		""" Checks whether this type of authentication provider
@@ -132,14 +132,16 @@ class GoogleAuthProvider(AuthProvider):
 		userinfo_response = requests.get(uri, headers=headers, data=body)
 
 		if userinfo_response.json().get("email_verified"):
+			email = userinfo_response.json()["email"]
 			sub_id = userinfo_response.json()["sub"]
 			username = userinfo_response.json()["given_name"]
 		else:
 			raise UnauthorizedUser("User account not verified by Google.")
 
 		external_user = ExternalUser(
+			email=email,
 			username=username,
-			external_sub_id=sub_id
+			external_sub_id=sub_id,
 		)
 
 		return external_user
@@ -219,12 +221,13 @@ class AzureAuthProvider(AuthProvider):
 
 		# Request user's information from Azure
 		userinfo_response = requests.get(
-			# Currently userinfo_endpoint only returns "sub". We need to use v1.0/users for other info
+			# Currently userinfo_endpoint only returns "sub". We need to use /v1.0/users for other info
 			"https://graph.microsoft.com/v1.0/users",
 			headers={'Authorization': 'Bearer ' + access_token}
 		)
 
 		if userinfo_response.json().get("value"):
+			email = result["id_token_claims"]["email"]
 			sub_id = result["id_token_claims"]["sub"]
 			username = None
 			if userinfo_response.json()["value"]:
@@ -233,6 +236,7 @@ class AzureAuthProvider(AuthProvider):
 			raise UnauthorizedUser("User account not verified by Azure.")
 
 		external_user = ExternalUser(
+			email=email,
 			username=username,
 			external_sub_id=sub_id
 		)

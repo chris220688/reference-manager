@@ -4,8 +4,11 @@ import Search from './Search';
 import Login from './Login';
 import References from './References';
 
+import logo from '../icons/logo.png'
+
+
 import {
-	Button, Container, Navbar,
+	Button, Container, Navbar, Nav,
 } from 'react-bootstrap'
 
 
@@ -14,16 +17,18 @@ class App extends Component {
 
 	state = {
 		userLoggedIn: false,
-		username: null,
+		userName: null,
 		permissions: [],
 		producerLoginRedirectEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_REDIRECT_ENDPOINT,
 		producerLoginEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_ENDPOINT,
+		producerLogoutEndpoint: process.env.REACT_APP_PRODUCER_LOGOUT_ENDPOINT,
 		producerLoginCheckEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_CHECK_ENDPOINT,
 		producerInsertEndpoint: process.env.REACT_APP_PRODUCER_INSERT_ENDPOINT,
 		producerDeleteEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ENDPOINT,
 		producerReferencesEndpoint: process.env.REACT_APP_PRODUCER_REFERENCES_ENDPOINT,
-		referencesOn: false,
 		searchOn: true,
+		referencesOn: false,
+		isAuthor: false,
 	}
 
 	componentDidMount() {
@@ -71,7 +76,27 @@ class App extends Component {
 		.then(response => response.json())
 		.then(data => {
 			this.setState({
-				userLoggedIn: data['userLoggedIn']
+				userLoggedIn: data['userLoggedIn'],
+				userName: data['userName'],
+				isAuthor: data['isAuthor'],
+			})
+		})
+		.catch(err => console.log(err))
+	}
+
+	logout = () => {
+		const request = {
+			method: 'GET',
+			credentials: 'include'
+		}
+
+		fetch(this.state.producerLogoutEndpoint, request)
+		.then(response => response.json())
+		.then(data => {
+			this.setState({
+				userLoggedIn: data['userLoggedIn'],
+				userName: null,
+				isAuthor: null,
 			})
 		})
 		.catch(err => console.log(err))
@@ -95,34 +120,45 @@ class App extends Component {
 		return (
 			<section>
 				<Navbar bg="light" expand="lg">
-					<Navbar.Brand href="/">Reference Manager</Navbar.Brand>
+					<Navbar.Brand href="#" onClick={this.openSearch}>
+						<img alt="" src={logo} width="30" height="30" className="d-inline-block align-top"/>
+					</Navbar.Brand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
 						{this.state.userLoggedIn ?
-							<div>
-								{this.state.searchOn ?
-									<Button variant="outline-dark" onClick={this.openReferences}>My Account</Button> :
-									<Button variant="outline-dark" onClick={this.openSearch}>Search</Button>
+							<Nav className="mr-auto">
+								{/*
+								{this.state.userName ?
+									<span>Hello {this.state.userName}</span> : <span></span>
 								}
-							</div>
-							:
-							<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
+								*/}
+								<Nav.Link onClick={this.openSearch}>My Account</Nav.Link>
+								<Nav.Link onClick={this.openSearch}>Search</Nav.Link>
+								{this.state.isAuthor ?
+									<Nav.Link variant="outline-dark" onClick={this.openReferences}>References</Nav.Link> : null
+								}
+							</Nav> : null
 						}
+						<Nav>
+							{this.state.userLoggedIn ?
+								<Nav.Link onClick={this.logout}>Log out</Nav.Link> :
+								<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
+							}
+						</Nav>
 					</Navbar.Collapse>
 				</Navbar>
 				<br/>
 				<Container>
 					{this.state.searchOn ?
-						<Search/> : <span></span>
+						<Search/> : null
 					}
-
-				{this.state.userLoggedIn && this.state.referencesOn ?
-					<References
-						producerInsertEndpoint={this.state.producerInsertEndpoint}
-						producerDeleteEndpoint={this.state.producerDeleteEndpoint}
-						producerReferencesEndpoint={this.state.producerReferencesEndpoint}
-					/> : <span></span>
-				}
+					{this.state.userLoggedIn && this.state.referencesOn ?
+						<References
+							producerInsertEndpoint={this.state.producerInsertEndpoint}
+							producerDeleteEndpoint={this.state.producerDeleteEndpoint}
+							producerReferencesEndpoint={this.state.producerReferencesEndpoint}
+						/> : null
+					}
 				</Container>
 			</section>
 		);

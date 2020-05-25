@@ -21,7 +21,7 @@ class Reference(BaseModel):
 	reference_id: Optional[constr(min_length=36, max_length=36)]
 	title: constr(min_length=5, max_length=100)
 	event_date: Optional[datetime.datetime]
-	description: constr(min_length=30, max_length=300)
+	description: constr(min_length=30, max_length=600)
 	books: conlist(Book, min_items=1, max_items=50)
 	rating: Optional[conint(gt=0, lt=6)]
 
@@ -31,7 +31,10 @@ class ReferenceMetadata(BaseModel):
 	created_at: datetime.datetime
 	author_id: str
 
+
 class InternalUser(BaseModel):
 	external_sub_id: str
 	internal_sub_id: str
+	username: str
+	is_author: bool
 	created_at: datetime.datetime

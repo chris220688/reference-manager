@@ -15,7 +15,7 @@ class References extends Component {
 		producerReferencesEndpoint: this.props.producerReferencesEndpoint,
 		references: [],
 		books: {},
-		currentBook: '',
+		currentBook: "",
 		currentSections: {},
 		title: null,
 		date: null,
@@ -127,8 +127,13 @@ class References extends Component {
 		var currentBook = books[bookName]
 
 		var currentSections = this.state.currentSections
-		var startingPage = currentSections[bookName].startingPage
-		var endingPage = currentSections[bookName].endingPage
+		var startingPage = parseFloat(currentSections[bookName].startingPage)
+		var endingPage = parseFloat(currentSections[bookName].endingPage)
+
+		if (!Number.isInteger(startingPage) || !Number.isInteger(endingPage)) {
+			this.addError("Pages should be integer numbers")
+			return
+		}
 
 		if (startingPage < 0 || endingPage < 0) {
 			this.addError("Page numbers should be positive numbers")
@@ -136,12 +141,8 @@ class References extends Component {
 		}
 
 		if (startingPage > endingPage) {
+			debugger
 			this.addError("Starting page should be less than the ending page")
-			return
-		}
-
-		if (!Number.isInteger(parseFloat(startingPage)) || !Number.isInteger(parseFloat(endingPage))) {
-			this.addError("Pages should be integer numbers")
 			return
 		}
 
@@ -206,6 +207,7 @@ class References extends Component {
 
 		var eventDate = this.state.date
 		if (eventDate !== null) {
+			// This is because pydantic requires datetime format
 			eventDate = eventDate + ' 00:00:00'
 		}
 
@@ -242,6 +244,8 @@ class References extends Component {
 					references: references
 				})
 			}
+
+			this.clearForm()
 		})
 		.catch(err => {
 			this.addError("Something went wrong. Please try again")
@@ -272,6 +276,17 @@ class References extends Component {
 
 	}
 
+	clearForm = () => {
+		this.setState({
+			books: {},
+			currentBook: "",
+			currentSections: {},
+			title: "",
+			date: "",
+			description: "",
+		})
+	}
+
 	render() {
 		return (
 			<section>
@@ -281,7 +296,7 @@ class References extends Component {
 							<Row>
 								<Col>
 									<br/>
-									{this.state.references.length === 0 ? <span>You have no references yet!</span> : <span></span>}
+									{this.state.references.length === 0 ? <span>You have no references yet!</span> : null}
 								</Col>
 							</Row>
 							<Row>
@@ -298,34 +313,36 @@ class References extends Component {
 													<Accordion.Collapse eventKey={index}>
 														<Card.Body>
 															<Container>
+																<Row className="text-right">
+																	<Col>
+																		<b>{reference.event_date.substring(0,10)}</b>
+																	</Col>
+																</Row>
 																<Row>
 																	<Col className="text-left">
-																		Description: {reference.description}
+																		{reference.description}
 																	</Col>
 																</Row>
+																<hr/>
 																<Row>
 																	<Col>
-																		Event date: {reference.event_date}
-																	</Col>
-																</Row>
-																<Row>
-																	<Col>
-																		<ul>
+																		<ListGroup>
 																		{reference.books.map(({ name, book_sections }) => (
-																			<li>
-																				{name}
-																				<ul>
+																			<ListGroup.Item>
+																				<div>
+																					<b>{name}</b>
+																				</div>
+																				<div>
 																					{book_sections.map(({ starting_page, ending_page }) => (
-																						<li>
-																							{starting_page}-{ending_page}
-																						</li>
+																						<span>|{starting_page}-{ending_page}| </span>
 																					))}
-																				</ul>
-																			</li>
+																				</div>
+																			</ListGroup.Item>
 																		))}
-																		</ul>
+																		</ListGroup>
 																	</Col>
 																</Row>
+																<br/>
 																<Row>
 																	<Col>
 																		<Button
@@ -355,7 +372,7 @@ class References extends Component {
 							{this.state.error ?
 								<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
 									{this.state.error}
-								</Alert> : <span></span>
+								</Alert> : null
 							}
 						<Form>
 							<Form.Row>
@@ -364,14 +381,15 @@ class References extends Component {
 										required
 										type="text"
 										onChange={this.handleTitleChange}
+										value={this.state.title}
 										placeholder="Event title"
-										className="form-control:invalid form-control"
 									/>
 								</Form.Group>
 
 								<Form.Group as={Col} md="6" controlId="dateValidation">
 									<Form.Control
 										type="date"
+										value={this.state.date}
 										onChange={this.handleDateChange}
 										placeholder="Event date"
 									/>
@@ -384,6 +402,7 @@ class References extends Component {
 										required
 										as="textarea"
 										rows="5"
+										value={this.state.description}
 										onChange={this.handleDescriptionChange}
 										placeholder="Event description"
 									/>
@@ -417,7 +436,14 @@ class References extends Component {
 															<b>Book:</b> {bookName}
 														</Col>
 														<Col xs={1}>
-															<Button className="float-right" size="sm" variant="danger" onClick={() => this.removeBook(bookName)}><IoIosTrash/></Button>
+															<Button
+																className="float-right"
+																size="sm"
+																variant="danger"
+																onClick={() => this.removeBook(bookName)}
+															>
+																<IoIosTrash/>
+															</Button>
 														</Col>
 													</Row>
 												</Container>

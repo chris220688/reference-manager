@@ -196,9 +196,9 @@ class DatabaseClient(ABC):
 			Returns:
 				encrypted_external_sub_id: The encrypted external subject id
 		"""
-		salt = external_user.username.lower()
+		salt = external_user.email.lower()
 		salt = salt.replace(" ", "")
-		# Hash the salt so that the username is not plain text visible in the database
+		# Hash the salt so that the email is not plain text visible in the database
 		salt = hashlib.sha256(salt.encode()).hexdigest()
 		# bcrypt requires a 22 char salt
 		if len(salt) > 21:
@@ -315,6 +315,8 @@ class MongoDBClient(DatabaseClient):
 			internal_user = InternalUser(
 				internal_sub_id=mongo_user["internal_sub_id"],
 				external_sub_id=mongo_user["external_sub_id"],
+				username=mongo_user["username"],
+				is_author=mongo_user["is_author"],
 				created_at=mongo_user["created_at"],
 			)
 
@@ -329,6 +331,8 @@ class MongoDBClient(DatabaseClient):
 			internal_user = InternalUser(
 				internal_sub_id=mongo_user["internal_sub_id"],
 				external_sub_id=mongo_user["external_sub_id"],
+				username=mongo_user["username"],
+				is_author=mongo_user["is_author"],
 				created_at=mongo_user["created_at"],
 			)
 
@@ -343,6 +347,8 @@ class MongoDBClient(DatabaseClient):
 				_id=unique_identifier,
 				internal_sub_id=unique_identifier,
 				external_sub_id=encrypted_external_sub_id,
+				username=external_user.username,
+				is_author=False,
 				created_at=datetime.datetime.utcnow(),
 			)
 		)
@@ -354,6 +360,8 @@ class MongoDBClient(DatabaseClient):
 		internal_user = InternalUser(
 			internal_sub_id=mongo_user["internal_sub_id"],
 			external_sub_id=mongo_user["external_sub_id"],
+			username=mongo_user["username"],
+			is_author=mongo_user["is_author"],
 			created_at=mongo_user["created_at"],
 		)
 

@@ -46,16 +46,16 @@ logger = contextlog.get_contextlog()
 
 app = FastAPI()
 
-# origins = [
-# 	"http://localhost:3000",
-# ]
-# app.add_middleware(
-# 	CORSMiddleware,
-# 	allow_origins=origins,
-# 	allow_credentials=True,
-# 	allow_methods=["*"],
-# 	allow_headers=["*"],
-# )
+origins = [
+	"http://localhost:3000",
+]
+app.add_middleware(
+	CORSMiddleware,
+	allow_origins=origins,
+	allow_credentials=True,
+	allow_methods=["*"],
+	allow_headers=["*"],
+)
 
 
 auth_token_scheme = auth_schemes.AuthTokenBearer()
@@ -214,15 +214,42 @@ async def login(
 		access_token = await auth_util.create_internal_access_token(
 			InternalAccessTokenData(
 				sub=internal_user.internal_sub_id,
-				username="TEST USER FOR NOW UNTIL I FIX THE USERNAMES WITH SOMETHING MORE CLEVER THAN PASSING IN THE CACHE. DON'T FORGET IT!",
 			)
 		)
 
 		response = JSONResponse(
-			content=jsonable_encoder({"userLoggedIn": True}),
+			content=jsonable_encoder({
+				"userLoggedIn": True,
+				"userName": internal_user.username,
+				"isAuthor": internal_user.is_author,
+			}),
 		)
 
 		response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
+
+		return response
+
+@app.get("/logout/")
+async def logout(
+	response: JSONResponse,
+	internal_user: str = Depends(access_token_cookie_scheme)
+) -> JSONResponse:
+	""" Logout endpoint for deleting the HTTPOnly cookie on a users browser.
+
+		Args:
+			internal_auth_token: Internal authentication token
+
+		Returns:
+			response: A JSON response with the status of the user's session
+	"""
+	async with exception_handling():
+		response = JSONResponse(
+			content=jsonable_encoder({
+				"userLoggedIn": False,
+			}),
+		)
+
+		response.delete_cookie(key="access_token")
 
 		return response
 
@@ -243,7 +270,11 @@ async def user_session_status(
 	logged_id = True if internal_user else False
 
 	response = JSONResponse(
-		content=jsonable_encoder({"userLoggedIn": logged_id}),
+		content=jsonable_encoder({
+			"userLoggedIn": logged_id,
+			"userName": internal_user.username,
+			"isAuthor": internal_user.is_author,
+		}),
 	)
 
 	return response
@@ -260,9 +291,8 @@ async def get_references(
 	"""
 	async with exception_handling():
 
-		#
-		# TODO: Check whether the user has author privileges
-		#
+		if not internal_user.is_author:
+			raise UnauthorizedUser()
 
 		references = await db_client.find_by_author(internal_user.internal_sub_id)
 
@@ -286,6 +316,9 @@ async def insert_reference(
 	"""
 	async with exception_handling():
 		logger.info(f"Received insert request - {reference.dict()}")
+
+		if not internal_user.is_author:
+			raise UnauthorizedUser()
 
 		title = reference.title
 		existing_references = await db_client.find_by_title(title)
@@ -323,6 +356,9 @@ async def delete_reference(
 	"""
 	async with exception_handling():
 		logger.info(f"Received delete request - {reference.dict()}")
+
+		if not internal_user.is_author:
+			raise UnauthorizedUser()
 
 		if reference.reference_id:
 			deleted_count = await db_client.delete_by_id(reference.reference_id)

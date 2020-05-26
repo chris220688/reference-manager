@@ -4,56 +4,56 @@ services:
   mongodb-primary:
     hostname: mongodb-primary
     container_name: mongodb-primary
-    image: 'bitnami/mongodb:4.0.10-debian-9-r53'
+    image: ${MONGODB_IMAGE}
     environment:
-      - MONGODB_USERNAME=referencemanager
-      - MONGODB_PASSWORD=referencemanager
-      - MONGODB_DATABASE=referencemanager
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
       - MONGODB_REPLICA_SET_MODE=primary
-      - MONGODB_ROOT_PASSWORD=referencemanager
-      - MONGODB_REPLICA_SET_KEY=replicaset123
-      - MONGODB_REPLICA_SET_NAME=rs0
-    # ports:
-    #   - "27017:27017"
+      - MONGODB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
+      - MONGODB_REPLICA_SET_NAME=${MONGODB_REPLICA_SET_NAME}
+    ports:
+      - "27017:27017"
     networks:
       - stack
 
   mongodb-secondary:
     hostname: mongodb-secondary
     container_name: mongodb-secondary
-    image: 'bitnami/mongodb:4.0.10-debian-9-r53'
+    image: ${MONGODB_IMAGE}
     depends_on:
       - mongodb-primary
     environment:
       - MONGODB_REPLICA_SET_MODE=secondary
       - MONGODB_PRIMARY_HOST=mongodb-primary
       - MONGODB_PRIMARY_PORT_NUMBER=27017
-      - MONGODB_PRIMARY_ROOT_PASSWORD=referencemanager
-      - MONGODB_REPLICA_SET_KEY=replicaset123
-      - MONGODB_REPLICA_SET_NAME=rs0
+      - MONGODB_PRIMARY_ROOT_PASSWORD=${MONGODB_PRIMARY_ROOT_PASSWORD}
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
+      - MONGODB_REPLICA_SET_NAME=${MONGODB_REPLICA_SET_NAME}
     networks:
       - stack
 
   mongodb-arbiter:
     hostname: mongodb-arbiter
     container_name: mongodb-arbiter
-    image: 'bitnami/mongodb:4.0.10-debian-9-r53'
+    image: ${MONGODB_IMAGE}
     depends_on:
       - mongodb-primary
     environment:
       - MONGODB_REPLICA_SET_MODE=arbiter
       - MONGODB_PRIMARY_HOST=mongodb-primary
       - MONGODB_PRIMARY_PORT_NUMBER=27017
-      - MONGODB_PRIMARY_ROOT_PASSWORD=referencemanager
-      - MONGODB_REPLICA_SET_KEY=replicaset123
-      - MONGODB_REPLICA_SET_NAME=rs0
+      - MONGODB_PRIMARY_ROOT_PASSWORD=${MONGODB_PRIMARY_ROOT_PASSWORD}
+      - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
+      - MONGODB_REPLICA_SET_NAME=${MONGODB_REPLICA_SET_NAME}
     networks:
       - stack
 
   elasticsearch:
     hostname: elasticsearch
     container_name: elasticsearch
-    image: "elasticsearch:7.6.2"
+    image: ${ELASTICSEARCH_IMAGE}
     environment:
     # - node.name=elasticsearch
       - bootstrap.memory_lock=true
@@ -65,8 +65,8 @@ services:
       memlock:
         soft: -1
         hard: -1
-    # ports:
-    #   - "9200:9200"
+    ports:
+      - "9200:9200"
     #   - "9300:9300"
     networks:
       - stack
@@ -127,26 +127,26 @@ services:
       - DATABASE_TYPE=mongodb
       - DATABASE_HOST=mongodb-primary
       - DATABASE_PORT=27017
-      - DATABASE_USERNAME=referencemanager
-      - DATABASE_PASSWORD=referencemanager
-      - DATABASE_NAME=referencemanager
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
       - WAIT_HOSTS=mongodb-primary:27017,mongodb-secondary:27017,mongodb-arbiter:27017
       - WAIT_HOSTS_TIMEOUT=60
       - WAIT_AFTER_HOSTS=30
-      - GOOGLE_CLIENT_ID=
-      - GOOGLE_CLIENT_SECRET=
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_DISCOVERY_URL=https://accounts.google.com/.well-known/openid-configuration
       - GOOGLE_REDIRECT_URL=http://localhost:80/api/producer/google-login-callback/
-      - AZURE_CLIENT_ID=
-      - AZURE_CLIENT_SECRET=
-      - AZURE_TENANT_ID=
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
       - AZURE_DISCOVERY_URL=https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration
-      - AZURE_REDIRECT_URL=http://localhost:8000/azure-login-callback/
+      - AZURE_REDIRECT_URL=http://localhost:80/api/producer/azure-login-callback/
       - FRONTEND_URL=http://localhost:80/frontend/
-      - ALGORITHM=HS256
-      - JWT_SECRET_KEY=
-      - ACCESS_TOKEN_EXPIRE_MINUTES=30
-      - AUTH_TOKEN_EXPIRE_MINUTES=3
+      - ALGORITHM=${ALGORITHM}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      - AUTH_TOKEN_EXPIRE_MINUTES=${AUTH_TOKEN_EXPIRE_MINUTES}
     command:
       sh -c "/wait && pipenv run uvicorn producer.main:app --host 0.0.0.0"
     # ports:
@@ -158,7 +158,6 @@ services:
     hostname: monstache
     container_name: monstache
     build: monstache/.
-    # image: rwynn/monstache:rel6
     deploy:
       replicas: 1
       update_config:

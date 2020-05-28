@@ -137,7 +137,12 @@ class App extends Component {
 		this.setState({
 			searchOn: true,
 			joinUsOn: false,
-			requestedJoin: true,
+		})
+	}
+
+	setRequestedJoin = (requestedJoin) => {
+		this.setState({
+			requestedJoin: requestedJoin,
 		})
 	}
 
@@ -156,6 +161,10 @@ class App extends Component {
 					</Navbar.Brand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+						<Nav className="mr-auto">
+							<Nav.Link>About</Nav.Link>
+							<Nav.Link>Contact us</Nav.Link>
+						</Nav>
 						{this.state.userLoggedIn ?
 							<Nav className="mr-auto">
 								{/*
@@ -199,6 +208,7 @@ class App extends Component {
 						<JoinUs
 							producerJoinEndpoint={this.state.producerJoinEndpoint}
 							setSearchOn={this.setSearchOn}
+							setRequestedJoin={this.setRequestedJoin}
 							setAlert={this.setAlert}
 						/> : null
 					}

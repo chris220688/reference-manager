@@ -8,6 +8,7 @@ class JoinUs extends Component {
 	state = {
 		producerJoinEndpoint: this.props.producerJoinEndpoint,
 		setSearchOn: this.props.setSearchOn,
+		setRequestedJoin: this.props.setRequestedJoin,
 		setAlert: this.props.setAlert,
 		requested: false
 	}
@@ -30,6 +31,7 @@ class JoinUs extends Component {
 					"We are processing your request! In the meantime you can continue searching. \
 					Visit 'My Account' to check the status of your request"
 				)
+				this.state.setRequestedJoin(true)
 				this.state.setSearchOn()
 			}
 		})

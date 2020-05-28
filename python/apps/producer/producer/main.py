@@ -222,6 +222,7 @@ async def login(
 				"userLoggedIn": True,
 				"userName": internal_user.username,
 				"isAuthor": internal_user.is_author,
+				"requestedJoin": internal_user.requested_join,
 			}),
 		)
 
@@ -274,6 +275,7 @@ async def user_session_status(
 			"userLoggedIn": logged_id,
 			"userName": internal_user.username,
 			"isAuthor": internal_user.is_author,
+			"requestedJoin": internal_user.requested_join,
 		}),
 	)
 
@@ -288,6 +290,9 @@ async def get_references(
 
 		Args:
 			internal_user: A user objects as defined in this application
+
+		Returns:
+			response: A JSON response including the references of the user
 	"""
 	async with exception_handling():
 
@@ -313,6 +318,9 @@ async def insert_reference(
 		Args:
 			reference: A reference document to be inserted in the database
 			internal_user: A user objects as defined in this application
+
+		Returns:
+			response: A JSON response with the inserted reference
 	"""
 	async with exception_handling():
 		logger.info(f"Received insert request - {reference.dict()}")
@@ -353,6 +361,9 @@ async def delete_reference(
 		Args:
 			reference: A reference document to be deleted from the database
 			internal_user: A user objects as defined in this application
+
+		Returns:
+			response: A JSON response with the status deletion operation
 	"""
 	async with exception_handling():
 		logger.info(f"Received delete request - {reference.dict()}")
@@ -367,6 +378,30 @@ async def delete_reference(
 
 		response = JSONResponse(
 			content=jsonable_encoder({"deleted": deleted}),
+		)
+
+		return response
+
+@app.put("/join/")
+async def join(
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	""" API endpoint for requested to join as an author
+
+		Args:
+			internal_user: A user objects as defined in this application
+	"""
+	async with exception_handling():
+		requested = False
+
+		internal_user.requested_join = True
+		updated_user = await db_client.update_internal_user(internal_user)
+
+		if updated_user:
+			requested = True
+
+		response = JSONResponse(
+			content=jsonable_encoder({"requested": requested}),
 		)
 
 		return response

@@ -37,4 +37,5 @@ class InternalUser(BaseModel):
 	internal_sub_id: str
 	username: str
 	is_author: bool
+	requested_join: bool
 	created_at: datetime.datetime

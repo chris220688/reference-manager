@@ -3,12 +3,13 @@ import React, { Component } from 'react';
 import Search from './Search';
 import Login from './Login';
 import References from './References';
+import JoinUs from './JoinUs';
 
 import logo from '../icons/logo.png'
 
 
 import {
-	Button, Container, Navbar, Nav,
+	Alert, Button, Container, Navbar, Nav,
 } from 'react-bootstrap'
 
 
@@ -26,9 +27,13 @@ class App extends Component {
 		producerInsertEndpoint: process.env.REACT_APP_PRODUCER_INSERT_ENDPOINT,
 		producerDeleteEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ENDPOINT,
 		producerReferencesEndpoint: process.env.REACT_APP_PRODUCER_REFERENCES_ENDPOINT,
+		producerJoinEndpoint: process.env.REACT_APP_PRODUCER_JOIN_ENDPOINT,
 		searchOn: true,
 		referencesOn: false,
+		joinUsOn: false,
 		isAuthor: false,
+		requestedJoin: false,
+		alertMessage: null,
 	}
 
 	componentDidMount() {
@@ -79,6 +84,7 @@ class App extends Component {
 				userLoggedIn: data['userLoggedIn'],
 				userName: data['userName'],
 				isAuthor: data['isAuthor'],
+				requestedJoin: data['requestedJoin'],
 			})
 		})
 		.catch(err => console.log(err))
@@ -97,6 +103,7 @@ class App extends Component {
 				userLoggedIn: data['userLoggedIn'],
 				userName: null,
 				isAuthor: null,
+				requestedJoin: null,
 			})
 		})
 		.catch(err => console.log(err))
@@ -106,6 +113,7 @@ class App extends Component {
 		this.setState({
 			referencesOn: true,
 			searchOn: false,
+			joinUsOn: false,
 		})
 	}
 
@@ -113,6 +121,29 @@ class App extends Component {
 		this.setState({
 			referencesOn: false,
 			searchOn: true,
+			joinUsOn: false,
+		})
+	}
+
+	openJoinus = () => {
+		this.setState({
+			referencesOn: false,
+			searchOn: false,
+			joinUsOn: true,
+		})
+	}
+
+	setSearchOn = () => {
+		this.setState({
+			searchOn: true,
+			joinUsOn: false,
+			requestedJoin: true,
+		})
+	}
+
+	setAlert = (alertMessage) => {
+		this.setState({
+			alertMessage: alertMessage,
 		})
 	}
 
@@ -135,8 +166,12 @@ class App extends Component {
 								<Nav.Link onClick={this.openSearch}>My Account</Nav.Link>
 								<Nav.Link onClick={this.openSearch}>Search</Nav.Link>
 								{this.state.isAuthor ?
-									<Nav.Link variant="outline-dark" onClick={this.openReferences}>References</Nav.Link> : null
+									<Nav.Link onClick={this.openReferences}>References</Nav.Link> : null
 								}
+								{!this.state.isAuthor && !this.state.requestedJoin ?
+									<Nav.Link onClick={this.openJoinus}>Join us</Nav.Link> : null
+								}
+
 							</Nav> : null
 						}
 						<Nav>
@@ -149,8 +184,23 @@ class App extends Component {
 				</Navbar>
 				<br/>
 				<Container>
+					{this.state.alertMessage ?
+						<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
+							<Alert.Heading>Fantastic!</Alert.Heading>
+								<p>
+									{this.state.alertMessage}
+								</p>
+						</Alert> : null
+					}
 					{this.state.searchOn ?
 						<Search/> : null
+					}
+					{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
+						<JoinUs
+							producerJoinEndpoint={this.state.producerJoinEndpoint}
+							setSearchOn={this.setSearchOn}
+							setAlert={this.setAlert}
+						/> : null
 					}
 					{this.state.userLoggedIn && this.state.referencesOn ?
 						<References

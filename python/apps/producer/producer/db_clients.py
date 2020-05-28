@@ -184,6 +184,18 @@ class DatabaseClient(ABC):
 		"""
 		...
 
+	@abstractmethod
+	async def update_internal_user(self, internal_user: InternalUser) -> InternalUser:
+		""" Updates a user in the database
+
+			Args:
+				internal_user: A user objects as defined in this application
+
+			Returns:
+				internal_user: A user objects as defined in this application
+		"""
+		...
+
 	async def _encrypt_external_sub_id(sefl, external_user: ExternalUser) -> str:
 		""" It encrypts the subject id received from the external provider. These ids are
 			used to uniquely identify a user in the system of the external provider and
@@ -317,6 +329,7 @@ class MongoDBClient(DatabaseClient):
 				external_sub_id=mongo_user["external_sub_id"],
 				username=mongo_user["username"],
 				is_author=mongo_user["is_author"],
+				requested_join=mongo_user["requested_join"],
 				created_at=mongo_user["created_at"],
 			)
 
@@ -333,6 +346,7 @@ class MongoDBClient(DatabaseClient):
 				external_sub_id=mongo_user["external_sub_id"],
 				username=mongo_user["username"],
 				is_author=mongo_user["is_author"],
+				requested_join=mongo_user["requested_join"],
 				created_at=mongo_user["created_at"],
 			)
 
@@ -349,6 +363,7 @@ class MongoDBClient(DatabaseClient):
 				external_sub_id=encrypted_external_sub_id,
 				username=external_user.username,
 				is_author=False,
+				requested_join=False,
 				created_at=datetime.datetime.utcnow(),
 			)
 		)
@@ -362,7 +377,21 @@ class MongoDBClient(DatabaseClient):
 			external_sub_id=mongo_user["external_sub_id"],
 			username=mongo_user["username"],
 			is_author=mongo_user["is_author"],
+			requested_join=mongo_user["requested_join"],
 			created_at=mongo_user["created_at"],
 		)
 
 		return internal_user
+
+	async def update_internal_user(self, internal_user: InternalUser) -> InternalUser:
+		updated_user = None
+
+		result = await self._users_coll.update_one(
+			{"internal_sub_id": internal_user.internal_sub_id},
+			{'$set': internal_user.dict()}
+		)
+
+		if result.modified_count:
+			updated_user = internal_user
+
+		return updated_user

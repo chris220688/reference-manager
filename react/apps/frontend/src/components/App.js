@@ -27,6 +27,7 @@ class App extends Component {
 		producerInsertEndpoint: process.env.REACT_APP_PRODUCER_INSERT_ENDPOINT,
 		producerDeleteEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ENDPOINT,
 		producerReferencesEndpoint: process.env.REACT_APP_PRODUCER_REFERENCES_ENDPOINT,
+		producerCaregoriesEndpoint: process.env.REACT_APP_PRODUCER_CATEGORIES_ENDPOINT,
 		producerJoinEndpoint: process.env.REACT_APP_PRODUCER_JOIN_ENDPOINT,
 		searchOn: true,
 		referencesOn: false,
@@ -217,6 +218,7 @@ class App extends Component {
 							producerInsertEndpoint={this.state.producerInsertEndpoint}
 							producerDeleteEndpoint={this.state.producerDeleteEndpoint}
 							producerReferencesEndpoint={this.state.producerReferencesEndpoint}
+							producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
 						/> : null
 					}
 				</Container>

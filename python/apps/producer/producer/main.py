@@ -31,6 +31,7 @@ from producer.exceptions import (
 	exception_handling,
 )
 from producer.models.db_models import (
+	Category,
 	InternalUser,
 	Reference,
 	ReferenceMetadata,
@@ -280,6 +281,24 @@ async def user_session_status(
 	)
 
 	return response
+
+
+@app.get("/get-categories/")
+async def get_categories():
+	""" API endpoint for getting the available reference categories
+
+		Returns:
+			response: A JSON response including the available categories
+	"""
+	async with exception_handling():
+
+		response = JSONResponse(
+			content=jsonable_encoder({
+				"categories": [cat.value for cat in Category.__members__.values()]
+			}),
+		)
+
+		return response
 
 
 @app.get("/get-references/")

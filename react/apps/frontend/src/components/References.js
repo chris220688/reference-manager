@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 
-import { Accordion, Alert, Button, Card, Col, Container, Form, ListGroup, Row, Tab, Tabs } from 'react-bootstrap'
+import {
+	Accordion, Alert, Button, Card, Col, Container, Dropdown,
+	DropdownButton, Form, ListGroup, Row, Tab, Tabs
+} from 'react-bootstrap'
 
 import { IoIosTrash } from "react-icons/io";
 
@@ -13,29 +16,44 @@ class References extends Component {
 		producerInsertEndpoint: this.props.producerInsertEndpoint,
 		producerDeleteEndpoint: this.props.producerDeleteEndpoint,
 		producerReferencesEndpoint: this.props.producerReferencesEndpoint,
+		producerCaregoriesEndpoint: this.props.producerCaregoriesEndpoint,
+		categories: [],
 		references: [],
 		books: {},
 		currentBook: "",
 		currentSections: {},
 		title: null,
-		date: null,
+		category: null,
 		description: null,
 		loading: true,
 		error: null
 	}
 
 	componentDidMount() {
-		const request = {
+		const referencesRequest = {
 			method: 'GET',
 			credentials: 'include',
 		}
 
-		fetch(this.state.producerReferencesEndpoint, request)
+		fetch(this.state.producerReferencesEndpoint, referencesRequest)
 		.then(response => response.json())
 		.then(data => {
 			this.setState({
 				references: data['references'],
 				loading: false
+			})
+		})
+		.catch(err => console.log(err))
+
+		const categoriesRequest = {
+			method: 'GET',
+		}
+
+		fetch(this.state.producerCaregoriesEndpoint, categoriesRequest)
+		.then(response => response.json())
+		.then(data => {
+			this.setState({
+				categories: data['categories'],
 			})
 		})
 		.catch(err => console.log(err))
@@ -53,9 +71,9 @@ class References extends Component {
 		})
 	}
 
-	handleDateChange = (event) => {
+	handleCategoryChange = (eventKey) => {
 		this.setState({
-			date: event.target.value,
+			category: this.state.categories[eventKey]
 		})
 	}
 
@@ -171,13 +189,18 @@ class References extends Component {
 			event.stopPropagation();
 		}
 
+		if (this.state.category === null || this.state.category === '') {
+			this.addError("Please provide a category for the subject")
+			return
+		}
+
 		if (this.state.title === null || this.state.title === '') {
-			this.addError("Please provide a title for the event")
+			this.addError("Please provide a title for the subject")
 			return
 		}
 
 		if (this.state.description === null || this.state.description === '') {
-			this.addError("Please provide a description for the event")
+			this.addError("Please provide a description for the subject")
 			return
 		}
 
@@ -205,15 +228,9 @@ class References extends Component {
 			})
 		}
 
-		var eventDate = this.state.date
-		if (eventDate !== null) {
-			// This is because pydantic requires datetime format
-			eventDate = eventDate + ' 00:00:00'
-		}
-
 		var reference = {
 			title: this.state.title,
-			event_date: eventDate,
+			category: this.state.category,
 			description: this.state.description,
 			books: booksList
 		}
@@ -282,7 +299,7 @@ class References extends Component {
 			currentBook: "",
 			currentSections: {},
 			title: "",
-			date: "",
+			category: "",
 			description: "",
 		})
 	}
@@ -315,7 +332,7 @@ class References extends Component {
 															<Container>
 																<Row className="text-right">
 																	<Col>
-																		<b>{reference.event_date.substring(0,10)}</b>
+																		<b>{reference.category}</b>
 																	</Col>
 																</Row>
 																<Row>
@@ -376,22 +393,33 @@ class References extends Component {
 							}
 						<Form>
 							<Form.Row>
-								<Form.Group as={Col} md="6" controlId="titleValidation">
+								<Form.Group as={Col} controlId="categoryValidation">
+									<DropdownButton
+										size="sm"
+										variant="secondary"
+										id="dropdown-basic-button"
+										title={this.state.category ? this.state.category : "Category"}
+									>
+										{this.state.categories.map((category, index) => (
+											<Dropdown.Item
+												eventKey={index}
+												onSelect={(eventKey, event) => this.handleCategoryChange(eventKey)}
+											>
+												{category}
+											</Dropdown.Item>
+										))}
+									</DropdownButton>
+								</Form.Group>
+							</Form.Row>
+
+							<Form.Row>
+								<Form.Group as={Col} controlId="titleValidation">
 									<Form.Control
 										required
 										type="text"
 										onChange={this.handleTitleChange}
 										value={this.state.title}
-										placeholder="Event title"
-									/>
-								</Form.Group>
-
-								<Form.Group as={Col} md="6" controlId="dateValidation">
-									<Form.Control
-										type="date"
-										value={this.state.date}
-										onChange={this.handleDateChange}
-										placeholder="Event date"
+										placeholder="Subject title"
 									/>
 								</Form.Group>
 							</Form.Row>
@@ -404,7 +432,7 @@ class References extends Component {
 										rows="5"
 										value={this.state.description}
 										onChange={this.handleDescriptionChange}
-										placeholder="Event description"
+										placeholder="Subject description"
 									/>
 								</Form.Group>
 							</Form.Row>

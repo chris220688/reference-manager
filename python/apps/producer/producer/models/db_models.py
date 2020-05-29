@@ -1,4 +1,5 @@
 import datetime
+from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel, Field, conint, conlist, constr
@@ -16,11 +17,18 @@ class Book(BaseModel):
 	book_sections: conlist(BookSection, min_items=1, max_items=100)
 
 
+class Category(str, Enum):
+	history = "history"
+	science = "science"
+	computer_science = "computer science"
+	literature = "literature"
+
+
 class Reference(BaseModel):
 	""" A reference of an event """
 	reference_id: Optional[constr(min_length=36, max_length=36)]
 	title: constr(min_length=5, max_length=100)
-	event_date: Optional[datetime.datetime]
+	category: Category
 	description: constr(min_length=30, max_length=600)
 	books: conlist(Book, min_items=1, max_items=50)
 	rating: Optional[conint(gt=0, lt=6)]

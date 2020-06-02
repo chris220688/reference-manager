@@ -20,7 +20,7 @@ class Book(BaseModel):
 class Category(str, Enum):
 	history = "history"
 	science = "science"
-	computer_science = "computer science"
+	computer_science = "computer_science"
 	literature = "literature"
 
 

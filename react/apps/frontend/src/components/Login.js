@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Button, Container, Col, Row, Modal, Nav, } from 'react-bootstrap'
+import { Container, Col, Row, Modal, Nav, } from 'react-bootstrap'
 
 import glogo from '../icons/google_logo.svg'
 import mlogo from '../icons/microsoft_logo.svg'
@@ -27,7 +27,7 @@ export default function Login(props) {
 
 	return (
 		<section>
-			<Nav.Link variant="outline-dark" onClick={handleShow}>
+			<Nav.Link variant="outline-dark" style={{color:"white"}} onClick={handleShow}>
 				Sign in
 			</Nav.Link>
 			<Modal show={show} onHide={handleClose}>

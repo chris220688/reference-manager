@@ -13,8 +13,8 @@ services:
       - MONGODB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
       - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
       - MONGODB_REPLICA_SET_NAME=${MONGODB_REPLICA_SET_NAME}
-    ports:
-      - "27017:27017"
+    # ports:
+    #   - "27017:27017"
     networks:
       - stack
 
@@ -99,7 +99,7 @@ services:
       - APP_NAME=consumer
       - ELASTICSEARCH_HOST=elasticsearch
       - ELASTICSEARCH_INDEX=referencemanager.referencemanager
-      - MSEARCH_ENDPOINT=/msearch/referencemanager/_msearch/
+      - SEARCH_ENDPOINT=/search/referencemanager/_msearch/
     command:
       pipenv run uvicorn consumer.main:app --host 0.0.0.0
     # links:
@@ -107,7 +107,7 @@ services:
     # depends_on:
     #   - elasticsearch
     # ports:
-    #   - "8000:8000"
+    #   - "8001:8000"
     networks:
       - stack
 
@@ -150,7 +150,7 @@ services:
     command:
       sh -c "/wait && pipenv run uvicorn producer.main:app --host 0.0.0.0"
     # ports:
-    #   - "8001:8000"
+    #   - "8000:8000"
     networks:
       - stack
 

@@ -28,8 +28,7 @@ class JoinUs extends Component {
 
 			if (data['requested']) {
 				this.state.setAlert(
-					"We are processing your request! In the meantime you can continue searching. \
-					Visit 'My Account' to check the status of your request"
+					"We are processing your request! In the meantime you can continue searching. Visit 'My Account' to check the status of your request"
 				)
 				this.state.setRequestedJoin(true)
 				this.state.setSearchOn()

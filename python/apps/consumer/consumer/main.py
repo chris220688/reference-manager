@@ -22,6 +22,7 @@ from fastapi import (
 	Query,
 	Request,
 )
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
@@ -36,6 +37,17 @@ from contextlog import contextlog
 logger = contextlog.get_contextlog()
 
 app = FastAPI()
+
+# origins = [
+# 	"http://localhost:3000",
+# ]
+# app.add_middleware(
+# 	CORSMiddleware,
+# 	allow_origins=origins,
+# 	allow_credentials=True,
+# 	allow_methods=["*"],
+# 	allow_headers=["*"],
+# )
 
 @app.on_event("startup")
 async def startup_event():
@@ -73,8 +85,8 @@ async def setup_request(request: Request, call_next):
 	return response
 
 
-@app.post(config.MSEARCH_ENDPOINT)
-async def msearch(request: Request):
+@app.post(config.SEARCH_ENDPOINT)
+async def search(request: Request):
 	""" API endpoint for making a search request to elasticsearch's
 		'_msearch' endpoint.
 

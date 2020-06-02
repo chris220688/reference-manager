@@ -5,11 +5,8 @@ import Login from './Login';
 import References from './References';
 import JoinUs from './JoinUs';
 
-import logo from '../icons/logo.png'
-
-
 import {
-	Alert, Button, Container, Navbar, Nav,
+	Alert, Container, Navbar, Nav
 } from 'react-bootstrap'
 
 
@@ -156,16 +153,12 @@ class App extends Component {
 	render() {
 		return (
 			<section>
-				<Navbar bg="light" expand="lg">
+				<Navbar bg="dark" expand="md">
 					<Navbar.Brand href="#" onClick={this.openSearch}>
-						<img alt="" src={logo} width="30" height="30" className="d-inline-block align-top"/>
+
 					</Navbar.Brand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-						<Nav className="mr-auto">
-							<Nav.Link>About</Nav.Link>
-							<Nav.Link>Contact us</Nav.Link>
-						</Nav>
 						{this.state.userLoggedIn ?
 							<Nav className="mr-auto">
 								{/*
@@ -173,27 +166,27 @@ class App extends Component {
 									<span>Hello {this.state.userName}</span> : <span></span>
 								}
 								*/}
-								<Nav.Link onClick={this.openSearch}>My Account</Nav.Link>
-								<Nav.Link onClick={this.openSearch}>Search</Nav.Link>
+								<Nav.Link style={{color:"white"}} onClick={this.openSearch}>My Account</Nav.Link>
+								<Nav.Link style={{color:"white"}} onClick={this.openSearch}>Search</Nav.Link>
 								{this.state.isAuthor ?
-									<Nav.Link onClick={this.openReferences}>References</Nav.Link> : null
+									<Nav.Link style={{color:"white"}} onClick={this.openReferences}>References</Nav.Link> : null
 								}
 								{!this.state.isAuthor && !this.state.requestedJoin ?
-									<Nav.Link onClick={this.openJoinus}>Join us</Nav.Link> : null
+									<Nav.Link style={{color:"white"}} onClick={this.openJoinus}>Join us</Nav.Link> : null
 								}
 
 							</Nav> : null
 						}
 						<Nav>
 							{this.state.userLoggedIn ?
-								<Nav.Link onClick={this.logout}>Log out</Nav.Link> :
+								<Nav.Link style={{color:"white"}} onClick={this.logout}>Log out</Nav.Link> :
 								<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
 							}
 						</Nav>
 					</Navbar.Collapse>
 				</Navbar>
 				<br/>
-				<Container>
+				<Container style={{"minHeight": "500px"}}>
 					{this.state.alertMessage ?
 						<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
 							<Alert.Heading>Fantastic!</Alert.Heading>
@@ -221,6 +214,17 @@ class App extends Component {
 							producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
 						/> : null
 					}
+				</Container>
+
+				<Container>
+					<hr/>
+					<Navbar sticky="bottom" className="justify-content-end">
+						<Nav>
+							<Nav.Link>About</Nav.Link>
+							<Nav.Link>Contact</Nav.Link>
+							<Nav.Link>Terms</Nav.Link>
+						</Nav>
+					</Navbar>
 				</Container>
 			</section>
 		);

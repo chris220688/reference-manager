@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-	Accordion, Alert, Button, Card, Col, Container, Dropdown,
+	Alert, Button, Col, Container, Dropdown,
 	DropdownButton, Form, ListGroup, Row, Tab, Tabs
 } from 'react-bootstrap'
 
@@ -321,63 +321,61 @@ class References extends Component {
 									{this.state.loading ? (
 										"Loading..."
 									) : (
-										<Accordion defaultActiveKey="0">
+										<ListGroup variant="flush">
 											{this.state.references.map((reference, index) => (
-												<Card>
-													<Accordion.Toggle as={Card.Header} eventKey={index}>
-														{reference.title}
-													</Accordion.Toggle>
-													<Accordion.Collapse eventKey={index}>
-														<Card.Body>
-															<Container>
-																<Row className="text-right">
-																	<Col>
-																		<b>{reference.category}</b>
-																	</Col>
-																</Row>
-																<Row>
-																	<Col className="text-left">
-																		{reference.description}
-																	</Col>
-																</Row>
-																<hr/>
-																<Row>
-																	<Col>
-																		<ListGroup>
-																		{reference.books.map(({ name, book_sections }) => (
-																			<ListGroup.Item>
-																				<div>
-																					<b>{name}</b>
-																				</div>
-																				<div>
-																					{book_sections.map(({ starting_page, ending_page }) => (
-																						<span>|{starting_page}-{ending_page}| </span>
-																					))}
-																				</div>
-																			</ListGroup.Item>
-																		))}
-																		</ListGroup>
-																	</Col>
-																</Row>
-																<br/>
-																<Row>
-																	<Col>
-																		<Button
-																			className="float-right"
-																			size="sm"
-																			variant="danger"
-																			onClick={() => this.deleteReference(reference)}
-																		>
-																			<IoIosTrash/>
-																		</Button>
-																	</Col>
-																</Row>
-															</Container>
-														</Card.Body>
-													</Accordion.Collapse>
-												</Card>
+												<ListGroup.Item key={index}>
+													<Container>
+														<Row className="text-right">
+															<Col>
+																<b>{reference.category.replace("_", " ")}</b>
+															</Col>
+														</Row>
+														<Row >
+															<Col>
+																<h4>{reference.title}</h4>
+															</Col>
+														</Row>
+														<br/>
+														<Row>
+															<Col className="text-left">
+																{reference.description}
+															</Col>
+														</Row>
+														<Row>
+															<Col>
+																<ListGroup>
+																{reference.books.map(({ name, book_sections }, bookIndex) => (
+																	<ListGroup.Item style={{border: "none"}} key={bookIndex}>
+																		<div>
+																			<b>{name}</b>
+																		</div>
+																		<div>
+																			{book_sections.map(({ starting_page, ending_page }, sectionsIndex) => (
+																				<span key={sectionsIndex}>|{starting_page}-{ending_page}| </span>
+																			))}
+																		</div>
+																	</ListGroup.Item>
+																))}
+																</ListGroup>
+															</Col>
+														</Row>
+														<Row>
+															<Col>
+																<Button
+																	className="float-right"
+																	size="sm"
+																	variant="danger"
+																	onClick={() => this.deleteReference(reference)}
+																>
+																	<IoIosTrash/>
+																</Button>
+															</Col>
+														</Row>
+													</Container>
+													<br/>
+												</ListGroup.Item>
 											))}
-										</Accordion>
+										</ListGroup>
 									)}
 								</Col>
 							</Row>
@@ -402,10 +400,11 @@ class References extends Component {
 									>
 										{this.state.categories.map((category, index) => (
 											<Dropdown.Item
+												key={index}
 												eventKey={index}
 												onSelect={(eventKey, event) => this.handleCategoryChange(eventKey)}
 											>
-												{category}
+												{category.replace("_", " ")}
 											</Dropdown.Item>
 										))}
 									</DropdownButton>
@@ -418,7 +417,7 @@ class References extends Component {
 										required
 										type="text"
 										onChange={this.handleTitleChange}
-										value={this.state.title}
+										value={this.state.title || ""}
 										placeholder="Subject title"
 									/>
 								</Form.Group>
@@ -430,7 +429,7 @@ class References extends Component {
 										required
 										as="textarea"
 										rows="5"
-										value={this.state.description}
+										value={this.state.description || ""}
 										onChange={this.handleDescriptionChange}
 										placeholder="Subject description"
 									/>
@@ -441,7 +440,7 @@ class References extends Component {
 								<Form.Group as={Col} sm="8" md="10">
 									<Form.Control
 										type="text"
-										value={this.state.currentBook}
+										value={this.state.currentBook || ""}
 										onChange={this.handleBookChange}
 										placeholder="Book title"
 									/>

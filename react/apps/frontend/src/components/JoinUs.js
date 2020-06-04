@@ -47,7 +47,7 @@ class JoinUs extends Component {
 					</p>
 					<p>
 						Becoming an author means that you can contribute to our cause by adding your own references.
-						There are no commitments. You can simply do it the next time you read an awesome historical book!
+						There are no commitments. You can simply do it the next time you read an awesome book!
 					</p>
 					<p>
 						If you feel like this is something interesting, click the button below!

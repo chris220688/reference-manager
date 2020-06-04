@@ -1,0 +1,13 @@
+.search-toggle a {
+	font-size: 12px;
+	min-height: 10px;
+	height: 17px;
+	width: 100%;
+
+}
+
+.toggle-categories-btn {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 10px;
+}

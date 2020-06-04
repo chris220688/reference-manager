@@ -306,7 +306,7 @@ class References extends Component {
 
 	render() {
 		return (
-			<section>
+			<Container>
 				<Tabs defaultActiveKey="references">
 					<Tab eventKey="references" title="My References">
 						<Container fluid>
@@ -529,7 +529,7 @@ class References extends Component {
 						</Form>
 					</Tab>
 				</Tabs>
-			</section>
+			</Container>
 		);
 	}
 }

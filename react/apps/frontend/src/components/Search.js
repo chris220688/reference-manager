@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { ReactiveBase, ReactiveList, DataSearch, ResultList, ToggleButton } from '@appbaseio/reactivesearch';
 
 import {
-	Col, Container, ListGroup, Row
+	Button, Col, Container, ListGroup, Row
 } from 'react-bootstrap'
+
+import '../styles/Search.css'
 
 const { ResultListWrapper } = ReactiveList;
 
@@ -14,7 +16,8 @@ class Search extends Component {
 		producerCaregoriesEndpoint: process.env.REACT_APP_PRODUCER_CATEGORIES_ENDPOINT,
 		consumerSearchEndpoint: process.env.REACT_APP_CONSUMER_SEARCH_ENDPOINT,
 		category: null,
-		categories: []
+		categories: [],
+		categoriesStyle: {display: 'none'},
 	}
 
 	componentDidMount() {
@@ -43,92 +46,126 @@ class Search extends Component {
 		})
 	}
 
+	toggleCategories = () => {
+		if (Object.keys(this.state.categoriesStyle).length === 0) {
+			this.setState({
+				categoriesStyle: {display: 'none'},
+			})
+		} else {
+			this.setState({
+				categoriesStyle: {},
+			})
+		}
+	}
+
 	render() {
 		return (
 			<section>
-			<ReactiveBase
-				app="referencemanager"
-				url={this.state.consumerSearchEndpoint}
-			>
+				<ReactiveBase
+					app="referencemanager"
+					url={this.state.consumerSearchEndpoint}
+				>
+					<Container>
+						<Row>
+							<Col sm="2"></Col>
+							<Col sm="8">
+								<div className="toggle-categories-btn">
+									<Button size="sm" variant="outline-dark" onClick={this.toggleCategories}>Categories</Button>
+								</div>
+							</Col>
+							<Col sm="2"></Col>
+						</Row>
 
-			<div className="col">
-				<ToggleButton
-					componentId="categoryFilter"
-					dataField="category"
-					data={this.state.categories}
-				/>
-			</div>
+						<Row>
+							<Col xs="3" sm="3" md="4"></Col>
+							<Col xs="6" sm="6" md="4">
+								<div className="toggle-categories-btn">
+									<ToggleButton
+										componentId="categoryFilter"
+										dataField="category"
+										data={this.state.categories}
+										className="search-toggle"
+										style={this.state.categoriesStyle}
+									/>
+								</div>
+							</Col>
+							<Col xs="3" sm="3" md="4"></Col>
+						</Row>
+					</Container>
 
-				<DataSearch
-					componentId="searchBox"
-					dataField={["title"]}
-					queryFormat="or"
-					placeholder="Search"
-					debounce={100}
-					fuzziness="AUTO"
-					showFilter={true}
-					react={{
-						"and": ["categoryFilter",]
-					}}
-				/>
+					<Container>
+						<DataSearch
+							componentId="searchBox"
+							dataField={["title"]}
+							queryFormat="or"
+							placeholder="Search"
+							debounce={100}
+							fuzziness="AUTO"
+							showFilter={true}
+							react={{
+								"and": ["categoryFilter",]
+							}}
+						/>
 
-				<ReactiveList
-					dataField="title"
-					react={{
-						"and": ["searchBox", "categoryFilter"]
-					}}
-					componentId="searchResult"
-					pagination={true}
-					size={20}
-					render={({ data }) => (
-						<ResultListWrapper>
-							{
-								data.map((item, index) => (
-									<ResultList key={index}>
-										<ResultList.Content>
-											<ResultList.Title>
-											{item.title}
-											</ResultList.Title>
-											<ResultList.Description>
-												<Container>
-													<Row className="text-right">
-														<Col>
-															<b>{item.category}</b>
-														</Col>
-													</Row>
-													<br/>
-													<Row>
-														<Col className="text-left">
-															{item.description}
-														</Col>
-													</Row>
-													<Row>
-														<Col>
-															<ListGroup>
-															{item.books.map(({ name, book_sections }, index) => (
-																<ListGroup.Item style={{border: "none"}} key={index}>
-																	<div>
-																		<b>{name}</b>
-																	</div>
-																	<div>
-																		{book_sections.map(({ starting_page, ending_page }, index) => (
-																			<span key={index}>|{starting_page}-{ending_page}| </span>
-																		))}
-																	</div>
-																</ListGroup.Item>
-															))}
-															</ListGroup>
-														</Col>
-													</Row>
-												</Container>
-											</ResultList.Description>
-										</ResultList.Content>
-									</ResultList>
-								))
-							}
-						</ResultListWrapper>
-					)}/>
-			</ReactiveBase>
+						<ReactiveList
+							dataField="title"
+							react={{
+								"and": ["searchBox", "categoryFilter"]
+							}}
+							componentId="searchResult"
+							pagination={true}
+							size={20}
+							render={({ data }) => (
+								<ResultListWrapper>
+									{
+										data.map((item, index) => (
+											<ResultList key={index}>
+												<ResultList.Content>
+													<ResultList.Title>
+													{item.title}
+													</ResultList.Title>
+													<ResultList.Description>
+														<Container>
+															<Row className="text-right">
+																<Col>
+																	<b>{item.category}</b>
+																</Col>
+															</Row>
+															<br/>
+															<Row>
+																<Col className="text-left">
+																	{item.description}
+																</Col>
+															</Row>
+															<Row>
+																<Col>
+																	<ListGroup>
+																	{item.books.map(({ name, book_sections }, index) => (
+																		<ListGroup.Item style={{border: "none"}} key={index}>
+																			<div>
+																				<b>{name}</b>
+																			</div>
+																			<div>
+																				{book_sections.map(({ starting_page, ending_page }, index) => (
+																					<span key={index}>|{starting_page}-{ending_page}| </span>
+																				))}
+																			</div>
+																		</ListGroup.Item>
+																	))}
+																	</ListGroup>
+																</Col>
+															</Row>
+														</Container>
+													</ResultList.Description>
+												</ResultList.Content>
+											</ResultList>
+										))
+									}
+								</ResultListWrapper>
+							)}
+						/>
+					</Container>
+				</ReactiveBase>
 			</section>
 		)
 	}

@@ -9,6 +9,7 @@ import {
 	Alert, Container, Navbar, Nav
 } from 'react-bootstrap'
 
+import '../styles/App.css'
 
 
 class App extends Component {
@@ -186,7 +187,7 @@ class App extends Component {
 					</Navbar.Collapse>
 				</Navbar>
 				<br/>
-				<Container style={{"minHeight": "500px"}}>
+				<Container className="search-container">
 					{this.state.alertMessage ?
 						<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
 							<Alert.Heading>Fantastic!</Alert.Heading>
@@ -216,7 +217,7 @@ class App extends Component {
 					}
 				</Container>
 
-				<Container>
+				<Container className="footer-container">
 					<hr/>
 					<Navbar sticky="bottom" className="justify-content-end">
 						<Nav>

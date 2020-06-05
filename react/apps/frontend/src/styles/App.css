@@ -45,3 +45,38 @@
 .footer-container {
   max-width: none;
 }
+
+.language-dropdown > button {
+  height: 25px;
+  background-color: transparent;
+  border-color: transparent;
+  padding-top: 0px;
+  padding-right: 20px;
+  padding-bottom: 0px;
+  padding-left: 20px;
+}
+
+.language-dropdown > button:hover {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.language-dropdown > button:focus {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
+  box-shadow: none;
+}
+
+.language-dropdown > .dropdown-toggle::before {
+  content: none;
+}

@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 
+import { withTranslation } from 'react-i18next'
+import i18n from './i18n';
+import { MdLanguage } from "react-icons/md";
+import {
+	Alert, Container, Dropdown, DropdownType, Navbar, Nav
+} from 'react-bootstrap'
+
+
 import Search from './Search';
 import Login from './Login';
 import References from './References';
 import JoinUs from './JoinUs';
-
-import {
-	Alert, Container, Navbar, Nav
-} from 'react-bootstrap'
 
 import '../styles/App.css'
 
@@ -151,12 +155,17 @@ class App extends Component {
 		})
 	}
 
+	changeLanguage = (lng) => {
+		i18n.changeLanguage(lng)
+	}
+
 	render() {
+		const { t } = this.props
+
 		return (
 			<section>
 				<Navbar bg="dark" expand="md">
 					<Navbar.Brand href="#" onClick={this.openSearch}>
-
 					</Navbar.Brand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
@@ -167,22 +176,33 @@ class App extends Component {
 									<span>Hello {this.state.userName}</span> : <span></span>
 								}
 								*/}
-								<Nav.Link style={{color:"white"}} onClick={this.openSearch}>My Account</Nav.Link>
-								<Nav.Link style={{color:"white"}} onClick={this.openSearch}>Search</Nav.Link>
+								<Nav.Link style={{color:"white"}} onClick={this.openSearch}>{t('search.myaccount')}</Nav.Link>
+								<Nav.Link style={{color:"white"}} onClick={this.openSearch}>{t('search.search')}</Nav.Link>
 								{this.state.isAuthor ?
-									<Nav.Link style={{color:"white"}} onClick={this.openReferences}>References</Nav.Link> : null
+									<Nav.Link style={{color:"white"}} onClick={this.openReferences}>{t('search.references')}</Nav.Link> : null
 								}
 								{!this.state.isAuthor && !this.state.requestedJoin ?
-									<Nav.Link style={{color:"white"}} onClick={this.openJoinus}>Join us</Nav.Link> : null
+									<Nav.Link style={{color:"white"}} onClick={this.openJoinus}>{t('search.joinus')}</Nav.Link> : null
 								}
-
 							</Nav> : null
 						}
 						<Nav>
 							{this.state.userLoggedIn ?
-								<Nav.Link style={{color:"white"}} onClick={this.logout}>Log out</Nav.Link> :
+								<Nav.Link style={{color:"white"}} onClick={this.logout}>{t('search.logout')}</Nav.Link> :
 								<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
 							}
+							<Nav.Link style={{color:"white"}} onClick={() => this.changeLanguage}>
+								<Dropdown drop="left" className="language-dropdown">
+									<Dropdown.Toggle style={{"BackgroundColor": "black"}} id="dropdown">
+										<MdLanguage/>
+									</Dropdown.Toggle>
+
+									<Dropdown.Menu>
+										<Dropdown.Item onClick={() => this.changeLanguage('en')}>{t('search.language.english')}</Dropdown.Item>
+										<Dropdown.Item onClick={() => this.changeLanguage('gr')}>{t('search.language.greek')}</Dropdown.Item>
+									</Dropdown.Menu>
+								</Dropdown>
+							</Nav.Link>
 						</Nav>
 					</Navbar.Collapse>
 				</Navbar>
@@ -197,7 +217,7 @@ class App extends Component {
 						</Alert> : null
 					}
 					{this.state.searchOn ?
-						<Search/> : null
+						<Search t={t}/> : null
 					}
 					{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
 						<JoinUs
@@ -232,4 +252,4 @@ class App extends Component {
 	}
 }
 
-export default App;
+export default withTranslation()(App);

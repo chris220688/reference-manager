@@ -11,3 +11,41 @@
 	justify-content: center;
 	margin-bottom: 10px;
 }
+
+.custom-pagination {
+	text-align: center;
+}
+
+.custom-pagination > ul {
+	display: inline-flex;
+}
+
+.custom-pagination > ul > li > span {
+	background-color: #fff;
+	color: #343a40;
+	border-color: #343a40;
+}
+
+.custom-pagination > ul > li > a {
+	background-color: #fff;
+	color: #343a40;
+	border-color: gray;
+}
+
+.custom-pagination .page-item.active .page-link {
+	background-color: #7f7f7f;
+	color: #fff;
+	border-color: gray;
+}
+
+.custom-pagination .page-item.disabled .page-link {
+	background-color: #fff;
+	color: black;
+	border-color: gray;
+}
+
+.custom-pagination .page-link:hover {
+	background-color: #7f7f7f;
+	color: #fff;
+	border-color: #7f7f7f;
+}

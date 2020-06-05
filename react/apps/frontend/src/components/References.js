@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import { withTranslation } from 'react-i18next'
 import {
 	Alert, Button, Col, Container, Dropdown,
 	DropdownButton, Form, ListGroup, Row, Tab, Tabs
@@ -305,6 +306,7 @@ class References extends Component {
 	}
 
 	render() {
+		const { t } = this.props
 		return (
 			<Container>
 				<Tabs defaultActiveKey="references">
@@ -327,7 +329,7 @@ class References extends Component {
 													<Container>
 														<Row className="text-right">
 															<Col>
-																<b>{reference.category.replace("_", " ")}</b>
+																<b>{t('references.categories.' + reference.category)}</b>
 															</Col>
 														</Row>
 														<Row >
@@ -534,4 +536,4 @@ class References extends Component {
 	}
 }
 
-export default References;
+export default withTranslation()(References);

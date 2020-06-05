@@ -13,8 +13,8 @@ services:
       - MONGODB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
       - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
       - MONGODB_REPLICA_SET_NAME=${MONGODB_REPLICA_SET_NAME}
-    # ports:
-    #   - "27017:27017"
+    ports:
+      - "27017:27017"
     networks:
       - stack
 
@@ -106,8 +106,8 @@ services:
     #   - elasticsearch
     # depends_on:
     #   - elasticsearch
-    # ports:
-    #   - "8001:8000"
+    ports:
+      - "8001:8000"
     networks:
       - stack
 
@@ -149,8 +149,8 @@ services:
       - AUTH_TOKEN_EXPIRE_MINUTES=${AUTH_TOKEN_EXPIRE_MINUTES}
     command:
       sh -c "/wait && pipenv run uvicorn producer.main:app --host 0.0.0.0"
-    # ports:
-    #   - "8000:8000"
+    ports:
+      - "8000:8000"
     networks:
       - stack
 
@@ -182,8 +182,8 @@ services:
     #   - MONSTACHE_DIRECT_READ_NS=referencemanager.referencemanager
     #   - MONSTACHE_MONGO_URL=mongodb://root:referencemanager@mongodb-primary:27017
     #   - MONSTACHE_ES_URLS=http://elasticsearch:9200
-    # ports:
-    #   - "8080:8080"
+    ports:
+      - "8080:8080"
     command:
       sh -c "/wait && ./build/linux-amd64/monstache -f config.toml"
     networks:

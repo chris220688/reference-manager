@@ -52,12 +52,20 @@ class References extends Component {
 
 		fetch(this.state.producerCaregoriesEndpoint, categoriesRequest)
 		.then(response => response.json())
-		.then(data => {
-			this.setState({
-				categories: data['categories'],
-			})
-		})
+		.then(data => this.setCategories(data))
 		.catch(err => console.log(err))
+	}
+
+	setCategories = (data) => {
+		var categories = []
+
+		data['categories'].forEach(category => {
+			categories.push(category)
+		})
+
+		this.setState({
+			categories: categories,
+		})
 	}
 
 	addError = (error) => {
@@ -109,10 +117,11 @@ class References extends Component {
 	}
 
 	addBook = () => {
+		const { t } = this.props
 		var books = this.state.books
 
 		if (this.state.currentBook === null || this.state.currentBook === '') {
-			this.addError("Please provide a name for the book")
+			this.addError(t("references.form.error.bookname"))
 			return
 		}
 
@@ -142,6 +151,7 @@ class References extends Component {
 	}
 
 	addSection = (bookName) => {
+		const { t } = this.props
 		var books = this.state.books
 		var currentBook = books[bookName]
 
@@ -150,18 +160,18 @@ class References extends Component {
 		var endingPage = parseFloat(currentSections[bookName].endingPage)
 
 		if (!Number.isInteger(startingPage) || !Number.isInteger(endingPage)) {
-			this.addError("Pages should be integer numbers")
+			this.addError(t('references.form.error.pagenumber'))
 			return
 		}
 
 		if (startingPage < 0 || endingPage < 0) {
-			this.addError("Page numbers should be positive numbers")
+			this.addError('references.form.error.pagepositivenumber')
 			return
 		}
 
 		if (startingPage > endingPage) {
 			debugger
-			this.addError("Starting page should be less than the ending page")
+			this.addError(t('references.form.error.startingpagegt'))
 			return
 		}
 
@@ -184,6 +194,7 @@ class References extends Component {
 	}
 
 	addReference = (event) => {
+		const { t } = this.props
 		const form = event.currentTarget;
 		if (form.checkValidity() === false) {
 			event.preventDefault();
@@ -191,27 +202,27 @@ class References extends Component {
 		}
 
 		if (this.state.category === null || this.state.category === '') {
-			this.addError("Please provide a category for the subject")
+			this.addError(t('references.form.error.category'))
 			return
 		}
 
 		if (this.state.title === null || this.state.title === '') {
-			this.addError("Please provide a title for the subject")
+			this.addError(t('references.form.error.title'))
 			return
 		}
 
 		if (this.state.description === null || this.state.description === '') {
-			this.addError("Please provide a description for the subject")
+			this.addError(t('references.form.error.description'))
 			return
 		}
 
 		if (this.state.description.length < 30) {
-			this.addError("The description is too small. Please add some more details")
+			this.addError(t('references.form.error.desctiptionsize'))
 			return
 		}
 
 		if (Object.keys(this.state.books).length === 0) {
-			this.addError("Please provide at least one book as a reference")
+			this.addError(t('references.form.error.book'))
 			return
 		}
 
@@ -219,7 +230,7 @@ class References extends Component {
 		for (const [ name, sections ] of Object.entries(this.state.books)) {
 
 			if (sections.length === 0) {
-				this.addError("Please provide at least one book section for every book")
+				this.addError(t('references.form.error.section'))
 				return
 			}
 
@@ -246,10 +257,10 @@ class References extends Component {
 		.then(response => {
 			if (!response.ok) {
 				if (response.status === 422) {
-					this.addError("Something went wrong. Please make sure you follow the instructions on how to create a reference")
+					this.addError(t('references.form.error.genericerror'))
 				}
 				if (response.status === 409) {
-					this.addError("This reference already exists. Please try with a different name and description")
+					this.addError(t('references.form.error.referenceexists'))
 				}
 			}
 			return response.json()
@@ -266,11 +277,12 @@ class References extends Component {
 			this.clearForm()
 		})
 		.catch(err => {
-			this.addError("Something went wrong. Please try again")
+			this.addError(t('references.error.genericerror'))
 		})
 	}
 
 	deleteReference = (reference) => {
+		const { t } = this.props
 		const request = {
 			method: 'DELETE',
 			credentials: 'include',
@@ -289,7 +301,7 @@ class References extends Component {
 			}
 		})
 		.catch(err => {
-			this.addError("Something went wrong. Please try again")
+			this.addError(t('references.error.genericerror'))
 		})
 
 	}
@@ -309,19 +321,19 @@ class References extends Component {
 		const { t } = this.props
 		return (
 			<Container>
-				<Tabs defaultActiveKey="references">
-					<Tab eventKey="references" title="My References">
+				<Tabs defaultActiveKey="references" className="reference-tabs">
+					<Tab eventKey="references" title={t('references.myreferences')}>
 						<Container fluid>
 							<Row>
 								<Col>
 									<br/>
-									{this.state.references.length === 0 ? <span>You have no references yet!</span> : null}
+									{this.state.references.length === 0 ? <span>{t('references.noreferences')}</span> : null}
 								</Col>
 							</Row>
 							<Row>
 								<Col>
 									{this.state.loading ? (
-										"Loading..."
+										t('references.loading')
 									) : (
 										<ListGroup variant="flush">
 											{this.state.references.map((reference, index) => (
@@ -384,7 +396,7 @@ class References extends Component {
 						</Container>
 					</Tab>
 
-					<Tab eventKey="addReference" title="New Reference">
+					<Tab eventKey="addReference" title={t('references.addreference')}>
 						<br/>
 							{this.state.error ?
 								<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
@@ -398,7 +410,7 @@ class References extends Component {
 										size="sm"
 										variant="secondary"
 										id="dropdown-basic-button"
-										title={this.state.category ? this.state.category : "Category"}
+										title={this.state.category ? this.state.category : t('references.form.category')}
 									>
 										{this.state.categories.map((category, index) => (
 											<Dropdown.Item
@@ -406,7 +418,7 @@ class References extends Component {
 												eventKey={index}
 												onSelect={(eventKey, event) => this.handleCategoryChange(eventKey)}
 											>
-												{category.replace("_", " ")}
+												{t('search.categories.' + category)}
 											</Dropdown.Item>
 										))}
 									</DropdownButton>
@@ -420,7 +432,7 @@ class References extends Component {
 										type="text"
 										onChange={this.handleTitleChange}
 										value={this.state.title || ""}
-										placeholder="Subject title"
+										placeholder={t('references.form.title')}
 									/>
 								</Form.Group>
 							</Form.Row>
@@ -433,7 +445,7 @@ class References extends Component {
 										rows="5"
 										value={this.state.description || ""}
 										onChange={this.handleDescriptionChange}
-										placeholder="Subject description"
+										placeholder={t('references.form.description')}
 									/>
 								</Form.Group>
 							</Form.Row>
@@ -444,12 +456,12 @@ class References extends Component {
 										type="text"
 										value={this.state.currentBook || ""}
 										onChange={this.handleBookChange}
-										placeholder="Book title"
+										placeholder={t('references.form.booktitle')}
 									/>
 								</Form.Group>
 
 								<div as={Col} sm="4" md="2">
-									<Button variant="link" onClick={this.addBook}>Add new book</Button>
+									<Button variant="link" onClick={this.addBook}>{t('references.form.addbook')}</Button>
 								</div>
 							</Form.Row>
 
@@ -462,7 +474,7 @@ class References extends Component {
 												<Container>
 													<Row>
 														<Col xs={11} className="limited-text">
-															<b>Book:</b> {bookName}
+															<b>{t('references.form.book')}:</b> {bookName}
 														</Col>
 														<Col xs={1}>
 															<Button
@@ -482,7 +494,7 @@ class References extends Component {
 												<Container fluid>
 													<Row>
 														<Col className="limited-text">
-															<div className="limited-text"><b>Pages: </b>
+															<div className="limited-text"><b>{t('references.form.pages')}: </b>
 															{sections.map(({ starting_page, ending_page }, sectionIndex) => (
 																<span key={sectionIndex}>|{starting_page}-{ending_page}| </span>
 															))}
@@ -499,7 +511,7 @@ class References extends Component {
 															min="0"
 															value={this.state.currentSections[bookName].startingPage}
 															onChange={(event) => this.handleStartingPageChange(event, bookName)}
-															placeholder="Starting page"
+															placeholder={t('references.form.startingpage')}
 														/>
 													</Form.Group>
 
@@ -509,12 +521,12 @@ class References extends Component {
 															min="0"
 															value={this.state.currentSections[bookName].endingPage}
 															onChange={(event) => this.handleEndingPageChange(event, bookName)}
-															placeholder="Ending page"
+															placeholder={t('references.form.endinggpage')}
 														/>
 													</Form.Group>
 
 													<div as={Col} sm="4" md="2">
-														<Button variant="link" onClick={() => this.addSection(bookName)}>Add new section</Button>
+														<Button variant="link" onClick={() => this.addSection(bookName)}>{t('references.form.addsection')}</Button>
 													</div>
 												</Form.Row>
 											</ListGroup.Item>
@@ -525,7 +537,7 @@ class References extends Component {
 							<hr/>
 							<Form.Row>
 								<Col>
-									<Button size="sm" variant="outline-dark" onClick={this.addReference}>Create reference</Button>
+									<Button size="sm" variant="outline-dark" onClick={this.addReference}>{t('references.form.save')}</Button>
 								</Col>
 							</Form.Row>
 						</Form>

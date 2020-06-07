@@ -1,6 +1,13 @@
 .limited-text {
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 
-  overflow:hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.reference-tabs .nav-link {
+	color: #495057;
+}
+
+.reference-tabs .nav-link.active {
+	color: black;
 }

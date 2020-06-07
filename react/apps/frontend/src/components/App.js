@@ -168,7 +168,7 @@ class App extends Component {
 					<Navbar.Brand href="#" onClick={this.openSearch}>
 					</Navbar.Brand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
-					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end custom-nav-items">
 						{this.state.userLoggedIn ?
 							<Nav className="mr-auto">
 								{/*
@@ -176,19 +176,19 @@ class App extends Component {
 									<span>Hello {this.state.userName}</span> : <span></span>
 								}
 								*/}
-								<Nav.Link style={{color:"white"}} onClick={this.openSearch}>{t('search.myaccount')}</Nav.Link>
-								<Nav.Link style={{color:"white"}} onClick={this.openSearch}>{t('search.search')}</Nav.Link>
+								<Nav.Link onClick={this.openSearch}>{t('search.myaccount')}</Nav.Link>
+								<Nav.Link onClick={this.openSearch}>{t('search.search')}</Nav.Link>
 								{this.state.isAuthor ?
 									<Nav.Link style={{color:"white"}} onClick={this.openReferences}>{t('search.references')}</Nav.Link> : null
 								}
 								{!this.state.isAuthor && !this.state.requestedJoin ?
-									<Nav.Link style={{color:"white"}} onClick={this.openJoinus}>{t('search.joinus')}</Nav.Link> : null
+									<Nav.Link onClick={this.openJoinus}>{t('joinus')}</Nav.Link> : null
 								}
 							</Nav> : null
 						}
 						<Nav>
 							{this.state.userLoggedIn ?
-								<Nav.Link style={{color:"white"}} onClick={this.logout}>{t('search.logout')}</Nav.Link> :
+								<Nav.Link onClick={this.logout}>{t('search.logout')}</Nav.Link> :
 								<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
 							}
 							<Nav.Link style={{color:"white"}} onClick={() => this.changeLanguage}>
@@ -196,8 +196,7 @@ class App extends Component {
 									<Dropdown.Toggle style={{"BackgroundColor": "black"}} id="dropdown">
 										<MdLanguage/>
 									</Dropdown.Toggle>
-
-									<Dropdown.Menu>
+									<Dropdown.Menu className="language-dropdown">
 										<Dropdown.Item onClick={() => this.changeLanguage('en')}>{t('search.language.english')}</Dropdown.Item>
 										<Dropdown.Item onClick={() => this.changeLanguage('gr')}>{t('search.language.greek')}</Dropdown.Item>
 									</Dropdown.Menu>
@@ -210,14 +209,14 @@ class App extends Component {
 				<Container className="search-container">
 					{this.state.alertMessage ?
 						<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
-							<Alert.Heading>Fantastic!</Alert.Heading>
+							<Alert.Heading>{t('joinus.fantastic')}</Alert.Heading>
 								<p>
 									{this.state.alertMessage}
 								</p>
 						</Alert> : null
 					}
 					{this.state.searchOn ?
-						<Search t={t}/> : null
+						<Search/> : null
 					}
 					{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
 						<JoinUs
@@ -241,9 +240,9 @@ class App extends Component {
 					<hr/>
 					<Navbar sticky="bottom" className="justify-content-end">
 						<Nav>
-							<Nav.Link>About</Nav.Link>
-							<Nav.Link>Contact</Nav.Link>
-							<Nav.Link>Terms</Nav.Link>
+							<Nav.Link>{t('about')}</Nav.Link>
+							<Nav.Link>{t('contact')}</Nav.Link>
+							<Nav.Link>{t('terms')}</Nav.Link>
 						</Nav>
 					</Navbar>
 				</Container>

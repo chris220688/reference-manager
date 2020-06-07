@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { useTranslation } from 'react-i18next';
 import { Container, Col, Row, Modal, Nav, } from 'react-bootstrap'
 
 import glogo from '../icons/google_logo.svg'
@@ -8,6 +9,8 @@ import '../styles/Login.css'
 
 
 export default function Login(props) {
+	const { t, i18n } = useTranslation();
+
 	const [show, setShow] = useState(false);
 
 	const handleClose = () => setShow(false);
@@ -28,7 +31,7 @@ export default function Login(props) {
 	return (
 		<section>
 			<Nav.Link variant="outline-dark" style={{color:"white"}} onClick={handleShow}>
-				Sign in
+				{t('login.signin')}
 			</Nav.Link>
 			<Modal show={show} onHide={handleClose}>
 				<Modal.Header>
@@ -38,7 +41,7 @@ export default function Login(props) {
 							<Col xs="8">
 								<div class="login-title">
 									<p>
-										Welcome!
+										{t('login.welcome')}
 									</p>
 								</div>
 							</Col>
@@ -49,7 +52,7 @@ export default function Login(props) {
 							<Col xs="10">
 							<div>
 								<p>
-									Please sign in with one of the listed providers below.
+									{t('login.message')}
 								</p>
 							</div>
 							</Col>
@@ -67,7 +70,7 @@ export default function Login(props) {
 										<img width="20" height="20" class="login-btn-image" alt="google" src={glogo}/>
 									</span>
 									<span class="login-btn-text">
-										Sign in with Google
+										{t('login.googlesignin')}
 									</span>
 								</div>
 							</Col>
@@ -82,7 +85,7 @@ export default function Login(props) {
 										<img width="20" height="20" class="login-btn-image" alt="microsoft" src={mlogo}/>
 									</span>
 									<span class="login-btn-text">
-										Sign in with Microsoft
+										{t('login.msoftsignin')}
 									</span>
 								</div>
 							</Col>
@@ -94,8 +97,7 @@ export default function Login(props) {
 				<Modal.Footer>
 					<div class="login-footer-text">
 						<p>
-							You do not need to Sign in to search for references!
-							Sign in only if you want to access extra features or submit a request to become an author.
+							{t('login.notification')}
 						</p>
 					</div>
 				</Modal.Footer>

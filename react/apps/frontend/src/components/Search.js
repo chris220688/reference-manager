@@ -39,7 +39,7 @@ class Search extends Component {
 
 		data['categories'].forEach(category => {
 			categories.push(
-				{ label: t('search.categories.' + category), value: category }
+				{label: t('search.categories.' + category), value: category}
 			)
 		})
 
@@ -62,7 +62,6 @@ class Search extends Component {
 
 	render() {
 		const { t } = this.props
-
 		return (
 			<section>
 				<ReactiveBase
@@ -79,7 +78,6 @@ class Search extends Component {
 							</Col>
 							<Col sm="2"></Col>
 						</Row>
-
 						<Row>
 							<Col xs="3" sm="3" md="4"></Col>
 							<Col xs="6" sm="6" md="4">
@@ -102,10 +100,14 @@ class Search extends Component {
 							componentId="searchBox"
 							dataField={["title"]}
 							queryFormat="or"
-							placeholder="Search"
+							placeholder={t('search.searchbar')}
 							debounce={100}
 							fuzziness="AUTO"
 							showFilter={true}
+							innerClass={{
+								input: 'searchbar-input',
+								list: 'searchbar-list',
+							}}
 							react={{
 								"and": ["categoryFilter",]
 							}}
@@ -119,6 +121,20 @@ class Search extends Component {
 							componentId="searchResult"
 							pagination={true}
 							size={5}
+							renderResultStats={(stats) => {
+								return (
+									<Container>
+										<Row>
+											<Col sm="2"></Col>
+											<Col sm="8" className="search-stats">
+												<span>{t('search.results.stats', {numberOfResults: stats.numberOfResults, time: stats.time})}</span>
+											</Col>
+											<Col sm="2"></Col>
+										</Row>
+										<br/>
+									</Container>
+								)
+							}}
 							renderPagination={({ pages, totalPages, currentPage, setPage, fragmentName }) => {
 								let active = currentPage
 								let items = []
@@ -177,10 +193,10 @@ class Search extends Component {
 								<ResultListWrapper>
 									{
 										data.map((item, index) => (
-											<ResultList key={index}>
+											<ResultList className="test" key={index}>
 												<ResultList.Content>
 													<ResultList.Title>
-													{item.title}
+														<b>{item.title}</b>
 													</ResultList.Title>
 													<ResultList.Description>
 														<Container>

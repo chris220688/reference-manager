@@ -80,3 +80,15 @@
 .language-dropdown > .dropdown-toggle::before {
   content: none;
 }
+
+.custom-nav-items .nav-link {
+  color: #fff !important;
+}
+
+.custom-nav-items .nav-link:hover {
+  color: #86ddf8 !important;
+}
+
+.custom-nav-items .nav-link svg:hover {
+  color: #86ddf8 !important;
+}

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
-import { Button, Jumbotron } from 'react-bootstrap'
+import { withTranslation } from 'react-i18next'
+
+import { Button, Jumbotron, Container, Row, Col } from 'react-bootstrap'
 
 
 class JoinUs extends Component {
@@ -14,6 +16,7 @@ class JoinUs extends Component {
 	}
 
 	joinRequest = () => {
+		const { t } = this.props
 		const request = {
 			method: 'PUT',
 			credentials: 'include',
@@ -27,9 +30,7 @@ class JoinUs extends Component {
 			})
 
 			if (data['requested']) {
-				this.state.setAlert(
-					"We are processing your request! In the meantime you can continue searching. Visit 'My Account' to check the status of your request"
-				)
+				this.state.setAlert(t('joinus.alert'))
 				this.state.setRequestedJoin(true)
 				this.state.setSearchOn()
 			}
@@ -38,27 +39,27 @@ class JoinUs extends Component {
 	}
 
 	render() {
+		const { t } = this.props
 		return (
-			<section>
+			<Container>
 				<Jumbotron>
-					<h1>Join us!</h1>
+					<h1>{t('joinus')}</h1>
 					<p>
-						Would you like to become an author?
+						{t('joinus.p1')}
 					</p>
 					<p>
-						Becoming an author means that you can contribute to our cause by adding your own references.
-						There are no commitments. You can simply do it the next time you read an awesome book!
+						{t('joinus.p2')}
 					</p>
 					<p>
-						If you feel like this is something interesting, click the button below!
+						{t('joinus.p3')}
 					</p>
 					<p>
-						<Button size="sm" variant="outline-dark" onClick={this.joinRequest}>Join us</Button>
+						<Button size="sm" variant="outline-dark" onClick={this.joinRequest}>Join!</Button>
 					</p>
 				</Jumbotron>
-			</section>
+			</Container>
 		)
 	}
 }
 
-export default JoinUs;
+export default withTranslation()(JoinUs);

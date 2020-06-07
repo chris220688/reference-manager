@@ -214,12 +214,13 @@ class Search extends Component {
 															<Row>
 																<Col>
 																	<ListGroup>
-																	{item.books.map(({ name, book_sections }, index) => (
+																	{item.books.map(({ name, author, book_sections }, index) => (
 																		<ListGroup.Item style={{border: "none"}} key={index}>
 																			<div>
-																				<b>{name}</b>
+																				<b>{name}</b> - <span>{author}</span>
 																			</div>
 																			<div>
+																				<span>{t('references.form.pages')}: </span>
 																				{book_sections.map(({ starting_page, ending_page }, index) => (
 																					<span key={index}>|{starting_page}-{ending_page}| </span>
 																				))}

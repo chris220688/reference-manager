@@ -21,7 +21,8 @@ class References extends Component {
 		categories: [],
 		references: [],
 		books: {},
-		currentBook: "",
+		currentBook: '',
+		currentBookAuthor: '',
 		currentSections: {},
 		title: null,
 		category: null,
@@ -98,6 +99,12 @@ class References extends Component {
 		})
 	}
 
+	handleBookAuthorChange = (event) => {
+		this.setState({
+			currentBookAuthor: event.target.value,
+		})
+	}
+
 	handleStartingPageChange = (event, bookname) => {
 		var currentSections = this.state.currentSections
 		currentSections[bookname].startingPage = event.target.value
@@ -125,7 +132,15 @@ class References extends Component {
 			return
 		}
 
-		books[this.state.currentBook] = []
+		if (this.state.currentBookAuthor === null || this.state.currentBookAuthor === '') {
+			this.addError(t("references.form.error.bookauthor"))
+			return
+		}
+
+		books[this.state.currentBook] = {
+			author: this.state.currentBookAuthor,
+			sections: []
+		}
 
 		var currentSections = this.state.currentSections
 		currentSections[this.state.currentBook] = {
@@ -133,9 +148,12 @@ class References extends Component {
 			endingPage: ''
 		}
 
+		debugger
+
 		this.setState({
 			books: books,
 			currentBook: '',
+			currentBookAuthor: '',
 			currentSections: currentSections,
 		})
 	}
@@ -170,12 +188,11 @@ class References extends Component {
 		}
 
 		if (startingPage > endingPage) {
-			debugger
 			this.addError(t('references.form.error.startingpagegt'))
 			return
 		}
 
-		currentBook.push(
+		currentBook.sections.push(
 			{
 				starting_page: startingPage,
 				ending_page: endingPage,
@@ -227,18 +244,21 @@ class References extends Component {
 		}
 
 		var booksList = []
-		for (const [ name, sections ] of Object.entries(this.state.books)) {
+		for (const [ name, detail ] of Object.entries(this.state.books)) {
 
-			if (sections.length === 0) {
+			if (detail.sections.length === 0) {
 				this.addError(t('references.form.error.section'))
 				return
 			}
 
 			booksList.push({
 				name: name,
-				book_sections: sections,
+				author: detail.author,
+				book_sections: detail.sections,
 			})
 		}
+
+		debugger
 
 		var reference = {
 			title: this.state.title,
@@ -358,10 +378,10 @@ class References extends Component {
 														<Row>
 															<Col>
 																<ListGroup>
-																{reference.books.map(({ name, book_sections }, bookIndex) => (
+																{reference.books.map(({ name, author, book_sections }, bookIndex) => (
 																	<ListGroup.Item style={{border: "none"}} key={bookIndex}>
 																		<div>
-																			<b>{name}</b>
+																			<b>{name}</b> - <span>{author}</span>
 																		</div>
 																		<div>
 																			{book_sections.map(({ starting_page, ending_page }, sectionsIndex) => (
@@ -451,12 +471,20 @@ class References extends Component {
 							</Form.Row>
 
 							<Form.Row>
-								<Form.Group as={Col} sm="8" md="10">
+								<Form.Group as={Col} sm="4" md="5">
 									<Form.Control
 										type="text"
 										value={this.state.currentBook || ""}
 										onChange={this.handleBookChange}
 										placeholder={t('references.form.booktitle')}
+									/>
+								</Form.Group>
+								<Form.Group as={Col} sm="4" md="5">
+									<Form.Control
+										type="text"
+										value={this.state.currentBookAuthor || ""}
+										onChange={this.handleBookAuthorChange}
+										placeholder={t('references.form.bookauthor')}
 									/>
 								</Form.Group>
 
@@ -468,7 +496,7 @@ class References extends Component {
 							<Form.Row>
 								<Col>
 									<ListGroup as={Col}>
-										{Object.entries(this.state.books).map(([bookName, sections], bookIndex) => (
+										{Object.entries(this.state.books).map(([bookName, details], bookIndex) => (
 											<ListGroup.Item key={bookIndex}>
 												<Form.Row>
 												<Container>
@@ -489,13 +517,21 @@ class References extends Component {
 													</Row>
 												</Container>
 												</Form.Row>
-
+												<Form.Row>
+												<Container>
+													<Row>
+														<Col className="limited-text">
+															<b>{t('references.form.author')}: </b> {details.author}
+														</Col>
+													</Row>
+												</Container>
+												</Form.Row>
 												<Form.Row>
 												<Container fluid>
 													<Row>
 														<Col className="limited-text">
 															<div className="limited-text"><b>{t('references.form.pages')}: </b>
-															{sections.map(({ starting_page, ending_page }, sectionIndex) => (
+															{details.sections.map(({ starting_page, ending_page }, sectionIndex) => (
 																<span key={sectionIndex}>|{starting_page}-{ending_page}| </span>
 															))}
 															</div>

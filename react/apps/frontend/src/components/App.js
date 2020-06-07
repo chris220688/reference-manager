@@ -8,6 +8,7 @@ import {
 } from 'react-bootstrap'
 
 
+import About from './About';
 import Search from './Search';
 import Login from './Login';
 import References from './References';
@@ -34,6 +35,7 @@ class App extends Component {
 		searchOn: true,
 		referencesOn: false,
 		joinUsOn: false,
+		aboutOn: false,
 		isAuthor: false,
 		requestedJoin: false,
 		alertMessage: null,
@@ -117,6 +119,7 @@ class App extends Component {
 			referencesOn: true,
 			searchOn: false,
 			joinUsOn: false,
+			aboutOn: false,
 		})
 	}
 
@@ -125,6 +128,7 @@ class App extends Component {
 			referencesOn: false,
 			searchOn: true,
 			joinUsOn: false,
+			aboutOn: false,
 		})
 	}
 
@@ -133,13 +137,25 @@ class App extends Component {
 			referencesOn: false,
 			searchOn: false,
 			joinUsOn: true,
+			aboutOn: false,
+		})
+	}
+
+	openAbout = () => {
+		this.setState({
+			referencesOn: false,
+			searchOn: false,
+			joinUsOn: false,
+			aboutOn: true
 		})
 	}
 
 	setSearchOn = () => {
 		this.setState({
+			referencesOn: false,
 			searchOn: true,
 			joinUsOn: false,
+			aboutOn: false
 		})
 	}
 
@@ -169,23 +185,25 @@ class App extends Component {
 					</Navbar.Brand>
 					<Navbar.Toggle aria-controls="basic-navbar-nav" />
 					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end custom-nav-items">
-						{this.state.userLoggedIn ?
-							<Nav className="mr-auto">
-								{/*
-								{this.state.userName ?
-									<span>Hello {this.state.userName}</span> : <span></span>
-								}
-								*/}
-								<Nav.Link onClick={this.openSearch}>{t('search.myaccount')}</Nav.Link>
-								<Nav.Link onClick={this.openSearch}>{t('search.search')}</Nav.Link>
-								{this.state.isAuthor ?
-									<Nav.Link style={{color:"white"}} onClick={this.openReferences}>{t('search.references')}</Nav.Link> : null
-								}
-								{!this.state.isAuthor && !this.state.requestedJoin ?
-									<Nav.Link onClick={this.openJoinus}>{t('joinus')}</Nav.Link> : null
-								}
-							</Nav> : null
-						}
+
+						<Nav className="mr-auto">
+							{/*
+							{this.state.userName ?
+								<span>Hello {this.state.userName}</span> : <span></span>
+							}
+							*/}
+							{this.state.userLoggedIn ?
+								<Nav.Link onClick={this.openSearch}>{t('myaccount')}</Nav.Link> : null
+							}
+							<Nav.Link onClick={this.openSearch}>{t('search.search')}</Nav.Link>
+							{this.state.userLoggedIn && this.state.isAuthor ?
+								<Nav.Link style={{color:"white"}} onClick={this.openReferences}>{t('search.references')}</Nav.Link> : null
+							}
+							{this.state.userLoggedIn && !this.state.isAuthor && !this.state.requestedJoin ?
+								<Nav.Link onClick={this.openJoinus}>{t('joinus')}</Nav.Link> : null
+							}
+						</Nav>
+
 						<Nav>
 							{this.state.userLoggedIn ?
 								<Nav.Link onClick={this.logout}>{t('search.logout')}</Nav.Link> :
@@ -234,13 +252,16 @@ class App extends Component {
 							producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
 						/> : null
 					}
+					{this.state.aboutOn ?
+						<About/> : null
+					}
 				</Container>
 
 				<Container className="footer-container">
 					<hr/>
 					<Navbar sticky="bottom" className="justify-content-end">
 						<Nav>
-							<Nav.Link>{t('about')}</Nav.Link>
+							<Nav.Link onClick={this.openAbout}>{t('about')}</Nav.Link>
 							<Nav.Link>{t('contact')}</Nav.Link>
 							<Nav.Link>{t('terms')}</Nav.Link>
 						</Nav>

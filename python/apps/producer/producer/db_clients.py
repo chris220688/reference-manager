@@ -185,6 +185,20 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
+	async def delete_internal_user(self, internal_user: InternalUser) -> int:
+		""" Deletes a user account from the database. If the user is an author
+			and has already created reference, updates the 'author' of these
+			references and sets it to 'orphan'.
+
+			Args:
+				internal_user: A user objects as defined in this application
+
+			Returns:
+				deleted_count: Number of deleted items
+		"""
+		...
+
+	@abstractmethod
 	async def update_internal_user(self, internal_user: InternalUser) -> InternalUser:
 		""" Updates a user in the database
 
@@ -383,12 +397,23 @@ class MongoDBClient(DatabaseClient):
 
 		return internal_user
 
+	async def delete_internal_user(self, internal_user: InternalUser) -> int:
+		result = await self._users_coll.delete_one({'_id': internal_user.internal_sub_id})
+
+		if result.deleted_count:
+			await self._reference_manager_coll.update_many(
+				{"metadata.author_id": internal_user.internal_sub_id},
+				{"$set": {"metadata.author_id": "orphan"}}
+			)
+
+		return result.deleted_count
+
 	async def update_internal_user(self, internal_user: InternalUser) -> InternalUser:
 		updated_user = None
 
 		result = await self._users_coll.update_one(
 			{"internal_sub_id": internal_user.internal_sub_id},
-			{'$set': internal_user.dict()}
+			{"$set": internal_user.dict()}
 		)
 
 		if result.modified_count:

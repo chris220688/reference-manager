@@ -37,13 +37,14 @@
   }
 }
 
-.search-container {
-  min-height: 500px;
+.main-container {
+  min-height: 800px;
   max-width: none;
 }
 
 .footer-container {
   max-width: none;
+  font-size: 15px;
 }
 
 .language-dropdown > button {

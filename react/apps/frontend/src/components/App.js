@@ -9,10 +9,13 @@ import {
 
 
 import About from './About';
+import Account from './Account';
 import Search from './Search';
 import Login from './Login';
 import References from './References';
 import JoinUs from './JoinUs';
+import PrivacyPolicy from './PrivacyPolicy';
+import Terms from './Terms';
 
 import '../styles/App.css'
 
@@ -32,6 +35,8 @@ class App extends Component {
 		producerReferencesEndpoint: process.env.REACT_APP_PRODUCER_REFERENCES_ENDPOINT,
 		producerCaregoriesEndpoint: process.env.REACT_APP_PRODUCER_CATEGORIES_ENDPOINT,
 		producerJoinEndpoint: process.env.REACT_APP_PRODUCER_JOIN_ENDPOINT,
+		producerAccountDetailsEndpoint: process.env.REACT_APP_PRODUCER_ACCOUNT_DETAILS_ENDPOINT,
+		producerDeleteAccountEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ACCOUNT_ENDPOINT,
 		searchOn: true,
 		referencesOn: false,
 		joinUsOn: false,
@@ -103,59 +108,103 @@ class App extends Component {
 
 		fetch(this.state.producerLogoutEndpoint, request)
 		.then(response => response.json())
-		.then(data => {
-			this.setState({
-				userLoggedIn: data['userLoggedIn'],
-				userName: null,
-				isAuthor: null,
-				requestedJoin: null,
-			})
-		})
+		.then(data => {window.location.reload()})
 		.catch(err => console.log(err))
 	}
 
 	openReferences = () => {
 		this.setState({
 			referencesOn: true,
+			accountOn: false,
 			searchOn: false,
 			joinUsOn: false,
 			aboutOn: false,
+			privacyPolicyOn: false,
+			termsOn: false,
 		})
 	}
 
 	openSearch = () => {
 		this.setState({
 			referencesOn: false,
+			accountOn: false,
 			searchOn: true,
 			joinUsOn: false,
 			aboutOn: false,
+			privacyPolicyOn: false,
+			termsOn: false,
+		})
+	}
+
+	openAccount = () => {
+		this.setState({
+			referencesOn: false,
+			accountOn: true,
+			searchOn: false,
+			joinUsOn: false,
+			aboutOn: false,
+			privacyPolicyOn: false,
+			termsOn: false,
 		})
 	}
 
 	openJoinus = () => {
 		this.setState({
 			referencesOn: false,
+			accountOn: false,
 			searchOn: false,
 			joinUsOn: true,
 			aboutOn: false,
+			privacyPolicyOn: false,
+			termsOn: false,
 		})
 	}
 
 	openAbout = () => {
 		this.setState({
 			referencesOn: false,
+			accountOn: false,
 			searchOn: false,
 			joinUsOn: false,
-			aboutOn: true
+			aboutOn: true,
+			privacyPolicyOn: false,
+			termsOn: false,
+		})
+	}
+
+	openPrivacyPolicy = () => {
+		this.setState({
+			referencesOn: false,
+			accountOn: false,
+			searchOn: false,
+			joinUsOn: false,
+			aboutOn: false,
+			privacyPolicyOn: true,
+			termsOn: false,
+		})
+	}
+
+	openTerms = () => {
+		this.setState({
+			referencesOn: false,
+			accountOn: false,
+			searchOn: false,
+			joinUsOn: false,
+			aboutOn: false,
+			privacyPolicyOn: false,
+			termsOn: true,
 		})
 	}
 
 	setSearchOn = () => {
 		this.setState({
 			referencesOn: false,
+			accountOn: false,
 			searchOn: true,
 			joinUsOn: false,
-			aboutOn: false
+			aboutOn: false,
+			privacyPolicyOn: false,
+			termsOn: false,
 		})
 	}
 
@@ -193,7 +242,7 @@ class App extends Component {
 							}
 							*/}
 							{this.state.userLoggedIn ?
-								<Nav.Link onClick={this.openSearch}>{t('myaccount')}</Nav.Link> : null
+								<Nav.Link onClick={this.openAccount}>{t('myaccount')}</Nav.Link> : null
 							}
 							<Nav.Link onClick={this.openSearch}>{t('search.search')}</Nav.Link>
 							{this.state.userLoggedIn && this.state.isAuthor ?
@@ -224,7 +273,7 @@ class App extends Component {
 					</Navbar.Collapse>
 				</Navbar>
 				<br/>
-				<Container className="search-container">
+				<Container className="main-container">
 					{this.state.alertMessage ?
 						<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
 							<Alert.Heading>{t('joinus.fantastic')}</Alert.Heading>
@@ -233,9 +282,13 @@ class App extends Component {
 								</p>
 						</Alert> : null
 					}
-					{this.state.searchOn ?
-						<Search/> : null
+					{this.state.accountOn ?
+						<Account
+							producerAccountDetailsEndpoint={this.state.producerAccountDetailsEndpoint}
+							producerDeleteAccountEndpoint={this.state.producerDeleteAccountEndpoint}
+						/> : null
 					}
+					{this.state.searchOn ? <Search/> : null }
 					{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
 						<JoinUs
 							producerJoinEndpoint={this.state.producerJoinEndpoint}
@@ -252,9 +305,9 @@ class App extends Component {
 							producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
 						/> : null
 					}
-					{this.state.aboutOn ?
-						<About/> : null
-					}
+					{this.state.aboutOn ? <About/> : null }
+					{this.state.privacyPolicyOn ? <PrivacyPolicy/> : null }
+					{this.state.termsOn ? <Terms/> : null }
 				</Container>
 
 				<Container className="footer-container">
@@ -263,7 +316,8 @@ class App extends Component {
 						<Nav>
 							<Nav.Link onClick={this.openAbout}>{t('about')}</Nav.Link>
 							<Nav.Link>{t('contact')}</Nav.Link>
-							<Nav.Link>{t('terms')}</Nav.Link>
+							<Nav.Link onClick={this.openPrivacyPolicy}>{t('privacypolicy')}</Nav.Link>
+							<Nav.Link onClick={this.openTerms}>{t('terms')}</Nav.Link>
 						</Nav>
 					</Navbar>
 				</Container>

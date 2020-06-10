@@ -424,3 +424,59 @@ async def join(
 		)
 
 		return response
+
+@app.get("/get-account/")
+async def get_account(
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	""" API endpoint for getting the account details of a user
+
+		Args:
+			internal_user: A user objects as defined in this application
+
+		Returns:
+			response: A JSON response including the account details
+	"""
+	async with exception_handling():
+
+		account_details = dict(
+			username=internal_user.username,
+			is_author=internal_user.is_author,
+			requested_join=internal_user.requested_join,
+			created_at=internal_user.created_at,
+		)
+
+		response = JSONResponse(
+			content=jsonable_encoder(account_details),
+		)
+
+		return response
+
+@app.delete("/delete-account/")
+async def delete_account(
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	""" API endpoint for deleting an account
+
+		Args:
+			internal_user: A user objects as defined in this application
+
+		Returns:
+			response: A JSON response with the status deletion operation
+	"""
+	async with exception_handling():
+		logger.info(
+			f"Received delete account request for user: {internal_user.internal_sub_id}"
+		)
+
+		deleted_count = await db_client.delete_internal_user(internal_user)
+
+		deleted = True if deleted_count else False
+
+		response = JSONResponse(
+			content=jsonable_encoder({"deleted": deleted}),
+		)
+
+		response.delete_cookie(key="access_token")
+
+		return response

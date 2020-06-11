@@ -30,7 +30,7 @@ export default function Login(props) {
 
 	return (
 		<section>
-			<Nav.Link variant="outline-dark" style={{color:"white"}} onClick={handleShow}>
+			<Nav.Link variant="outline-dark" onClick={handleShow}>
 				{t('login.signin')}
 			</Nav.Link>
 			<Modal show={show} onHide={handleClose}>
@@ -47,7 +47,7 @@ export default function Login(props) {
 							</Col>
 							<Col xs="2"></Col>
 						</Row>
-						<Row>
+						<Row className="text-center">
 							<Col xs="1"></Col>
 							<Col xs="10">
 							<div>

@@ -16,7 +16,7 @@ class PrivacyPolicy extends Component {
 				<h2>Last Updated 07 June  2020</h2>
 
 				<p>
-					Thank you for choosing to be part of our community at __________ (“company”, “we”, “us”, or “our”). We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about our policy, or our practices with regards to your personal information, please contact us at __________.
+					Thank you for choosing to be part of our community. We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about our policy, or our practices with regards to your personal information, please contact us at {this.props.emailContact}.
 				</p>
 				<p>
 					When you visit our and use our services, you trust us with your personal information. We take your privacy very seriously. In this privacy notice, we describe our privacy policy. We seek to explain to you in the clearest way possible what information we collect, how we use it and what rights you have in relation to it. We hope you take some time to read through it carefully, as it is important. If there are any terms in this privacy policy that you do not agree with, please discontinue use of our and our services.
@@ -36,7 +36,7 @@ class PrivacyPolicy extends Component {
 						In Short: We may collect personal information that you provide to us such as name, address, contact information and security data.
 					</p>
 					<p>
-						We collect personal information that you voluntarily provide to us when registering at ________ or otherwise contacting us.
+						We collect personal information that you voluntarily provide to us when registering at {this.props.domainName} or otherwise contacting us.
 					</p>
 
 					<p>
@@ -60,10 +60,10 @@ class PrivacyPolicy extends Component {
 
 					<h4>Information automatically collected</h4>
 					<p>
-						In Short: Some information – such as IP address and/or browser and device characteristics – is collected automatically when you visit ________ .
+						In Short: Some information – such as IP address and/or browser and device characteristics – is collected automatically when you visit {this.props.domainName}.
 					</p>
 					<p>
-						We automatically collect certain information when you visit, use or navigate the ________. This information does not reveal your specific identity (like your name or contact information) but may include device and usage information, such as your IP address, browser and device characteristics, operating system, language preferences, referring URLs, device name, country, location, information about how and when you use our and other technical information. This information is primarily needed to maintain the security and operation of our ________, and for our internal analytics and reporting purposes. 
+						We automatically collect certain information when you visit, use or navigate the website. This information does not reveal your specific identity (like your name or contact information) but may include device and usage information, such as your IP address, browser and device characteristics, operating system, language preferences, referring URLs, device name, country, location, information about how and when you use our and other technical information. This information is primarily needed to maintain the security and operation of our website, and for our internal analytics and reporting purposes.
 					</p>
 				</div>
 
@@ -110,7 +110,7 @@ class PrivacyPolicy extends Component {
 						<ul>
 							<li>
 								<p>
-									Third-Party Advertisers. We may use third-party advertising companies to serve ads when you visit ________. These companies may use information about your visits to our Website(s) and other websites that are contained in web cookies and other tracking technologies in order to provide advertisements about goods and services of interest to you.   
+									Third-Party Advertisers. We may use third-party advertising companies to serve ads when you visit {this.props.domainName}. These companies may use information about your visits to our Website(s) and other websites that are contained in web cookies and other tracking technologies in order to provide advertisements about goods and services of interest to you.
 								</p>
 							</li>
 							<li>
@@ -160,7 +160,7 @@ class PrivacyPolicy extends Component {
 						In Short: We may transfer, store, and process your information in countries other than your own.
 					</p>
 					<p>
-						Our servers are located in ________. If you are accessing our from outside, please be aware that your information may be transferred to, stored, and processed by us in our facilities and by those third parties with whom we may share your personal information (see "Will your information be shared with anyone?" above), in and other countries.
+						Our servers are located in {this.props.serversLocation}. If you are accessing our from outside, please be aware that your information may be transferred to, stored, and processed by us in our facilities and by those third parties with whom we may share your personal information (see "Will your information be shared with anyone?" above), in and other countries.
 					</p>
 					<p>
 						If you are a resident in the European Economic Area, then these countries may not have data protection or other laws as comprehensive as those in your country. We will however take all necessary measures to protect your personal information in accordance with this privacy policy and applicable law.
@@ -188,7 +188,7 @@ class PrivacyPolicy extends Component {
 						We will keep your personal information for as long as you keep your account open, in order to be able to authenticate you and grant you access to your account.
 					</p>
 					<p>
-						You can chose to delete your account anytime by contacting us at _______ or by following the instructions in your account settings.
+						You can chose to delete your account anytime by contacting us at {this.props.emailContact} or by following the instructions in your account settings.
 					</p>
 				</div>
 
@@ -210,7 +210,7 @@ class PrivacyPolicy extends Component {
 						In Short: We do not knowingly collect data from or market to children under 18 years of age.
 					</p>
 					<p>
-						We do not knowingly solicit data from or market to children under 18 years of age. By using ________, you represent that you are at least 18 or that you are the parent or guardian of such a minor and consent to such minor dependent’s use of the ________ . If we learn that personal information from users less than 18 years of age has been collected, we will deactivate the account and take reasonable measures to promptly delete such data from our records. If you become aware of any data we have collected from children under age 18, please contact us at __________. 
+						We do not knowingly solicit data from or market to children under 18 years of age. By using {this.props.domainName}, you represent that you are at least 18 or that you are the parent or guardian of such a minor and consent to such minor dependent’s use of the {this.props.domainName}. If we learn that personal information from users less than 18 years of age has been collected, we will deactivate the account and take reasonable measures to promptly delete such data from our records. If you become aware of any data we have collected from children under age 18, please contact us at {this.props.emailContact}.
 					</p>
 				</div>
 
@@ -260,7 +260,7 @@ class PrivacyPolicy extends Component {
 					<h3>13. How can you contact us about this policy?</h3>
 
 					<p>
-						If you have questions or comments about this policy, you may email us at __________ .
+						If you have questions or comments about this policy, you may email us at {this.props.emailContact}.
 					</p>
 				</div>
 			</Container>

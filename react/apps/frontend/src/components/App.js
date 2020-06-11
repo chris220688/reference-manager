@@ -16,6 +16,7 @@ import References from './References';
 import JoinUs from './JoinUs';
 import PrivacyPolicy from './PrivacyPolicy';
 import Terms from './Terms';
+import Contact from './Contact';
 
 import '../styles/App.css'
 
@@ -37,10 +38,17 @@ class App extends Component {
 		producerJoinEndpoint: process.env.REACT_APP_PRODUCER_JOIN_ENDPOINT,
 		producerAccountDetailsEndpoint: process.env.REACT_APP_PRODUCER_ACCOUNT_DETAILS_ENDPOINT,
 		producerDeleteAccountEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ACCOUNT_ENDPOINT,
+		emailContact: process.env.REACT_APP_EMAIL_CONTACT,
+		domainName: process.env.REACT_APP_DOMAIN_NAME,
+		serversLocation: process.env.REACT_APP_SERVERS_LOCATION,
 		searchOn: true,
+		accountOn: false,
 		referencesOn: false,
 		joinUsOn: false,
 		aboutOn: false,
+		privacyPolicyOn: false,
+		termsOn: false,
+		contactOn: false,
 		isAuthor: false,
 		requestedJoin: false,
 		alertMessage: null,
@@ -121,6 +129,7 @@ class App extends Component {
 			aboutOn: false,
 			privacyPolicyOn: false,
 			termsOn: false,
+			contactOn: false,
 		})
 	}
 
@@ -133,6 +142,7 @@ class App extends Component {
 			aboutOn: false,
 			privacyPolicyOn: false,
 			termsOn: false,
+			contactOn: false,
 		})
 	}
 
@@ -145,6 +155,7 @@ class App extends Component {
 			aboutOn: false,
 			privacyPolicyOn: false,
 			termsOn: false,
+			contactOn: false,
 		})
 	}
 
@@ -157,6 +168,7 @@ class App extends Component {
 			aboutOn: false,
 			privacyPolicyOn: false,
 			termsOn: false,
+			contactOn: false,
 		})
 	}
 
@@ -169,6 +181,7 @@ class App extends Component {
 			aboutOn: true,
 			privacyPolicyOn: false,
 			termsOn: false,
+			contactOn: false,
 		})
 	}
 
@@ -181,6 +194,7 @@ class App extends Component {
 			aboutOn: false,
 			privacyPolicyOn: true,
 			termsOn: false,
+			contactOn: false,
 		})
 	}
 
@@ -193,6 +207,20 @@ class App extends Component {
 			aboutOn: false,
 			privacyPolicyOn: false,
 			termsOn: true,
+			contactOn: false,
+		})
+	}
+
+	openContact = () => {
+		this.setState({
+			referencesOn: false,
+			accountOn: false,
+			searchOn: false,
+			joinUsOn: false,
+			aboutOn: false,
+			privacyPolicyOn: false,
+			termsOn: false,
+			contactOn: true,
 		})
 	}
 
@@ -205,6 +233,7 @@ class App extends Component {
 			aboutOn: false,
 			privacyPolicyOn: false,
 			termsOn: false,
+			contactOn: false,
 		})
 	}
 
@@ -306,8 +335,24 @@ class App extends Component {
 						/> : null
 					}
 					{this.state.aboutOn ? <About/> : null }
-					{this.state.privacyPolicyOn ? <PrivacyPolicy/> : null }
-					{this.state.termsOn ? <Terms/> : null }
+					{this.state.contactOn ?
+						<Contact
+							emailContact={this.state.emailContact}
+						/> : null
+					}
+					{this.state.privacyPolicyOn ?
+						<PrivacyPolicy
+							emailContact={this.state.emailContact}
+							domainName={this.state.domainName}
+							serversLocation={this.state.serversLocation}
+						/> : null
+					}
+					{this.state.termsOn ?
+						<Terms
+							emailContact={this.state.emailContact}
+							domainName={this.state.domainName}
+						/> : null
+					}
 				</Container>
 
 				<Container className="footer-container">
@@ -315,7 +360,7 @@ class App extends Component {
 					<Navbar sticky="bottom" className="justify-content-end">
 						<Nav>
 							<Nav.Link onClick={this.openAbout}>{t('about')}</Nav.Link>
-							<Nav.Link>{t('contact')}</Nav.Link>
+							<Nav.Link onClick={this.openContact}>{t('contact')}</Nav.Link>
 							<Nav.Link onClick={this.openPrivacyPolicy}>{t('privacypolicy')}</Nav.Link>
 							<Nav.Link onClick={this.openTerms}>{t('terms')}</Nav.Link>
 						</Nav>

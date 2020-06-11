@@ -94,10 +94,10 @@ class Account extends Component {
 								<tr>
 									<td>{t('myaccount.authorstatus')}</td>
 									{this.state.requestedJoin && this.state.isAuthor ?
-										<td>{t('myaccount.confirmed')}</td>: null
+										<td style={{"color": "#19b119"}}><b>{t('myaccount.confirmed')}</b></td>: null
 									}
 									{this.state.requestedJoin && !this.state.isAuthor ?
-										<td>{t('myaccount.pending')}</td>: null
+										<td style={{"color": "#bc900d"}}><b>{t('myaccount.pending')}</b></td>: null
 									}
 									{!this.state.requestedJoin ?
 										<td>{t('myaccount.notrequested')}</td>: null

@@ -20,7 +20,7 @@ class Terms extends Component {
 					<ul>
 						<li>
 							<p>
-								1.1  These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (you), and __________, located at __________, London, __________ United Kingdom (we, us), concerning your access to and use of the __________ (http://__________) website as well as any related applications (the Site).
+								1.1  These Terms and Conditions constitute a legally binding agreement made between you, whether personally or on behalf of an entity (you), and {this.props.domainName}, concerning your access to and use of the website ({this.props.domainName}) as well as any related applications (the Site).
 							</p>
 							<p>
 								The Site provides the following services: Online search engine for book references (Services). You agree that by accessing the Site and/or Services, you have read, understood, and agree to be bound by all of these Terms and Conditions.
@@ -150,7 +150,7 @@ class Terms extends Component {
 								3.1  You represent and warrant that: (a) all registration information you submit will be true, accurate, current, and complete and relate to you and not a third party; (b) you will maintain the accuracy of such information and promptly update such information as necessary; (c) you will keep your password confidential and will be responsible for all use of your password and account; (d) you have the legal capacity and you agree to comply with these Terms and Conditions; and (e) you are not a minor in the jurisdiction in which you reside, or if a minor, you have received parental permission to use the Site.
 							</p>
 							<p>
-								If you know or suspect that anyone other than you knows your user information (such as an identification code or user name) and/or password you must promptly notify us at __________.
+								If you know or suspect that anyone other than you knows your user information (such as an identification code or user name) and/or password you must promptly notify us at {this.props.emailContact}.
 							</p>
 						</li>
 						<li>
@@ -217,7 +217,7 @@ class Terms extends Component {
 						</li>
 						<li>
 							<p>
-								4.7  If you wish to complain about User Content uploaded by other users please contact us at __________.
+								4.7  If you wish to complain about User Content uploaded by other users please contact us at {this.props.emailContact}.
 							</p>
 						</li>
 					</ul>
@@ -369,7 +369,7 @@ class Terms extends Component {
 					<ul>
 						<li>
 							<p>
-								9.1  These Terms and Conditions shall remain in full force and effect while you use the Site or Services or are otherwise a user of the Site, as applicable. You may terminate your use or participation at any time, for any reason, by following the instructions for terminating user accounts in your account settings, if available, or by contacting us at __________.
+								9.1  These Terms and Conditions shall remain in full force and effect while you use the Site or Services or are otherwise a user of the Site, as applicable. You may terminate your use or participation at any time, for any reason, by following the instructions for terminating user accounts in your account settings, if available, or by contacting us at {this.props.emailContact}.
 							</p>
 						</li>
 						<li>
@@ -442,7 +442,7 @@ class Terms extends Component {
 						</li>
 						<li>
 							<p>
-								10.10  In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services, please contact us by email at __________ .
+								10.10  In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services, please contact us by email at {this.props.emailContact}.
 							</p>
 						</li>
 					</ul>

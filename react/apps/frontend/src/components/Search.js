@@ -193,7 +193,7 @@ class Search extends Component {
 								<ResultListWrapper>
 									{
 										data.map((item, index) => (
-											<ResultList className="test" key={index}>
+											<ResultList key={index}>
 												<ResultList.Content>
 													<ResultList.Title>
 														<b>{item.title}</b>

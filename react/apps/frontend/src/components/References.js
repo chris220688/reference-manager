@@ -3,10 +3,11 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next'
 import {
 	Alert, Button, Col, Container, Dropdown,
-	DropdownButton, Form, ListGroup, Row, Tab, Tabs
+	DropdownButton, Form, ListGroup, Popover,
+	OverlayTrigger, Row, Tab, Tabs
 } from 'react-bootstrap'
 
-import { IoIosTrash } from "react-icons/io";
+import { IoIosTrash, IoMdInformationCircle } from "react-icons/io";
 
 import '../styles/References.css'
 
@@ -148,8 +149,6 @@ class References extends Component {
 			endingPage: ''
 		}
 
-		debugger
-
 		this.setState({
 			books: books,
 			currentBook: '',
@@ -258,8 +257,6 @@ class References extends Component {
 			})
 		}
 
-		debugger
-
 		var reference = {
 			title: this.state.title,
 			category: this.state.category,
@@ -339,6 +336,24 @@ class References extends Component {
 
 	render() {
 		const { t } = this.props
+
+		const popover = (
+			<Popover id="popover-basic">
+				<Popover.Title as="h3">Tips</Popover.Title>
+				<Popover.Content>
+					<p>
+						1. {t('references.tips.p1')}
+					</p>
+					<p>
+						2. {t('references.tips.p2')}
+					</p>
+					<p>
+						3. {t('references.tips.p3')}
+					</p>
+				</Popover.Content>
+			</Popover>
+		)
+
 		return (
 			<Container>
 				<Tabs defaultActiveKey="references" className="reference-tabs">
@@ -442,6 +457,13 @@ class References extends Component {
 											</Dropdown.Item>
 										))}
 									</DropdownButton>
+								</Form.Group>
+								<Form.Group as={Col} controlId="information">
+									<OverlayTrigger trigger="click" placement="left" overlay={popover}>
+										<div className="float-right information-button">
+											<IoMdInformationCircle/>
+										</div>
+									</OverlayTrigger>
 								</Form.Group>
 							</Form.Row>
 

@@ -157,7 +157,9 @@ services:
   monstache:
     hostname: monstache
     container_name: monstache
-    build: monstache/.
+    build:
+      context: monstache/.
+      dockerfile: Dockerfile.dev
     deploy:
       replicas: 1
       update_config:

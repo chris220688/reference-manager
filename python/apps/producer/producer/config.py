@@ -40,5 +40,5 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", None)
 # JWT access token configuration
 JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", None)
 ALGORITHM = os.environ.get("ALGORITHM", None)
-ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 15)
-AUTH_TOKEN_EXPIRE_MINUTES = os.environ.get("AUTH_TOKEN_EXPIRE_MINUTES", 1)
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 15))
+AUTH_TOKEN_EXPIRE_MINUTES = int(os.environ.get("AUTH_TOKEN_EXPIRE_MINUTES", 1))

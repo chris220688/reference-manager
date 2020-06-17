@@ -8,7 +8,9 @@ RUN mkdir app
 WORKDIR /app
 
 # Copy the current directory contents into the container at /app
-COPY . /app
+COPY monstache /app
+
+RUN rm config.toml.dev
 
 # Install any needed packages specified in requirements.txt
 RUN apt-get update

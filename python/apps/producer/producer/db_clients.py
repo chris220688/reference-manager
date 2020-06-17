@@ -240,17 +240,20 @@ class DatabaseClient(ABC):
 class MongoDBClient(DatabaseClient):
 	""" Wrapper around an AsyncIOMotorClient object. """
 	def __init__(self):
-		# Connection URI
-		replicaset_uri = (
-			f"mongodb://{config.MONGODB_USERNAME}:"
-			f"{config.MONGODB_PASSWORD}@"
-			f"{config.MONGODB_HOST}:"
-			f"{config.MONGODB_PORT}/"
-			f"{config.MONGODB_DATABASE}?"
-			f"authSource={config.MONGODB_REFERENCE_MANAGER_COLLECTION}"
+		# Connection arguments
+		mongo_args = dict(
+			host=config.MONGODB_HOST,
+			port=config.MONGODB_PORT,
+			username=config.MONGODB_USERNAME,
+			password=config.MONGODB_PASSWORD,
+			replicaset=config.MONGODB_REPLICASET,
+			authSource=config.MONGODB_DATABASE,
+			retryWrites=True,
+			serverSelectionTimeoutMS=30000
 		)
+
 		# Motor mongo client
-		self._motor_client = AsyncIOMotorClient(replicaset_uri)
+		self._motor_client = AsyncIOMotorClient(**mongo_args)
 		# Mongo database
 		self._db = self._motor_client[config.MONGODB_DATABASE]
 		# Mongo collections

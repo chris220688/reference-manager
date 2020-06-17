@@ -1,27 +1,3 @@
-# connection settings
-
-# connect to MongoDB using the following URL
-mongo-url = "mongodb://root:referencemanager@mongodb-primary:27017"
-
-# connect to the Elasticsearch REST API at the following node URLs
-elasticsearch-urls = ["http://elasticsearch:9200"]
-
-# frequently required settings
-
-# additionally, if you need to seed an index from a collection and not just listen for changes from the oplog
-# you can copy entire collections or views from MongoDB to Elasticsearch
-direct-read-namespaces = ["referencemanager.referencemanager"]
-
-# if you want to use MongoDB change streams instead of legacy oplog tailing add the following
-# in this case you don't need regexes to filter collections.
-# change streams require MongoDB version 3.6+
-# change streams can only be combined with resume, replay, or cluster-name options on MongoDB 4+
-# if you have MongoDB 4+ you can listen for changes to an entire database or entire deployment
-# to listen to an entire db use only the database name.  For a deployment use an empty string.
-change-stream-namespaces = ["referencemanager.referencemanager"]
-
-# additional settings
-
 # compress requests to Elasticsearch
 gzip = true
 # generate indexing statistics
@@ -31,9 +7,9 @@ index-stats = true
 # use 4 go routines concurrently pushing documents to Elasticsearch
 elasticsearch-max-conns = 4
 
-# propogate dropped collections in MongoDB as index deletes in Elasticsearch
+# propagate dropped collections in MongoDB as index deletes in Elasticsearch
 dropped-collections = true
-# propogate dropped databases in MongoDB as index deletes in Elasticsearch
+# propagate dropped databases in MongoDB as index deletes in Elasticsearch
 dropped-databases = true
 # in Elasticsearch with a newer version. Elasticsearch is preventing the old docs from overwriting new ones.
 replay = false

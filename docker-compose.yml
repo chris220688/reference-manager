@@ -1,9 +1,9 @@
 version: "3"
 
 services:
-  mongodb-primary:
-    hostname: mongodb-primary
-    container_name: mongodb-primary
+  replica-set-mongodb-primary:
+    hostname: replica-set-mongodb-primary
+    container_name: replica-set-mongodb-primary
     image: ${MONGODB_IMAGE}
     environment:
       - MONGODB_USERNAME=${MONGODB_USERNAME}
@@ -18,15 +18,15 @@ services:
     networks:
       - stack
 
-  mongodb-secondary:
-    hostname: mongodb-secondary
-    container_name: mongodb-secondary
+  replica-set-mongodb-secondary:
+    hostname: replica-set-mongodb-secondary
+    container_name: replica-set-secondary
     image: ${MONGODB_IMAGE}
     depends_on:
-      - mongodb-primary
+      - replica-set-mongodb-primary
     environment:
       - MONGODB_REPLICA_SET_MODE=secondary
-      - MONGODB_PRIMARY_HOST=mongodb-primary
+      - MONGODB_PRIMARY_HOST=replica-set-mongodb-primary
       - MONGODB_PRIMARY_PORT_NUMBER=27017
       - MONGODB_PRIMARY_ROOT_PASSWORD=${MONGODB_PRIMARY_ROOT_PASSWORD}
       - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
@@ -34,15 +34,15 @@ services:
     networks:
       - stack
 
-  mongodb-arbiter:
-    hostname: mongodb-arbiter
-    container_name: mongodb-arbiter
+  replica-set-mongodb-arbiter:
+    hostname: replica-set-mongodb-arbiter
+    container_name: replica-set-mongodb-arbiter
     image: ${MONGODB_IMAGE}
     depends_on:
-      - mongodb-primary
+      - replica-set-mongodb-primary
     environment:
       - MONGODB_REPLICA_SET_MODE=arbiter
-      - MONGODB_PRIMARY_HOST=mongodb-primary
+      - MONGODB_PRIMARY_HOST=replica-set-mongodb-primary
       - MONGODB_PRIMARY_PORT_NUMBER=27017
       - MONGODB_PRIMARY_ROOT_PASSWORD=${MONGODB_PRIMARY_ROOT_PASSWORD}
       - MONGODB_REPLICA_SET_KEY=${MONGODB_REPLICA_SET_KEY}
@@ -67,7 +67,6 @@ services:
         hard: -1
     ports:
       - "9200:9200"
-    #   - "9300:9300"
     networks:
       - stack
 
@@ -96,16 +95,13 @@ services:
       dockerfile: python/apps/consumer/Dockerfile
     working_dir: "/usr/src/apps/consumer"
     environment:
+      - LOCAL_DEPLOYMENT=false
       - APP_NAME=consumer
       - ELASTICSEARCH_HOST=elasticsearch
       - ELASTICSEARCH_INDEX=referencemanager.referencemanager
       - SEARCH_ENDPOINT=/search/referencemanager/_msearch/
     command:
       pipenv run uvicorn consumer.main:app --host 0.0.0.0
-    # links:
-    #   - elasticsearch
-    # depends_on:
-    #   - elasticsearch
     ports:
       - "8001:8000"
     networks:
@@ -118,19 +114,20 @@ services:
       context: .
       dockerfile: python/apps/producer/Dockerfile
     depends_on:
-      - mongodb-primary
-      - mongodb-secondary
-      - mongodb-arbiter
+      - replica-set-mongodb-primary
+      - replica-set-mongodb-secondary
+      - replica-set-mongodb-arbiter
     working_dir: "/usr/src/apps/producer"
     environment:
+      - LOCAL_DEPLOYMENT=false
       - APP_NAME=producer
       - DATABASE_TYPE=mongodb
-      - DATABASE_HOST=mongodb-primary
+      - DATABASE_HOST=replica-set-mongodb-primary
       - DATABASE_PORT=27017
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_NAME=${DATABASE_NAME}
-      - WAIT_HOSTS=mongodb-primary:27017,mongodb-secondary:27017,mongodb-arbiter:27017
+      - WAIT_HOSTS=replica-set-mongodb-primary:27017,replica-set-mongodb-secondary:27017,replica-set-mongodb-arbiter:27017
       - WAIT_HOSTS_TIMEOUT=60
       - WAIT_AFTER_HOSTS=30
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
@@ -142,7 +139,6 @@ services:
       - AZURE_TENANT_ID=${AZURE_TENANT_ID}
       - AZURE_DISCOVERY_URL=https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration
       - AZURE_REDIRECT_URL=http://localhost:80/api/producer/azure-login-callback/
-      - FRONTEND_URL=http://localhost:80/frontend/
       - ALGORITHM=${ALGORITHM}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
@@ -178,16 +174,16 @@ services:
         max_attempts: 3
         window: 10s
     environment:
-      - WAIT_HOSTS=mongodb-primary:27017,elasticsearch:9200
+      - WAIT_HOSTS=replica-set-mongodb-primary:27017,elasticsearch:9200
       - WAIT_HOSTS_TIMEOUT=60
-    #   - MONSTACHE_CHANGE_STREAM_NS=referencemanager.referencemanager
-    #   - MONSTACHE_DIRECT_READ_NS=referencemanager.referencemanager
-    #   - MONSTACHE_MONGO_URL=mongodb://root:referencemanager@mongodb-primary:27017
-    #   - MONSTACHE_ES_URLS=http://elasticsearch:9200
+      - MONSTACHE_CHANGE_STREAM_NS=${MONSTACHE_CHANGE_STREAM_NS}
+      - MONSTACHE_DIRECT_READ_NS=${MONSTACHE_DIRECT_READ_NS}
+      - MONSTACHE_MONGO_URL=${MONSTACHE_MONGO_URL}
+      - MONSTACHE_ES_URLS=http://elasticsearch:9200
     ports:
       - "8080:8080"
     command:
-      sh -c "/wait && ./build/linux-amd64/monstache -f config.toml.dev"
+      sh -c "/wait && ./build/linux-amd64/monstache -f config.toml"
     networks:
       - stack
 
@@ -196,7 +192,7 @@ services:
     container_name: frontend
     build:
       context: .
-      dockerfile: react/apps/frontend/Dockerfile.dev
+      dockerfile: react/apps/frontend/Dockerfile
     environment:
       # Doesn't work. Needs to be set in .env file
       - REACT_APP_PRODUCER_LOGIN_ENDPOINT=http://localhost:80/api/producer/login-redirect

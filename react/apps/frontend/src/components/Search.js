@@ -15,8 +15,8 @@ const { ResultListWrapper } = ReactiveList;
 class Search extends Component {
 
 	state = {
-		producerCaregoriesEndpoint: process.env.REACT_APP_PRODUCER_CATEGORIES_ENDPOINT,
-		consumerSearchEndpoint: process.env.REACT_APP_CONSUMER_SEARCH_ENDPOINT,
+		producerCaregoriesEndpoint: this.props.producerCaregoriesEndpoint,
+		consumerSearchEndpoint: this.props.consumerSearchEndpoint,
 		category: null,
 		categories: [],
 		categoriesStyle: {display: 'none'},

@@ -1,13 +1,13 @@
 SHELL := /bin/bash
 
 stack:
-	docker-compose up -d --build mongodb-primary mongodb-secondary mongodb-arbiter elasticsearch monstache frontend producer consumer nginx
+	docker-compose up -d --build replica-set-mongodb-primary replica-set-mongodb-secondary replica-set-mongodb-arbiter elasticsearch monstache frontend producer consumer nginx
 
 frontend:
 	docker-compose up -d --build frontend consumer elasticsearch nginx
 
 replica-set:
-	docker-compose up -d --build mongodb-arbiter mongodb-secondary mongodb-primary
+	docker-compose up -d --build replica-set-mongodb-arbiter replica-set-mongodb-secondary replica-set-mongodb-primary
 
 clean:
 	docker-compose down

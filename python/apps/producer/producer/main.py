@@ -47,16 +47,19 @@ logger = contextlog.get_contextlog()
 
 app = FastAPI()
 
-# origins = [
-# 	"http://localhost:3000",
-# ]
-# app.add_middleware(
-# 	CORSMiddleware,
-# 	allow_origins=origins,
-# 	allow_credentials=True,
-# 	allow_methods=["*"],
-# 	allow_headers=["*"],
-# )
+
+# Allow CORS only locally
+if config.LOCAL_DEPLOYMENT:
+	origins = [
+		"http://localhost:3000",
+	]
+	app.add_middleware(
+		CORSMiddleware,
+		allow_origins=origins,
+		allow_credentials=True,
+		allow_methods=["*"],
+		allow_headers=["*"],
+	)
 
 
 auth_token_scheme = auth_schemes.AuthTokenBearer()
@@ -156,7 +159,7 @@ async def google_login_callback(request: Request):
 		internal_auth_token = await auth_util.create_internal_auth_token(internal_user)
 
 		# Redirect the user to the home page
-		redirect_url = f"{config.FRONTEND_URL}?authToken={internal_auth_token}"
+		redirect_url = f"{request.base_url}?authToken={internal_auth_token}"
 		return RedirectResponse(url=redirect_url)
 
 @app.get("/azure-login-callback/")
@@ -192,7 +195,7 @@ async def azure_login_callback(request: Request):
 		internal_auth_token = await auth_util.create_internal_auth_token(internal_user)
 
 		# Redirect the user to the home page
-		redirect_url = f"{config.FRONTEND_URL}?authToken={internal_auth_token}"
+		redirect_url = f"{request.base_url}?authToken={internal_auth_token}"
 		return RedirectResponse(url=redirect_url)
 
 

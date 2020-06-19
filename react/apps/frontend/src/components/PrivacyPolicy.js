@@ -8,7 +8,7 @@ import { Container } from 'react-bootstrap'
 class PrivacyPolicy extends Component {
 
 	render() {
-		const { t } = this.props
+		//const { t } = this.props
 		return (
 			<Container>
 				<h1>PRIVACY NOTICE</h1>

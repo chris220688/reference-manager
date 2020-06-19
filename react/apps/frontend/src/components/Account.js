@@ -128,7 +128,7 @@ class Account extends Component {
 }
 
 function DeleteAccount(props) {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 
 	const [show, setShow] = useState(false);
 

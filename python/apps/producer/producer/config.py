@@ -1,5 +1,8 @@
 import os
 
+# Mongo driver does funny things when running replica-set locally
+# Also use LOCAL_DEPLOYMENT for CORS when running locally
+LOCAL_DEPLOYMENT = True if os.getenv("LOCAL_DEPLOYMENT", "false") == "true" else False
 
 # Supported database types by name
 MONGO_DB = "mongodb"
@@ -33,9 +36,6 @@ AZURE_TENANT_ID = os.environ.get("AZURE_TENANT_ID", None)
 AZURE_AUTHORITY = f"https://login.microsoftonline.com/common"
 AZURE_DISCOVERY_URL = os.environ.get("AZURE_DISCOVERY_URL", None)
 AZURE_REDIRECT_URL = os.environ.get("AZURE_REDIRECT_URL", None)
-
-# Front end endpoint
-FRONTEND_URL = os.environ.get("FRONTEND_URL", None)
 
 # JWT access token configuration
 JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", None)

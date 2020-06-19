@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import i18n from './i18n';
 import { MdLanguage } from "react-icons/md";
 import {
-	Alert, Container, Dropdown, DropdownType, Navbar, Nav
+	Alert, Container, Dropdown, Navbar, Nav
 } from 'react-bootstrap'
 
 
@@ -27,20 +27,6 @@ class App extends Component {
 		userLoggedIn: false,
 		userName: null,
 		permissions: [],
-		producerLoginRedirectEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_REDIRECT_ENDPOINT,
-		producerLoginEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_ENDPOINT,
-		producerLogoutEndpoint: process.env.REACT_APP_PRODUCER_LOGOUT_ENDPOINT,
-		producerLoginCheckEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_CHECK_ENDPOINT,
-		producerInsertEndpoint: process.env.REACT_APP_PRODUCER_INSERT_ENDPOINT,
-		producerDeleteEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ENDPOINT,
-		producerReferencesEndpoint: process.env.REACT_APP_PRODUCER_REFERENCES_ENDPOINT,
-		producerCaregoriesEndpoint: process.env.REACT_APP_PRODUCER_CATEGORIES_ENDPOINT,
-		producerJoinEndpoint: process.env.REACT_APP_PRODUCER_JOIN_ENDPOINT,
-		producerAccountDetailsEndpoint: process.env.REACT_APP_PRODUCER_ACCOUNT_DETAILS_ENDPOINT,
-		producerDeleteAccountEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ACCOUNT_ENDPOINT,
-		emailContact: process.env.REACT_APP_EMAIL_CONTACT,
-		domainName: process.env.REACT_APP_DOMAIN_NAME,
-		serversLocation: process.env.REACT_APP_SERVERS_LOCATION,
 		searchOn: true,
 		accountOn: false,
 		referencesOn: false,
@@ -55,7 +41,34 @@ class App extends Component {
 	}
 
 	componentDidMount() {
+		this.setEnvVariables()
 		this.authenticate()
+	}
+
+	setEnvVariables = () => {
+		// All these should ideally be environment variables
+		const domain = window.location.protocol + '//' + window.location.host
+
+		const consumerDomain = domain // 'http://localhost:8001'
+		const producerDomain = domain // 'http://localhost:8000'
+
+		this.setState({
+			domainName: domain,
+			producerLoginRedirectEndpoint: producerDomain + '/login-redirect',
+			producerLoginEndpoint: producerDomain + '/login/',
+			producerLogoutEndpoint: producerDomain + '/logout/',
+			producerLoginCheckEndpoint: producerDomain + '/user-session-status/',
+			producerInsertEndpoint: producerDomain + '/insert-reference/',
+			producerDeleteEndpoint: producerDomain + '/delete-reference/',
+			producerReferencesEndpoint: producerDomain + '/get-references/',
+			producerCaregoriesEndpoint: producerDomain + '/get-categories/',
+			producerJoinEndpoint: producerDomain + '/join/',
+			producerAccountDetailsEndpoint: producerDomain + '/get-account/',
+			producerDeleteAccountEndpoint: producerDomain + '/delete-account/',
+			consumerSearchEndpoint: consumerDomain + '/search/',
+			emailContact: 'findbooksources@gmail.com',
+			serversLocation: 'United Kingdom',
+		})
 	}
 
 	authenticate = () => {
@@ -85,7 +98,7 @@ class App extends Component {
 			// Check user is logged in
 			this.checkUserSessionStatus()
 		})
-		.then(data => console.log(data))
+		.then(data => {})
 		.catch(err => console.log(err))
 	}
 
@@ -317,7 +330,12 @@ class App extends Component {
 							producerDeleteAccountEndpoint={this.state.producerDeleteAccountEndpoint}
 						/> : null
 					}
-					{this.state.searchOn ? <Search/> : null }
+					{this.state.searchOn && this.state.consumerSearchEndpoint ?
+						<Search
+							producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+							consumerSearchEndpoint={this.state.consumerSearchEndpoint}
+						/> : null
+					}
 					{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
 						<JoinUs
 							producerJoinEndpoint={this.state.producerJoinEndpoint}

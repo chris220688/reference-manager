@@ -194,9 +194,6 @@ services:
     build:
       context: .
       dockerfile: react/apps/frontend/Dockerfile
-    environment:
-      # Doesn't work. Needs to be set in .env file
-      - REACT_APP_PRODUCER_LOGIN_ENDPOINT=http://localhost:80/api/producer/login-redirect
     ports:
       - "3000:3000"
     networks:

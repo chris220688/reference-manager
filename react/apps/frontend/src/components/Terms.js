@@ -7,7 +7,7 @@ import { Container } from 'react-bootstrap'
 
 class Terms extends Component {
 	render() {
-		const { t } = this.props
+		//const { t } = this.props
 		return (
 			<Container>
 				<h1>TERMS AND CONDITIONS</h1>

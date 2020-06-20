@@ -1,5 +1,8 @@
 import os
 
+# Mongo driver does funny things when running replica-set locally
+# Also use LOCAL_DEPLOYMENT for CORS when running locally
+LOCAL_DEPLOYMENT = True if os.getenv("LOCAL_DEPLOYMENT", "false") == "true" else False
 
 # Supported database types by name
 MONGO_DB = "mongodb"

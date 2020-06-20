@@ -9,7 +9,7 @@ import '../styles/Login.css'
 
 
 export default function Login(props) {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 
 	const [show, setShow] = useState(false);
 
@@ -39,7 +39,7 @@ export default function Login(props) {
 						<Row>
 							<Col xs="2"></Col>
 							<Col xs="8">
-								<div class="login-title">
+								<div className="login-title">
 									<p>
 										{t('login.welcome')}
 									</p>
@@ -65,11 +65,11 @@ export default function Login(props) {
 						<Row>
 							<Col xs="2"></Col>
 							<Col xs="8">
-								<div class="login-btn-div" onClick={googleLogin}>
+								<div className="login-btn-div" onClick={googleLogin}>
 									<span>
-										<img width="20" height="20" class="login-btn-image" alt="google" src={glogo}/>
+										<img width="20" height="20" className="login-btn-image" alt="google" src={glogo}/>
 									</span>
-									<span class="login-btn-text">
+									<span className="login-btn-text">
 										{t('login.googlesignin')}
 									</span>
 								</div>
@@ -80,11 +80,11 @@ export default function Login(props) {
 						<Row>
 							<Col xs="2"></Col>
 							<Col xs="8">
-								<div class="login-btn-div" onClick={azureLogin}>
+								<div className="login-btn-div" onClick={azureLogin}>
 									<span>
-										<img width="20" height="20" class="login-btn-image" alt="microsoft" src={mlogo}/>
+										<img width="20" height="20" className="login-btn-image" alt="microsoft" src={mlogo}/>
 									</span>
-									<span class="login-btn-text">
+									<span className="login-btn-text">
 										{t('login.msoftsignin')}
 									</span>
 								</div>
@@ -95,7 +95,7 @@ export default function Login(props) {
 					</Container>
 				</Modal.Body>
 				<Modal.Footer>
-					<div class="login-footer-text">
+					<div className="login-footer-text">
 						<p>
 							{t('login.notification')}
 						</p>

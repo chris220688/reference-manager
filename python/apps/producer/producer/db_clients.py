@@ -251,9 +251,21 @@ class MongoDBClient(DatabaseClient):
 			retryWrites=True,
 			serverSelectionTimeoutMS=30000
 		)
+		replicaset_uri = (
+			f"mongodb://{config.MONGODB_USERNAME}:"
+			f"{config.MONGODB_PASSWORD}@"
+			f"{config.MONGODB_HOST}:"
+			f"{config.MONGODB_PORT}/"
+			f"{config.MONGODB_DATABASE}?"
+			f"authSource={config.MONGODB_REFERENCE_MANAGER_COLLECTION}"
+		)
 
 		# Motor mongo client
-		self._motor_client = AsyncIOMotorClient(**mongo_args)
+		if config.LOCAL_DEPLOYMENT:
+			self._motor_client = AsyncIOMotorClient(replicaset_uri)
+		else:
+			self._motor_client = AsyncIOMotorClient(**mongo_args)
+
 		# Mongo database
 		self._db = self._motor_client[config.MONGODB_DATABASE]
 		# Mongo collections
@@ -267,7 +279,7 @@ class MongoDBClient(DatabaseClient):
 
 	async def close_connection(self):
 		logger.info("Closing MongoDB connection")
-		await self._motor_client.close()
+		self._motor_client.close()
 
 	async def start_session(self):
 		logger.info("Starting MongoDB session")

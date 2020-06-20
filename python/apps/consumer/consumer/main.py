@@ -38,16 +38,20 @@ logger = contextlog.get_contextlog()
 
 app = FastAPI()
 
-# origins = [
-# 	"http://localhost:3000",
-# ]
-# app.add_middleware(
-# 	CORSMiddleware,
-# 	allow_origins=origins,
-# 	allow_credentials=True,
-# 	allow_methods=["*"],
-# 	allow_headers=["*"],
-# )
+
+# Allow CORS only locally
+if config.LOCAL_DEPLOYMENT:
+	origins = [
+		"http://localhost:3000",
+	]
+	app.add_middleware(
+		CORSMiddleware,
+		allow_origins=origins,
+		allow_credentials=True,
+		allow_methods=["*"],
+		allow_headers=["*"],
+	)
+
 
 @app.on_event("startup")
 async def startup_event():

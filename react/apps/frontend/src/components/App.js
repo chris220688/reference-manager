@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import i18n from './i18n';
 import { MdLanguage } from "react-icons/md";
 import {
-	Alert, Container, Dropdown, DropdownType, Navbar, Nav
+	Alert, Container, Dropdown, Navbar, Nav
 } from 'react-bootstrap'
 
 
@@ -17,6 +17,7 @@ import JoinUs from './JoinUs';
 import PrivacyPolicy from './PrivacyPolicy';
 import Terms from './Terms';
 import Contact from './Contact';
+import { constants } from '../constants/Constants.js'
 
 import '../styles/App.css'
 
@@ -24,23 +25,23 @@ import '../styles/App.css'
 class App extends Component {
 
 	state = {
+		producerLoginRedirectEndpoint: constants.producerLoginRedirectEndpoint,
+		producerLoginEndpoint: constants.producerLoginEndpoint,
+		producerLogoutEndpoint: constants.producerLogoutEndpoint,
+		producerLoginCheckEndpoint: constants.producerLoginCheckEndpoint,
+		producerInsertEndpoint: constants.producerInsertEndpoint,
+		producerDeleteEndpoint: constants.producerDeleteEndpoint,
+		producerReferencesEndpoint: constants.producerReferencesEndpoint,
+		producerCaregoriesEndpoint: constants.producerCaregoriesEndpoint,
+		producerJoinEndpoint: constants.producerJoinEndpoint,
+		producerAccountDetailsEndpoint: constants.producerAccountDetailsEndpoint,
+		producerDeleteAccountEndpoint: constants.producerDeleteAccountEndpoint,
+		consumerSearchEndpoint: constants.consumerSearchEndpoint,
+		emailContact: constants.emailContact,
+		serversLocation: constants.serversLocation,
 		userLoggedIn: false,
 		userName: null,
 		permissions: [],
-		producerLoginRedirectEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_REDIRECT_ENDPOINT,
-		producerLoginEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_ENDPOINT,
-		producerLogoutEndpoint: process.env.REACT_APP_PRODUCER_LOGOUT_ENDPOINT,
-		producerLoginCheckEndpoint: process.env.REACT_APP_PRODUCER_LOGIN_CHECK_ENDPOINT,
-		producerInsertEndpoint: process.env.REACT_APP_PRODUCER_INSERT_ENDPOINT,
-		producerDeleteEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ENDPOINT,
-		producerReferencesEndpoint: process.env.REACT_APP_PRODUCER_REFERENCES_ENDPOINT,
-		producerCaregoriesEndpoint: process.env.REACT_APP_PRODUCER_CATEGORIES_ENDPOINT,
-		producerJoinEndpoint: process.env.REACT_APP_PRODUCER_JOIN_ENDPOINT,
-		producerAccountDetailsEndpoint: process.env.REACT_APP_PRODUCER_ACCOUNT_DETAILS_ENDPOINT,
-		producerDeleteAccountEndpoint: process.env.REACT_APP_PRODUCER_DELETE_ACCOUNT_ENDPOINT,
-		emailContact: process.env.REACT_APP_EMAIL_CONTACT,
-		domainName: process.env.REACT_APP_DOMAIN_NAME,
-		serversLocation: process.env.REACT_APP_SERVERS_LOCATION,
 		searchOn: true,
 		accountOn: false,
 		referencesOn: false,
@@ -85,7 +86,7 @@ class App extends Component {
 			// Check user is logged in
 			this.checkUserSessionStatus()
 		})
-		.then(data => console.log(data))
+		.then(data => {})
 		.catch(err => console.log(err))
 	}
 
@@ -317,7 +318,12 @@ class App extends Component {
 							producerDeleteAccountEndpoint={this.state.producerDeleteAccountEndpoint}
 						/> : null
 					}
-					{this.state.searchOn ? <Search/> : null }
+					{this.state.searchOn && this.state.consumerSearchEndpoint ?
+						<Search
+							producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+							consumerSearchEndpoint={this.state.consumerSearchEndpoint}
+						/> : null
+					}
 					{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
 						<JoinUs
 							producerJoinEndpoint={this.state.producerJoinEndpoint}

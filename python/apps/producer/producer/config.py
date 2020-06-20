@@ -37,6 +37,9 @@ AZURE_AUTHORITY = f"https://login.microsoftonline.com/common"
 AZURE_DISCOVERY_URL = os.environ.get("AZURE_DISCOVERY_URL", None)
 AZURE_REDIRECT_URL = os.environ.get("AZURE_REDIRECT_URL", None)
 
+# Front end endpoint
+FRONTEND_URL = os.environ.get("FRONTEND_URL", None)
+
 # JWT access token configuration
 JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", None)
 ALGORITHM = os.environ.get("ALGORITHM", None)

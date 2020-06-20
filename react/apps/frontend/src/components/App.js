@@ -17,6 +17,7 @@ import JoinUs from './JoinUs';
 import PrivacyPolicy from './PrivacyPolicy';
 import Terms from './Terms';
 import Contact from './Contact';
+import { constants } from '../constants/Constants.js'
 
 import '../styles/App.css'
 
@@ -24,6 +25,20 @@ import '../styles/App.css'
 class App extends Component {
 
 	state = {
+		producerLoginRedirectEndpoint: constants.producerLoginRedirectEndpoint,
+		producerLoginEndpoint: constants.producerLoginEndpoint,
+		producerLogoutEndpoint: constants.producerLogoutEndpoint,
+		producerLoginCheckEndpoint: constants.producerLoginCheckEndpoint,
+		producerInsertEndpoint: constants.producerInsertEndpoint,
+		producerDeleteEndpoint: constants.producerDeleteEndpoint,
+		producerReferencesEndpoint: constants.producerReferencesEndpoint,
+		producerCaregoriesEndpoint: constants.producerCaregoriesEndpoint,
+		producerJoinEndpoint: constants.producerJoinEndpoint,
+		producerAccountDetailsEndpoint: constants.producerAccountDetailsEndpoint,
+		producerDeleteAccountEndpoint: constants.producerDeleteAccountEndpoint,
+		consumerSearchEndpoint: constants.consumerSearchEndpoint,
+		emailContact: constants.emailContact,
+		serversLocation: constants.serversLocation,
 		userLoggedIn: false,
 		userName: null,
 		permissions: [],
@@ -41,34 +56,7 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		this.setEnvVariables()
 		this.authenticate()
-	}
-
-	setEnvVariables = () => {
-		// All these should ideally be environment variables
-		const domain = window.location.protocol + '//' + window.location.host
-
-		const consumerDomain = domain // 'http://localhost:8001'
-		const producerDomain = domain // 'http://localhost:8000'
-
-		this.setState({
-			domainName: domain,
-			producerLoginRedirectEndpoint: producerDomain + '/api/producer/login-redirect',
-			producerLoginEndpoint: producerDomain + '/api/producer/login/',
-			producerLogoutEndpoint: producerDomain + '/api/producer/logout/',
-			producerLoginCheckEndpoint: producerDomain + '/api/producer/user-session-status/',
-			producerInsertEndpoint: producerDomain + '/api/producer/api/producer/insert-reference/',
-			producerDeleteEndpoint: producerDomain + '/api/producer/delete-reference/',
-			producerReferencesEndpoint: producerDomain + '/api/producer/get-references/',
-			producerCaregoriesEndpoint: producerDomain + '/api/producer/get-categories/',
-			producerJoinEndpoint: producerDomain + '/api/producer/join/',
-			producerAccountDetailsEndpoint: producerDomain + '/api/producer/get-account/',
-			producerDeleteAccountEndpoint: producerDomain + '/api/producer/delete-account/',
-			consumerSearchEndpoint: consumerDomain + '/api/consumer/search/',
-			emailContact: 'findbooksources@gmail.com',
-			serversLocation: 'United Kingdom',
-		})
 	}
 
 	authenticate = () => {

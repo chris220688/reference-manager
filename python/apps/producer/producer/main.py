@@ -159,7 +159,7 @@ async def google_login_callback(request: Request):
 		internal_auth_token = await auth_util.create_internal_auth_token(internal_user)
 
 		# Redirect the user to the home page
-		redirect_url = f"{request.base_url}?authToken={internal_auth_token}"
+		redirect_url = f"{config.FRONTEND_URL}?authToken={internal_auth_token}"
 		return RedirectResponse(url=redirect_url)
 
 @app.get("/azure-login-callback/")
@@ -195,7 +195,7 @@ async def azure_login_callback(request: Request):
 		internal_auth_token = await auth_util.create_internal_auth_token(internal_user)
 
 		# Redirect the user to the home page
-		redirect_url = f"{request.base_url}?authToken={internal_auth_token}"
+		redirect_url = f"{config.FRONTEND_URL}?authToken={internal_auth_token}"
 		return RedirectResponse(url=redirect_url)
 
 

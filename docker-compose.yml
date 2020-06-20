@@ -139,6 +139,7 @@ services:
       - AZURE_TENANT_ID=${AZURE_TENANT_ID}
       - AZURE_DISCOVERY_URL=https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration
       - AZURE_REDIRECT_URL=http://localhost:80/api/producer/azure-login-callback/
+      - FRONTEND_URL=http://localhost:80/frontend/
       - ALGORITHM=${ALGORITHM}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}

@@ -19,6 +19,8 @@ import Terms from './Terms';
 import Contact from './Contact';
 import { constants } from '../constants/Constants.js'
 
+import logo from '../icons/logo.png'
+
 import '../styles/App.css'
 
 
@@ -274,6 +276,13 @@ class App extends Component {
 				<div id="content-wrap">
 					<Navbar bg="dark" expand="md">
 						<Navbar.Brand href="#" onClick={this.openSearch}>
+							<img
+								src={logo}
+								width="35"
+								height="35"
+								className="d-inline-block align-top"
+								alt="React Bootstrap logo"
+							/>
 						</Navbar.Brand>
 						<Navbar.Toggle aria-controls="basic-navbar-nav" />
 						<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end custom-nav-items">

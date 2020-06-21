@@ -10,7 +10,7 @@ class PrivacyPolicy extends Component {
 	render() {
 		//const { t } = this.props
 		return (
-			<Container>
+			<Container className="responsive-text">
 				<h1>PRIVACY NOTICE</h1>
 
 				<h2>Last Updated 07 June  2020</h2>

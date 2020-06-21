@@ -63,33 +63,33 @@ export default function Login(props) {
 				<Modal.Body>
 					<Container fluid>
 						<Row>
-							<Col xs="2"></Col>
-							<Col xs="8">
+							<Col xs="1" sm="2"></Col>
+							<Col xs="10" sm="8">
 								<div className="login-btn-div" onClick={googleLogin}>
 									<span>
 										<img width="20" height="20" className="login-btn-image" alt="google" src={glogo}/>
 									</span>
-									<span className="login-btn-text">
+									<span className="login-btn-text singin-btn">
 										{t('login.googlesignin')}
 									</span>
 								</div>
 							</Col>
-							<Col xs="2"></Col>
+							<Col xs="1" sm="2"></Col>
 						</Row>
 						<br/>
 						<Row>
-							<Col xs="2"></Col>
-							<Col xs="8">
+							<Col xs="1" sm="2"></Col>
+							<Col xs="10" sm="8">
 								<div className="login-btn-div" onClick={azureLogin}>
 									<span>
 										<img width="20" height="20" className="login-btn-image" alt="microsoft" src={mlogo}/>
 									</span>
-									<span className="login-btn-text">
+									<span className="login-btn-text singin-btn">
 										{t('login.msoftsignin')}
 									</span>
 								</div>
 							</Col>
-							<Col xs="2"></Col>
+							<Col xs="1" sm="2"></Col>
 						</Row>
 						<br/>
 					</Container>

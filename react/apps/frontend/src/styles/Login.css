@@ -95,3 +95,7 @@
   border-top: none;
 }
 
+@media (min-width: 100px) and (max-width:320px) { 
+  .singin-btn {font-size:10px;}
+}
+

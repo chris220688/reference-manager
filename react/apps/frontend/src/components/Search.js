@@ -63,7 +63,7 @@ class Search extends Component {
 	render() {
 		const { t } = this.props
 		return (
-			<section>
+			<section className="responsive-text">
 				<ReactiveBase
 					app="referencemanager"
 					url={this.state.consumerSearchEndpoint}

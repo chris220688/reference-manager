@@ -18,7 +18,7 @@ class Contact extends Component {
 
 		return (
 			<Container>
-				<Row className="text-center">
+				<Row className="text-center responsive-text">
 					<Col xs="1" sm="2" md="3" xl="4"></Col>
 					<Col xs ="10" sm="8" md="6" xl="4">
 						<h3>{t('contact.title')}</h3>
@@ -27,7 +27,7 @@ class Contact extends Component {
 				</Row>
 				<br/>
 
-				<Row className="text-center">
+				<Row className="text-center responsive-text">
 					<Col xs="1" sm="2" md="3" xl="4"></Col>
 					<Col xs ="10" sm="8" md="6" xl="4">
 						<p>

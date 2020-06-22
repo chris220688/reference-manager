@@ -27,6 +27,7 @@ import '../styles/App.css'
 class App extends Component {
 
 	state = {
+		domainName: constants.domainName,
 		producerLoginRedirectEndpoint: constants.producerLoginRedirectEndpoint,
 		producerLoginEndpoint: constants.producerLoginEndpoint,
 		producerLogoutEndpoint: constants.producerLogoutEndpoint,

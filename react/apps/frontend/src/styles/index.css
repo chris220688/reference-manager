@@ -12,6 +12,7 @@ code {
 
 @media (min-width: 100px) and (max-width:320px) {
   .responsive-text {font-size:7px; padding-right:0px; padding-left:0px;} /*1rem = 16px*/
+  .responsive-text span {font-size:7px; padding-right:0px; padding-left:0px;}
   .responsive-text h1 {font-size:12px;}
   .responsive-text h2 {font-size:11px;}
   .responsive-text h3 {font-size:10px;}
@@ -34,6 +35,7 @@ code {
 /* Small devices (landscape phones, 544px and up) */
 @media (min-width: 321px) and (max-width:544px) {
   .responsive-text {font-size:9px; padding-right:0px; padding-left:0px;}
+  .responsive-text span {font-size:9px; padding-right:0px; padding-left:0px;}
   .responsive-text h1 {font-size:13px;}
   .responsive-text h2 {font-size:12px;}
   .responsive-text h3 {font-size:11px;}
@@ -55,6 +57,7 @@ code {
 
 @media (min-width: 544px) and (max-width:768px) {
   .responsive-text {font-size:12px; padding-right:0px; padding-left:0px;}
+  .responsive-text span {font-size:12px; padding-right:0px; padding-left:0px;}
   .responsive-text h1 {font-size:20px;}
   .responsive-text h2 {font-size:19px;}
   .responsive-text h3 {font-size:18px;}
@@ -76,6 +79,7 @@ code {
 
 @media (min-width: 769px) {
   .responsive-text {font-size:15px; padding-right:0px; padding-left:0px;}
+  .responsive-text span {font-size:15px; padding-right:0px; padding-left:0px;}
   .responsive-text h1 {font-size:20px;}
   .responsive-text h2 {font-size:19px;}
   .responsive-text h3 {font-size:18px;}

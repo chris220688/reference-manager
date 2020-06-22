@@ -275,7 +275,7 @@ class App extends Component {
 			<section id="page-container">
 				<div id="content-wrap">
 					<Navbar bg="dark" expand="md">
-						<Navbar.Brand href="#" onClick={this.openSearch}>
+						<Navbar.Brand href="/" onClick={this.openSearch}>
 							<img
 								src={logo}
 								width="35"
@@ -385,7 +385,7 @@ class App extends Component {
 				</div>
 
 				<footer id="page-footer">
-					<Container className="footer-container responsive-text">
+					<div className="footer-container responsive-text">
 						<hr/>
 						<Navbar sticky="bottom" className="justify-content-end">
 							<Nav>
@@ -395,7 +395,7 @@ class App extends Component {
 								<Nav.Link onClick={this.openTerms}>{t('terms')}</Nav.Link>
 							</Nav>
 						</Navbar>
-					</Container>
+					</div>
 				</footer>
 			</section>
 		);

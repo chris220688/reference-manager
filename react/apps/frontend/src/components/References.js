@@ -381,7 +381,7 @@ class References extends Component {
 														</Row>
 														<Row >
 															<Col>
-																<h4>{reference.title}</h4>
+																<h2>{reference.title}</h2>
 															</Col>
 														</Row>
 														<br/>

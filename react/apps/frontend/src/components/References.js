@@ -338,7 +338,7 @@ class References extends Component {
 		const { t } = this.props
 
 		const popover = (
-			<Popover id="popover-basic">
+			<Popover id="popover-basic" className="responsive-text">
 				<Popover.Title as="h3">Tips</Popover.Title>
 				<Popover.Content>
 					<p>
@@ -355,7 +355,7 @@ class References extends Component {
 		)
 
 		return (
-			<Container>
+			<Container className="responsive-text">
 				<Tabs defaultActiveKey="references" className="reference-tabs">
 					<Tab eventKey="references" title={t('references.myreferences')}>
 						<Container fluid>
@@ -381,7 +381,7 @@ class References extends Component {
 														</Row>
 														<Row >
 															<Col>
-																<h4>{reference.title}</h4>
+																<h2>{reference.title}</h2>
 															</Col>
 														</Row>
 														<br/>
@@ -523,10 +523,10 @@ class References extends Component {
 												<Form.Row>
 												<Container>
 													<Row>
-														<Col xs={11} className="limited-text">
+														<Col xs={10} className="limited-text">
 															<b>{t('references.form.book')}:</b> {bookName}
 														</Col>
-														<Col xs={1}>
+														<Col xs={2}>
 															<Button
 																className="float-right"
 																size="sm"

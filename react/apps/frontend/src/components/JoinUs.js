@@ -41,7 +41,7 @@ class JoinUs extends Component {
 	render() {
 		const { t } = this.props
 		return (
-			<Container>
+			<Container className="responsive-text">
 				<Jumbotron>
 					<h1>{t('joinus')}</h1>
 					<p>

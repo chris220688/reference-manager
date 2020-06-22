@@ -19,12 +19,15 @@ import Terms from './Terms';
 import Contact from './Contact';
 import { constants } from '../constants/Constants.js'
 
+import logo from '../icons/logo.png'
+
 import '../styles/App.css'
 
 
 class App extends Component {
 
 	state = {
+		domainName: constants.domainName,
 		producerLoginRedirectEndpoint: constants.producerLoginRedirectEndpoint,
 		producerLoginEndpoint: constants.producerLoginEndpoint,
 		producerLogoutEndpoint: constants.producerLogoutEndpoint,
@@ -53,6 +56,7 @@ class App extends Component {
 		isAuthor: false,
 		requestedJoin: false,
 		alertMessage: null,
+		currentLanguage: 'EN',
 	}
 
 	componentDidMount() {
@@ -252,126 +256,148 @@ class App extends Component {
 
 	changeLanguage = (lng) => {
 		i18n.changeLanguage(lng)
+
+		var currentLanguage
+		if (lng === 'en') {
+			currentLanguage = 'EN'
+		} else if (lng === 'gr') {
+			currentLanguage = 'ΕΛ'
+		}
+
+		this.setState({
+			currentLanguage: currentLanguage
+		})
 	}
 
 	render() {
 		const { t } = this.props
 
 		return (
-			<section>
-				<Navbar bg="dark" expand="md">
-					<Navbar.Brand href="#" onClick={this.openSearch}>
-					</Navbar.Brand>
-					<Navbar.Toggle aria-controls="basic-navbar-nav" />
-					<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end custom-nav-items">
+			<section id="page-container">
+				<div id="content-wrap">
+					<Navbar bg="dark" expand="md">
+						<Navbar.Brand href="/" onClick={this.openSearch}>
+							<img
+								src={logo}
+								width="35"
+								height="35"
+								className="d-inline-block align-top"
+								alt="React Bootstrap logo"
+							/>
+						</Navbar.Brand>
+						<Navbar.Toggle aria-controls="basic-navbar-nav" />
+						<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end custom-nav-items">
 
-						<Nav className="mr-auto">
-							{/*
-							{this.state.userName ?
-								<span>Hello {this.state.userName}</span> : <span></span>
-							}
-							*/}
-							{this.state.userLoggedIn ?
-								<Nav.Link onClick={this.openAccount}>{t('myaccount')}</Nav.Link> : null
-							}
-							<Nav.Link onClick={this.openSearch}>{t('search.search')}</Nav.Link>
-							{this.state.userLoggedIn && this.state.isAuthor ?
-								<Nav.Link style={{color:"white"}} onClick={this.openReferences}>{t('search.references')}</Nav.Link> : null
-							}
-							{this.state.userLoggedIn && !this.state.isAuthor && !this.state.requestedJoin ?
-								<Nav.Link onClick={this.openJoinus}>{t('joinus')}</Nav.Link> : null
-							}
-						</Nav>
+							<Nav className="mr-auto">
+								{/*
+								{this.state.userName ?
+									<span>Hello {this.state.userName}</span> : <span></span>
+								}
+								*/}
+								{this.state.userLoggedIn ?
+									<Nav.Link onClick={this.openAccount}>{t('myaccount')}</Nav.Link> : null
+								}
+								<Nav.Link onClick={this.openSearch}>{t('search.search')}</Nav.Link>
+								{this.state.userLoggedIn && this.state.isAuthor ?
+									<Nav.Link style={{color:"white"}} onClick={this.openReferences}>{t('search.references')}</Nav.Link> : null
+								}
+								{this.state.userLoggedIn && !this.state.isAuthor && !this.state.requestedJoin ?
+									<Nav.Link onClick={this.openJoinus}>{t('joinus')}</Nav.Link> : null
+								}
+							</Nav>
 
-						<Nav>
-							{this.state.userLoggedIn ?
-								<Nav.Link onClick={this.logout}>{t('search.logout')}</Nav.Link> :
-								<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
-							}
-							<Nav.Link style={{color:"white"}} onClick={() => this.changeLanguage}>
-								<Dropdown drop="left" className="language-dropdown">
-									<Dropdown.Toggle style={{"BackgroundColor": "black"}} id="dropdown">
-										<MdLanguage/>
-									</Dropdown.Toggle>
-									<Dropdown.Menu className="language-dropdown">
-										<Dropdown.Item onClick={() => this.changeLanguage('en')}>{t('search.language.english')}</Dropdown.Item>
-										<Dropdown.Item onClick={() => this.changeLanguage('gr')}>{t('search.language.greek')}</Dropdown.Item>
-									</Dropdown.Menu>
-								</Dropdown>
-							</Nav.Link>
-						</Nav>
-					</Navbar.Collapse>
-				</Navbar>
-				<br/>
-				<Container className="main-container">
-					{this.state.alertMessage ?
-						<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
-							<Alert.Heading>{t('joinus.fantastic')}</Alert.Heading>
-								<p>
-									{this.state.alertMessage}
-								</p>
-						</Alert> : null
-					}
-					{this.state.accountOn ?
-						<Account
-							producerAccountDetailsEndpoint={this.state.producerAccountDetailsEndpoint}
-							producerDeleteAccountEndpoint={this.state.producerDeleteAccountEndpoint}
-						/> : null
-					}
-					{this.state.searchOn && this.state.consumerSearchEndpoint ?
-						<Search
-							producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
-							consumerSearchEndpoint={this.state.consumerSearchEndpoint}
-						/> : null
-					}
-					{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
-						<JoinUs
-							producerJoinEndpoint={this.state.producerJoinEndpoint}
-							setSearchOn={this.setSearchOn}
-							setRequestedJoin={this.setRequestedJoin}
-							setAlert={this.setAlert}
-						/> : null
-					}
-					{this.state.userLoggedIn && this.state.referencesOn ?
-						<References
-							producerInsertEndpoint={this.state.producerInsertEndpoint}
-							producerDeleteEndpoint={this.state.producerDeleteEndpoint}
-							producerReferencesEndpoint={this.state.producerReferencesEndpoint}
-							producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
-						/> : null
-					}
-					{this.state.aboutOn ? <About/> : null }
-					{this.state.contactOn ?
-						<Contact
-							emailContact={this.state.emailContact}
-						/> : null
-					}
-					{this.state.privacyPolicyOn ?
-						<PrivacyPolicy
-							emailContact={this.state.emailContact}
-							domainName={this.state.domainName}
-							serversLocation={this.state.serversLocation}
-						/> : null
-					}
-					{this.state.termsOn ?
-						<Terms
-							emailContact={this.state.emailContact}
-							domainName={this.state.domainName}
-						/> : null
-					}
-				</Container>
-
-				<Container className="footer-container">
-					<hr/>
-					<Navbar sticky="bottom" className="justify-content-end">
-						<Nav>
-							<Nav.Link onClick={this.openAbout}>{t('about')}</Nav.Link>
-							<Nav.Link onClick={this.openContact}>{t('contact')}</Nav.Link>
-							<Nav.Link onClick={this.openPrivacyPolicy}>{t('privacypolicy')}</Nav.Link>
-							<Nav.Link onClick={this.openTerms}>{t('terms')}</Nav.Link>
-						</Nav>
+							<Nav>
+								{this.state.userLoggedIn ?
+									<Nav.Link onClick={this.logout}>{t('search.logout')}</Nav.Link> :
+									<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
+								}
+								<Nav.Link style={{color:"white"}} onClick={() => this.changeLanguage}>
+									<Dropdown drop="left" className="language-dropdown">
+										<Dropdown.Toggle style={{"BackgroundColor": "black"}} id="dropdown">
+											{this.state.currentLanguage} <MdLanguage/>
+										</Dropdown.Toggle>
+										<Dropdown.Menu className="language-dropdown">
+											<Dropdown.Item onClick={() => this.changeLanguage('en')}>{t('search.language.english')}</Dropdown.Item>
+											<Dropdown.Item onClick={() => this.changeLanguage('gr')}>{t('search.language.greek')}</Dropdown.Item>
+										</Dropdown.Menu>
+									</Dropdown>
+								</Nav.Link>
+							</Nav>
+						</Navbar.Collapse>
 					</Navbar>
-				</Container>
+					<br/>
+					<Container className="main-container">
+						{this.state.alertMessage ?
+							<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
+								<Alert.Heading>{t('joinus.fantastic')}</Alert.Heading>
+									<p>
+										{this.state.alertMessage}
+									</p>
+							</Alert> : null
+						}
+						{this.state.accountOn ?
+							<Account
+								producerAccountDetailsEndpoint={this.state.producerAccountDetailsEndpoint}
+								producerDeleteAccountEndpoint={this.state.producerDeleteAccountEndpoint}
+							/> : null
+						}
+						{this.state.searchOn && this.state.consumerSearchEndpoint ?
+							<Search
+								producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+								consumerSearchEndpoint={this.state.consumerSearchEndpoint}
+							/> : null
+						}
+						{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
+							<JoinUs
+								producerJoinEndpoint={this.state.producerJoinEndpoint}
+								setSearchOn={this.setSearchOn}
+								setRequestedJoin={this.setRequestedJoin}
+								setAlert={this.setAlert}
+							/> : null
+						}
+						{this.state.userLoggedIn && this.state.referencesOn ?
+							<References
+								producerInsertEndpoint={this.state.producerInsertEndpoint}
+								producerDeleteEndpoint={this.state.producerDeleteEndpoint}
+								producerReferencesEndpoint={this.state.producerReferencesEndpoint}
+								producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+							/> : null
+						}
+						{this.state.aboutOn ? <About/> : null }
+						{this.state.contactOn ?
+							<Contact
+								emailContact={this.state.emailContact}
+							/> : null
+						}
+						{this.state.privacyPolicyOn ?
+							<PrivacyPolicy
+								emailContact={this.state.emailContact}
+								domainName={this.state.domainName}
+								serversLocation={this.state.serversLocation}
+							/> : null
+						}
+						{this.state.termsOn ?
+							<Terms
+								emailContact={this.state.emailContact}
+								domainName={this.state.domainName}
+							/> : null
+						}
+					</Container>
+				</div>
+
+				<footer id="page-footer">
+					<div className="footer-container responsive-text">
+						<hr/>
+						<Navbar sticky="bottom" className="justify-content-end">
+							<Nav>
+								<Nav.Link onClick={this.openAbout}>{t('about')}</Nav.Link>
+								<Nav.Link onClick={this.openContact}>{t('contact')}</Nav.Link>
+								<Nav.Link onClick={this.openPrivacyPolicy}>{t('privacypolicy')}</Nav.Link>
+								<Nav.Link onClick={this.openTerms}>{t('terms')}</Nav.Link>
+							</Nav>
+						</Navbar>
+					</div>
+				</footer>
 			</section>
 		);
 	}

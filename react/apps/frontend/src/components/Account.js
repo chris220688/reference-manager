@@ -62,11 +62,11 @@ class Account extends Component {
 	render() {
 		const { t } = this.props
 		return (
-			<Container>
+			<Container className="responsive-text">
 				<Row className="text-center">
 					<Col xs="1" sm="2" md="3" xl="4"></Col>
 					<Col xs ="10" sm="8" md="6" xl="4">
-						<h3>{t('myaccount.settings')}</h3>
+						<h1>{t('myaccount.settings')}</h1>
 					</Col>
 					<Col xs="1" sm="2" md="3" xl="4"></Col>
 				</Row>
@@ -141,7 +141,7 @@ function DeleteAccount(props) {
 				{t('myaccount.modal.delete')}
 			</Button>
 
-			<Modal show={show} onHide={handleClose}>
+			<Modal show={show} onHide={handleClose} className="responsive-text">
 				<Modal.Header closeButton>
 					<Modal.Title>{t('myaccount.modal.areyousure')}</Modal.Title>
 				</Modal.Header>

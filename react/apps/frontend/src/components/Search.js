@@ -68,7 +68,7 @@ class Search extends Component {
 					app="referencemanager"
 					url={this.state.consumerSearchEndpoint}
 				>
-					<Container>
+					<Container className="responsive-text">
 						<Row>
 							<Col sm="2"></Col>
 							<Col sm="8">
@@ -95,7 +95,7 @@ class Search extends Component {
 						</Row>
 					</Container>
 
-					<Container>
+					<Container className="responsive-text">
 						<DataSearch
 							componentId="searchBox"
 							dataField={["title"]}
@@ -196,19 +196,21 @@ class Search extends Component {
 											<ResultList key={index}>
 												<ResultList.Content>
 													<ResultList.Title>
-														<b>{item.title}</b>
+														<Row className="text-right">
+															<Col>
+																{t('search.categories.' + item.category)}
+															</Col>
+														</Row>
 													</ResultList.Title>
 													<ResultList.Description>
 														<Container>
-															<Row className="text-right">
-																<Col>
-																	<b>{t('search.categories.' + item.category)}</b>
-																</Col>
-															</Row>
+															<h2>{item.title}</h2>
 															<br/>
 															<Row>
 																<Col className="text-left">
-																	{item.description}
+																	<span>
+																		{item.description}
+																	</span>
 																</Col>
 															</Row>
 															<Row>
@@ -217,7 +219,7 @@ class Search extends Component {
 																	{item.books.map(({ name, author, book_sections }, index) => (
 																		<ListGroup.Item style={{border: "none"}} key={index}>
 																			<div>
-																				<b>{name}</b> - <span>{author}</span>
+																				<span><b>{name}</b></span> - <span>{author}</span>
 																			</div>
 																			<div>
 																				<span>{t('references.form.pages')}: </span>

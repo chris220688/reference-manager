@@ -40,6 +40,7 @@ if (localDeployment) {
 }
 
 export const constants = {
+	domainName: domainName,
 	producerLoginRedirectEndpoint: producerLoginRedirectEndpoint,
 	producerLoginEndpoint: producerLoginEndpoint,
 	producerLogoutEndpoint: producerLogoutEndpoint,

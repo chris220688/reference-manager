@@ -9,7 +9,7 @@ class Terms extends Component {
 	render() {
 		//const { t } = this.props
 		return (
-			<Container>
+			<Container className="responsive-text">
 				<h1>TERMS AND CONDITIONS</h1>
 
 				<h2>Last Updated 07 June  2020</h2>

@@ -198,7 +198,7 @@ class Search extends Component {
 													<ResultList.Title>
 														<Row className="text-right">
 															<Col>
-																<b>{t('search.categories.' + item.category)}</b>
+																{t('search.categories.' + item.category)}
 															</Col>
 														</Row>
 													</ResultList.Title>

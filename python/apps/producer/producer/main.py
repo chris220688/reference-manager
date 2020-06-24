@@ -230,7 +230,9 @@ async def login(
 			}),
 		)
 
-		response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
+		secure_cookie = False if config.LOCAL_DEPLOYMENT else True
+
+		response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True, secure=secure_cookie)
 
 		return response
 

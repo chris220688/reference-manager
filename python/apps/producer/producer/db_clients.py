@@ -51,11 +51,14 @@ class DatabaseClient(ABC):
 	""" Database client interface """
 
 	@abstractmethod
-	def meets_condition(self):
+	def meets_condition(db_type: str):
 		""" Checks whether this type of database client matches
 			the one defined in the configuration.
 
 			Makes sure the correct client will be instantiated.
+
+			Args:
+				db_type: One of database types as defined in config
 		"""
 		...
 

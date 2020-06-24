@@ -20,6 +20,7 @@ class Search extends Component {
 		category: null,
 		categories: [],
 		categoriesStyle: {display: 'none'},
+		showSearchResults: false,
 	}
 
 	componentDidMount() {
@@ -60,6 +61,36 @@ class Search extends Component {
 		}
 	}
 
+	handleSearchBarResults = (value, causes) => {
+		if (
+			value && (
+				causes === "SUGGESTION_SELECT" ||
+				causes === "ENTER_PRESS" ||
+				causes === "SEARCH_ICON_CLICK"
+			)
+		) {
+			this.setState({
+				showSearchResults: true
+			})
+		} else {
+			this.setState({
+				showSearchResults: false
+			})
+		}
+	}
+
+	handleSearchCategoryResults = (value) => {
+		if (value.length > 0) {
+			this.setState({
+				showSearchResults: true
+			})
+		} else {
+			this.setState({
+				showSearchResults: false
+			})
+		}
+	}
+
 	render() {
 		const { t } = this.props
 		return (
@@ -88,6 +119,7 @@ class Search extends Component {
 										data={this.state.categories}
 										className="search-toggle"
 										style={this.state.categoriesStyle}
+										onValueChange={(value) => this.handleSearchCategoryResults(value)}
 									/>
 								</div>
 							</Col>
@@ -111,136 +143,139 @@ class Search extends Component {
 							react={{
 								"and": ["categoryFilter",]
 							}}
+							onValueSelected={(value, cause, source) => this.handleSearchBarResults(value, cause)}
 						/>
 
-						<ReactiveList
-							dataField="title"
-							react={{
-								"and": ["searchBox", "categoryFilter"]
-							}}
-							componentId="searchResult"
-							pagination={true}
-							size={5}
-							renderResultStats={(stats) => {
-								return (
-									<Container>
-										<Row>
-											<Col sm="2"></Col>
-											<Col sm="8" className="search-stats">
-												<span>{t('search.results.stats', {numberOfResults: stats.numberOfResults, time: stats.time})}</span>
-											</Col>
-											<Col sm="2"></Col>
-										</Row>
-										<br/>
-									</Container>
-								)
-							}}
-							renderPagination={({ pages, totalPages, currentPage, setPage, fragmentName }) => {
-								let active = currentPage
-								let items = []
-								for (let number = 1; number <= totalPages; number++) {
+						{this.state.showSearchResults ?
+							<ReactiveList
+								dataField="title"
+								react={{
+									"and": ["searchBox", "categoryFilter"]
+								}}
+								componentId="searchResult"
+								pagination={true}
+								size={5}
+								renderResultStats={(stats) => {
+									return (
+										<Container>
+											<Row>
+												<Col sm="2"></Col>
+												<Col sm="8" className="search-stats">
+													<span>{t('search.results.stats', {numberOfResults: stats.numberOfResults, time: stats.time})}</span>
+												</Col>
+												<Col sm="2"></Col>
+											</Row>
+											<br/>
+										</Container>
+									)
+								}}
+								renderPagination={({ pages, totalPages, currentPage, setPage, fragmentName }) => {
+									let active = currentPage
+									let items = []
+									for (let number = 1; number <= totalPages; number++) {
 
-									if (number === 1) {
-										items.push(
-											<Pagination.Item key={number-1} active={number-1 === active} onClick={() => setPage(parseInt(number-1, 10))}>
-												{number}
-											</Pagination.Item>
-										)
-										if (currentPage > 2) {
-											items.push(<Pagination.Ellipsis disabled />)
+										if (number === 1) {
+											items.push(
+												<Pagination.Item key={number-1} active={number-1 === active} onClick={() => setPage(parseInt(number-1, 10))}>
+													{number}
+												</Pagination.Item>
+											)
+											if (currentPage > 2) {
+												items.push(<Pagination.Ellipsis disabled />)
+											}
+										}
+
+										if (
+											(number === currentPage || number === currentPage+1 || number === currentPage+2) &&
+											number !== 1 && number !== totalPages
+										) {
+											items.push(
+												<Pagination.Item key={number-1} active={number-1 === active} onClick={() => setPage(parseInt(number-1, 10))}>
+													{number}
+												</Pagination.Item>,
+											)
+										}
+
+										if (number === totalPages && number !== 1) {
+											if (currentPage+1 < totalPages-2) {
+												items.push(<Pagination.Ellipsis disabled />)
+											}
+
+											items.push(
+												<Pagination.Item key={number-1} active={number-1 === active} onClick={() => setPage(parseInt(number-1, 10))}>
+													{number}
+												</Pagination.Item>
+											)
 										}
 									}
 
-									if (
-										(number === currentPage || number === currentPage+1 || number === currentPage+2) &&
-										number !== 1 && number !== totalPages
-									) {
-										items.push(
-											<Pagination.Item key={number-1} active={number-1 === active} onClick={() => setPage(parseInt(number-1, 10))}>
-												{number}
-											</Pagination.Item>,
-										)
-									}
-
-									if (number === totalPages && number !== 1) {
-										if (currentPage+1 < totalPages-2) {
-											items.push(<Pagination.Ellipsis disabled />)
-										}
-
-										items.push(
-											<Pagination.Item key={number-1} active={number-1 === active} onClick={() => setPage(parseInt(number-1, 10))}>
-												{number}
-											</Pagination.Item>
-										)
-									}
-								}
-
-								return (
-									<Container>
-										<Row>
-											<Col></Col>
-											<Col className="custom-pagination">
-												<Pagination>
-													{items}
-												</Pagination>
-											</Col>
-											<Col></Col>
-										</Row>
-									</Container>
-								)
-							}}
-							render={({ data }) => (
-								<ResultListWrapper>
-									{
-										data.map((item, index) => (
-											<ResultList key={index}>
-												<ResultList.Content>
-													<ResultList.Title>
-														<Row className="text-right">
-															<Col>
-																{t('search.categories.' + item.category)}
-															</Col>
-														</Row>
-													</ResultList.Title>
-													<ResultList.Description>
-														<Container>
-															<h2>{item.title}</h2>
-															<br/>
-															<Row>
-																<Col className="text-left">
-																	<span>
-																		{item.description}
-																	</span>
-																</Col>
-															</Row>
-															<Row>
+									return (
+										<Container>
+											<Row>
+												<Col></Col>
+												<Col className="custom-pagination">
+													<Pagination>
+														{items}
+													</Pagination>
+												</Col>
+												<Col></Col>
+											</Row>
+										</Container>
+									)
+								}}
+								render={({ data }) => (
+									<ResultListWrapper>
+										{
+											data.map((item, index) => (
+												<ResultList key={index}>
+													<ResultList.Content>
+														<ResultList.Title>
+															<Row className="text-right">
 																<Col>
-																	<ListGroup>
-																	{item.books.map(({ name, author, book_sections }, index) => (
-																		<ListGroup.Item style={{border: "none"}} key={index}>
-																			<div>
-																				<span><b>{name}</b></span> - <span>{author}</span>
-																			</div>
-																			<div>
-																				<span>{t('references.form.pages')}: </span>
-																				{book_sections.map(({ starting_page, ending_page }, index) => (
-																					<span key={index}>|{starting_page}-{ending_page}| </span>
-																				))}
-																			</div>
-																		</ListGroup.Item>
-																	))}
-																	</ListGroup>
+																	{t('search.categories.' + item.category)}
 																</Col>
 															</Row>
-														</Container>
-													</ResultList.Description>
-												</ResultList.Content>
-											</ResultList>
-										))
-									}
-								</ResultListWrapper>
-							)}
-						/>
+														</ResultList.Title>
+														<ResultList.Description>
+															<Container>
+																<h2>{item.title}</h2>
+																<br/>
+																<Row>
+																	<Col className="text-left">
+																		<span>
+																			{item.description}
+																		</span>
+																	</Col>
+																</Row>
+																<Row>
+																	<Col>
+																		<ListGroup>
+																		{item.books.map(({ name, author, book_sections }, index) => (
+																			<ListGroup.Item style={{border: "none"}} key={index}>
+																				<div>
+																					<span><b>{name}</b></span> - <span>{author}</span>
+																				</div>
+																				<div>
+																					<span>{t('references.form.pages')}: </span>
+																					{book_sections.map(({ starting_page, ending_page }, index) => (
+																						<span key={index}>|{starting_page}-{ending_page}| </span>
+																					))}
+																				</div>
+																			</ListGroup.Item>
+																		))}
+																		</ListGroup>
+																	</Col>
+																</Row>
+															</Container>
+														</ResultList.Description>
+													</ResultList.Content>
+												</ResultList>
+											))
+										}
+									</ResultListWrapper>
+								)}
+							/> : null
+						}
 					</Container>
 				</ReactiveBase>
 			</section>

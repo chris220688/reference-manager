@@ -8,7 +8,7 @@ Follow the instructions on Digital Ocean on how to quick-start with your cluster
 # 2. Create the docker images to have in hand
 ```sh
 docker build -t findsources/frontend:latest --file react/apps/frontend/Dockerfile .
-docker push findsources/producer
+docker push findsources/frontend
 ```
 
 # 3. Add Helm repositories to your local machine

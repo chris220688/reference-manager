@@ -6,6 +6,8 @@
 	"login.msoftsignin": "Sign in with Microsoft",
 	"login.notification": "To make our website work, we log user data and share it with service providers. Click 'Sign In' above to accept our Terms of Service & Privacy Policy which you can find at the bottom of the website.",
 	"page": "Page",
+	"banner.header": "Ready to search?",
+	"banner.paragraph": "Type what you are looking for and we'll check if we have any books for you!",
 	"myaccount": "My Account",
 	"myaccount.settings": "Account information",
 	"myaccount.username": "User name",

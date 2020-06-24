@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import i18n from './i18n';
 import { MdLanguage } from "react-icons/md";
 import {
-	Alert, Container, Dropdown, Navbar, Nav
+	Alert, Container, Dropdown, Jumbotron, Navbar, Nav
 } from 'react-bootstrap'
 
 
@@ -275,7 +275,7 @@ class App extends Component {
 		return (
 			<section id="page-container">
 				<div id="content-wrap">
-					<Navbar bg="dark" expand="md">
+					<Navbar bg="dark" expand="md" sticky="top">
 						<Navbar.Brand href="/" onClick={this.openSearch}>
 							<img
 								src={logo}
@@ -325,6 +325,16 @@ class App extends Component {
 							</Nav>
 						</Navbar.Collapse>
 					</Navbar>
+
+					{this.state.searchOn ?
+						<Jumbotron fluid className="custom-jumbotron">
+							<Container className="text-center">
+								<h1>{t('banner.header')}</h1>
+								<p>{t('banner.paragraph')}</p>
+							</Container>
+						</Jumbotron>: null
+					}
+
 					<br/>
 					<Container className="main-container">
 						{this.state.alertMessage ?

@@ -2,7 +2,6 @@ import datetime
 import time
 from uuid import uuid4
 
-from aiocache import Cache
 from fastapi import (
 	Depends,
 	FastAPI,
@@ -62,6 +61,7 @@ if config.LOCAL_DEPLOYMENT:
 	)
 
 
+csrf_token_redirect_cookie_scheme = auth_schemes.CSRFTokenRedirectCookieBearer()
 auth_token_scheme = auth_schemes.AuthTokenBearer()
 access_token_cookie_scheme = auth_schemes.AccessTokenCookieBearer()
 
@@ -122,12 +122,21 @@ async def login_redirect(auth_provider: str):
 	async with exception_handling():
 		provider = await auth_providers.get_auth_provider(auth_provider)
 
-		request_uri = await provider.get_request_uri()
-		return RedirectResponse(url=request_uri)
+		request_uri, state_csrf_token = await provider.get_request_uri()
+
+		response = RedirectResponse(url=request_uri)
+
+		secure_cookie = False if config.LOCAL_DEPLOYMENT else True
+		response.set_cookie(key="state", value=f"Bearer {state_csrf_token}", httponly=True, secure=secure_cookie)
+
+		return response
 
 
 @app.get("/google-login-callback/")
-async def google_login_callback(request: Request):
+async def google_login_callback(
+	request: Request,
+	_ = Depends(csrf_token_redirect_cookie_scheme)
+):
 	""" Callback triggered when the user logs in to Google's pop-up.
 
 		Receives an authentication_token from Google which then
@@ -160,10 +169,18 @@ async def google_login_callback(request: Request):
 
 		# Redirect the user to the home page
 		redirect_url = f"{config.FRONTEND_URL}?authToken={internal_auth_token}"
-		return RedirectResponse(url=redirect_url)
+		response = RedirectResponse(url=redirect_url)
+
+		# Delete state cookie. No longer required
+		response.delete_cookie(key="state")
+
+		return response
 
 @app.get("/azure-login-callback/")
-async def azure_login_callback(request: Request):
+async def azure_login_callback(
+	request: Request,
+	_ = Depends(csrf_token_redirect_cookie_scheme)
+):
 	""" Callback triggered when the user logs in to Azure's pop-up.
 
 		Receives an authentication_token from Azure which then
@@ -196,7 +213,12 @@ async def azure_login_callback(request: Request):
 
 		# Redirect the user to the home page
 		redirect_url = f"{config.FRONTEND_URL}?authToken={internal_auth_token}"
-		return RedirectResponse(url=redirect_url)
+		response = RedirectResponse(url=redirect_url)
+
+		# Delete state cookie. No longer required
+		response.delete_cookie(key="state")
+
+		return response
 
 
 @app.get("/login/")

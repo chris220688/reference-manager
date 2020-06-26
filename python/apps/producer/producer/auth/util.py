@@ -1,4 +1,6 @@
 import datetime
+import hashlib
+import os
 
 from jwt import encode as jwt_encode, decode as jwt_decode, PyJWTError
 
@@ -16,6 +18,48 @@ from producer.models.auth_models import (
 
 
 logger = contextlog.get_contextlog()
+
+async def create_state_csrf_token() -> str:
+	""" Creates a CSRF token to mitigate CSRF attacks on redirects from
+		from the Authentication provider.
+
+		The token is added in an HTTPOnly, secure cookie on the browser
+		and also passed to the Auth provider as a "state" parameter.
+		When the Auth provider redirects the user back to our service,
+		we check that the HTTPOnly cookie value matches the "state" value
+		returned by the Auth provider. We also check that we did add this
+		token in the cache at some time in the past.
+
+		Returns:
+			state_csrf_token: The csrf token
+	"""
+	state_csrf_token = hashlib.sha256(os.urandom(1024)).hexdigest()
+
+	# Values not necessary. We only need to check for existence
+	await cache.set(state_csrf_token, {"valid": True})
+
+	return state_csrf_token
+
+
+async def validate_state_csrf_token(state_csrf_token: str, state_csrf_token_cookie: str):
+	""" Checks the validity of a state token received by the redirect url,
+		against the state token that the server added in the browser cookie.
+
+		Args:
+			state_csrf_token: The token returned in the redirect url
+			state_csrf_token_cookie: The token saved previously in the cookie
+	"""
+	if state_csrf_token != state_csrf_token_cookie:
+		raise UnauthorizedUser(f"Failed to validate state token")
+
+	# Also, check that we 100% cached that token in the past
+	cached_token = await cache.get(state_csrf_token)
+
+	if not cached_token:
+		raise UnauthorizedUser(f"Failed to validate against cached state token")
+
+	await cache.delete(state_csrf_token)
+
 
 async def create_internal_auth_token(internal_user: InternalUser) -> InternalAuthToken:
 	""" Creates a one time JWT authentication token to return to the user.

@@ -11,8 +11,32 @@ from producer.models.db_models import InternalUser
 from producer.auth import util as auth_util
 
 
-class AccessTokenCookieBearer():
+class CSRFTokenRedirectCookieBearer():
+	""" Scheme that checks the validity of the state parameter
+		returned by the Authentication provider when it redirects
+		the user to the application after a successful sing in.
+	"""
+	async def __call__(self, request: Request) -> InternalUser:
+		async with exception_handling():
+			# State token from redirect
+			state_csrf_token: str = request.query_params.get("state")
+			# State token from cookie
+			state_csrf_token_cookie: str = request.cookies.get('state')
 
+			if not state_csrf_token_cookie:
+				raise UnauthorizedUser("Invalid state token")
+
+			# Remove Bearer
+			state_csrf_token_cookie = state_csrf_token_cookie.split()[1]
+
+			await auth_util.validate_state_csrf_token(state_csrf_token, state_csrf_token_cookie)
+
+
+class AccessTokenCookieBearer():
+	""" Scheme that checks the validity of the access token
+		that is stored to an HTTPOnly secure cookie in order
+		to authorize the user.
+	"""
 	async def __call__(self, request: Request) -> InternalUser:
 		async with exception_handling():
 			internal_access_token: str = request.cookies.get('access_token')
@@ -28,7 +52,10 @@ class AccessTokenCookieBearer():
 
 
 class AuthTokenBearer():
-
+	""" Scheme that checks the validity of the authorization token
+		that is exchanged prior to authenticating the user in the
+		service and issuing the final access token.
+	"""
 	async def __call__(self, request: Request) -> Optional[str]:
 		async with exception_handling():
 			authorization: str = request.headers.get("Authorization")

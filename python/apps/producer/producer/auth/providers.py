@@ -9,6 +9,7 @@ from oauthlib.oauth2 import WebApplicationClient
 from starlette.responses import RedirectResponse
 
 from contextlog import contextlog
+from producer import cache
 from producer import config
 from producer.exceptions import (
 	DiscoveryDocumentError,
@@ -20,6 +21,7 @@ from producer.models.auth_models import (
 	ExternalAuthToken,
 	ExternalUser,
 )
+from producer.auth.util import create_state_csrf_token
 
 
 logger = contextlog.get_contextlog()
@@ -154,13 +156,16 @@ class GoogleAuthProvider(AuthProvider):
 		except KeyError as exc:
 			raise ProviderConnectionError(f"Could not parse Google's discovery document: {repr(exc)}")
 
+		state_csrf_token = await create_state_csrf_token()
+
 		request_uri = self.auth_client.prepare_request_uri(
 			authorization_endpoint,
+			state=state_csrf_token,
 			redirect_uri=config.GOOGLE_REDIRECT_URL,
 			scope=["openid", "email", "profile"],
 		)
 
-		return request_uri
+		return request_uri, state_csrf_token
 
 	async def _get_discovery_document(self) -> dict:
 		""" Returns the OpenId configuration information from Google.
@@ -250,13 +255,15 @@ class AzureAuthProvider(AuthProvider):
 			client_credential=config.AZURE_CLIENT_SECRET
 		)
 
+		state_csrf_token = await create_state_csrf_token()
+
 		request_uri = msal_client.get_authorization_request_url(
 			scopes=["User.Read"],
-			# state=state or str(uuid.uuid4()),
+			state=state_csrf_token,
 			redirect_uri=config.AZURE_REDIRECT_URL
 		)
 
-		return request_uri
+		return request_uri, state_csrf_token
 
 	async def _get_discovery_document(self) -> dict:
 		""" Returns the OpenId configuration information from Azure.

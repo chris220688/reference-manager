@@ -5,4 +5,5 @@ WORKDIR /usr/src/apps/consumer
 COPY python/apps/consumer /usr/src/apps/consumer
 COPY python/shared /usr/src/shared
 
-RUN rm .env && pip install pipenv && pipenv install
+RUN rm -rf *.log* && rm .env
+RUN pip install pipenv && pipenv install

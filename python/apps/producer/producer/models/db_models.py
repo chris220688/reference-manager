@@ -14,7 +14,7 @@ class BookSection(BaseModel):
 class Book(BaseModel):
 	""" A book containing a reference """
 	name: constr(min_length=5, max_length=100)
-	author: constr(min_length=2, max_length=50)
+	author: constr(min_length=5, max_length=50)
 	book_sections: conlist(BookSection, min_items=1, max_items=100)
 
 

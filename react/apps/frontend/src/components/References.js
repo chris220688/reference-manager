@@ -33,6 +33,7 @@ class References extends Component {
 	}
 
 	componentDidMount() {
+		const { t } = this.props
 		const referencesRequest = {
 			method: 'GET',
 			credentials: 'include',
@@ -46,7 +47,9 @@ class References extends Component {
 				loading: false
 			})
 		})
-		.catch(err => console.log(err))
+		.catch(err => {
+			this.addError(t('references.error.genericerror'))
+		})
 
 		const categoriesRequest = {
 			method: 'GET',
@@ -55,7 +58,9 @@ class References extends Component {
 		fetch(this.state.producerCaregoriesEndpoint, categoriesRequest)
 		.then(response => response.json())
 		.then(data => this.setCategories(data))
-		.catch(err => console.log(err))
+		.catch(err => {
+			this.addError(t('references.error.genericerror'))
+		})
 	}
 
 	setCategories = (data) => {
@@ -233,13 +238,39 @@ class References extends Component {
 		}
 
 		if (this.state.description.length < 30) {
-			this.addError(t('references.form.error.desctiptionsize'))
+			this.addError(t('references.form.error.descriptionshort'))
+			return
+		}
+
+		if (this.state.description.length > 600) {
+			this.addError(t('references.form.error.descriptionlong'))
 			return
 		}
 
 		if (Object.keys(this.state.books).length === 0) {
 			this.addError(t('references.form.error.book'))
 			return
+		}
+
+		for (let book in this.state.books) {
+			const author = this.state.books[book]['author']
+
+			if (book.length < 5) {
+				this.addError(t('references.form.error.bookshort'))
+				return
+			}
+			if (book.length > 100) {
+				this.addError(t('references.form.error.booklong'))
+				return
+			}
+			if (author.length < 5) {
+				this.addError(t('references.form.error.authorshort'))
+				return
+			}
+			if (author.length > 50) {
+				this.addError(t('references.form.error.authorlong'))
+				return
+			}
 		}
 
 		var booksList = []
@@ -294,7 +325,8 @@ class References extends Component {
 			this.clearForm()
 		})
 		.catch(err => {
-			this.addError(t('references.error.genericerror'))
+			// Most likely session token has expired. Redirect to home page
+			window.location.href = "/?error=401"
 		})
 	}
 

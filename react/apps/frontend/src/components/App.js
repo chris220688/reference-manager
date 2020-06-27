@@ -57,15 +57,36 @@ class App extends Component {
 		requestedJoin: false,
 		alertMessage: null,
 		currentLanguage: 'EN',
+		error: null,
 	}
 
 	componentDidMount() {
-		this.authenticate()
+		try {
+			this.authenticate()
+		} catch (exc) {
+			debugger
+		}
+	}
+
+	addError = (error) => {
+		this.setState({
+			error: error,
+		})
 	}
 
 	authenticate = () => {
+		const { t } = this.props
 		var authToken = (window.location.search.match(/authToken=([^&]+)/) || [])[1]
+		var error = (window.location.search.match(/error=([^&]+)/) || [])[1]
 		window.history.pushState('object', document.title, "/");
+
+		debugger
+
+		if (error === "401") {
+			// Coming back from a redirect after failing to authenticate
+			this.addError(t("app.error.failedtoauthenticate"))
+			return
+		}
 
 		if (authToken) {
 			// Try to get an access token from the server
@@ -91,7 +112,7 @@ class App extends Component {
 			this.checkUserSessionStatus()
 		})
 		.then(data => {})
-		.catch(err => console.log(err))
+		.catch(err => {})
 	}
 
 	checkUserSessionStatus = () => {
@@ -110,7 +131,7 @@ class App extends Component {
 				requestedJoin: data['requestedJoin'],
 			})
 		})
-		.catch(err => console.log(err))
+		.catch(err => {})
 	}
 
 	logout = () => {
@@ -122,7 +143,7 @@ class App extends Component {
 		fetch(this.state.producerLogoutEndpoint, request)
 		.then(response => response.json())
 		.then(data => {window.location.reload()})
-		.catch(err => console.log(err))
+		.catch(err => {})
 	}
 
 	openReferences = () => {
@@ -289,11 +310,6 @@ class App extends Component {
 						<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end custom-nav-items">
 
 							<Nav className="mr-auto">
-								{/*
-								{this.state.userName ?
-									<span>Hello {this.state.userName}</span> : <span></span>
-								}
-								*/}
 								{this.state.userLoggedIn ?
 									<Nav.Link onClick={this.openAccount}>{t('myaccount')}</Nav.Link> : null
 								}
@@ -337,13 +353,23 @@ class App extends Component {
 
 					<br/>
 					<Container className="main-container">
+						{this.state.error ?
+							<Container className="responsive-text">
+								<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
+									{this.state.error}
+								</Alert>
+							</Container> : null
+						}
+
 						{this.state.alertMessage ?
-							<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
-								<Alert.Heading>{t('joinus.fantastic')}</Alert.Heading>
-									<p>
-										{this.state.alertMessage}
-									</p>
-							</Alert> : null
+							<Container className="responsive-text">
+								<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
+									<Alert.Heading>{t('joinus.fantastic')}</Alert.Heading>
+										<p>
+											{this.state.alertMessage}
+										</p>
+								</Alert>
+							</Container> : null
 						}
 						{this.state.accountOn ?
 							<Account

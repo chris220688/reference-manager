@@ -25,7 +25,7 @@ class Search extends Component {
 
 	componentDidMount() {
 		const categoriesRequest = {
-			method: 'GET',
+			method: 'GET'
 		}
 
 		fetch(this.state.producerCaregoriesEndpoint, categoriesRequest)

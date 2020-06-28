@@ -61,11 +61,13 @@ class App extends Component {
 	}
 
 	componentDidMount() {
-		try {
-			this.authenticate()
-		} catch (exc) {
-			debugger
+		// Set the language if cookie exists
+		var language = this.getCookie("language")
+		if (language !== "en") {
+			this.changeLanguage(language)
 		}
+
+		this.authenticate()
 	}
 
 	addError = (error) => {
@@ -74,13 +76,34 @@ class App extends Component {
 		})
 	}
 
+	setCookie = (cname, cvalue, exdays) => {
+		var d = new Date();
+		d.setTime(d.getTime() + (exdays*24*60*60*1000));
+		var expires = "expires="+ d.toUTCString();
+		document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	}
+
+	getCookie = (cname) => {
+		var name = cname + "=";
+		var decodedCookie = decodeURIComponent(document.cookie);
+		var ca = decodedCookie.split(';');
+		for(var i = 0; i <ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) === ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) === 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
+
 	authenticate = () => {
 		const { t } = this.props
 		var authToken = (window.location.search.match(/authToken=([^&]+)/) || [])[1]
 		var error = (window.location.search.match(/error=([^&]+)/) || [])[1]
 		window.history.pushState('object', document.title, "/");
-
-		debugger
 
 		if (error === "401") {
 			// Coming back from a redirect after failing to authenticate
@@ -278,6 +301,9 @@ class App extends Component {
 	changeLanguage = (lng) => {
 		i18n.changeLanguage(lng)
 
+		// Set language cookie
+		this.setCookie("language", lng, 30)
+
 		var currentLanguage
 		if (lng === 'en') {
 			currentLanguage = 'EN'
@@ -327,17 +353,17 @@ class App extends Component {
 									<Nav.Link onClick={this.logout}>{t('search.logout')}</Nav.Link> :
 									<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
 								}
-								<Nav.Link style={{color:"white"}} onClick={() => this.changeLanguage}>
-									<Dropdown drop="left" className="language-dropdown">
-										<Dropdown.Toggle style={{"BackgroundColor": "black"}} id="dropdown">
-											{this.state.currentLanguage} <MdLanguage/>
-										</Dropdown.Toggle>
-										<Dropdown.Menu className="language-dropdown">
-											<Dropdown.Item onClick={() => this.changeLanguage('en')}>{t('search.language.english')}</Dropdown.Item>
-											<Dropdown.Item onClick={() => this.changeLanguage('gr')}>{t('search.language.greek')}</Dropdown.Item>
-										</Dropdown.Menu>
-									</Dropdown>
-								</Nav.Link>
+
+								<Dropdown className="language-dropdown" drop="left" className="language-dropdown">
+									<Dropdown.Toggle id="dropdown">
+										{this.state.currentLanguage} <MdLanguage/>
+									</Dropdown.Toggle>
+									<Dropdown.Menu className="language-dropdown">
+										<Dropdown.Item onClick={() => this.changeLanguage('en')}>{t('search.language.english')}</Dropdown.Item>
+										<Dropdown.Item onClick={() => this.changeLanguage('gr')}>{t('search.language.greek')}</Dropdown.Item>
+									</Dropdown.Menu>
+								</Dropdown>
+
 							</Nav>
 						</Navbar.Collapse>
 					</Navbar>

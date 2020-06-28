@@ -142,3 +142,14 @@ kubectl rollout restart deployment/frontend
 ```sh
 helm list
 ```
+
+#### Certificates
+
+If for some reason the ingress controller is destroyed, the certificates will need to be re-created when the new controller pod is up.
+
+Do not forget to delete them
+```sh
+kubectl get certificates
+kubectl delete certificate <cert-name>
+```
+Then create again ingress-controller + cert-manager + ingresses

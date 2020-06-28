@@ -51,13 +51,9 @@
 }
 
 .language-dropdown > button {
-  height: 25px;
   background-color: transparent;
   border-color: transparent;
-  padding-top: 0px;
-  padding-right: 20px;
-  padding-bottom: 0px;
-  padding-left: 20px;
+  padding-top: 8px;
 }
 
 .language-dropdown > button:hover {
@@ -94,6 +90,10 @@
 }
 
 .custom-nav-items .nav-link svg:hover {
+  color: #86ddf8 !important;
+}
+
+.language-dropdown button:hover {
   color: #86ddf8 !important;
 }
 

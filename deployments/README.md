@@ -137,3 +137,8 @@ kubectl describe certificate findsources-kubernetes-tls
 ```sh
 kubectl rollout restart deployment/frontend
 ```
+
+#### List helm releases
+```sh
+helm list
+```

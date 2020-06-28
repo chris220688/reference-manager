@@ -3,7 +3,7 @@ import React, { Component, useState } from 'react';
 import { useTranslation, withTranslation } from 'react-i18next'
 
 import {
-	Button, Col, Container, Modal, Row, Table
+	Alert, Button, Col, Container, Modal, Row, Table
 } from 'react-bootstrap'
 
 import '../styles/Account.css'
@@ -18,13 +18,21 @@ class Account extends Component {
 		isAuthor: false,
 		requestedJoin: false,
 		createdAt: null,
+		error: null,
 	}
 
 	componentDidMount() {
 		this.getAccountDetails()
 	}
 
+	addError = (error) => {
+		this.setState({
+			error: error,
+		})
+	}
+
 	getAccountDetails = () => {
+		const { t } = this.props
 		const accountRequest = {
 			method: 'GET',
 			credentials: 'include',
@@ -40,10 +48,13 @@ class Account extends Component {
 				createdAt: data['created_at'].slice(0, 10),
 			})
 		})
-		.catch(err => console.log(err))
+		.catch(err => {
+			this.addError(t('myaccount.error.getdetails'))
+		})
 	}
 
 	deleteAccount = () => {
+		const { t } = this.props
 		const deleteAccountRequest = {
 			method: 'DELETE',
 			credentials: 'include',
@@ -56,7 +67,9 @@ class Account extends Component {
 				window.location.reload()
 			}
 		})
-		.catch(err => console.log(err))
+		.catch(err => {
+			this.addError(t('myaccount.error.delete'))
+		})
 	}
 
 	render() {
@@ -71,6 +84,12 @@ class Account extends Component {
 					<Col xs="1" sm="2" md="3" xl="4"></Col>
 				</Row>
 				<br/>
+
+				{this.state.error ?
+					<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
+						{this.state.error}
+					</Alert> : null
+				}
 
 				<Row>
 					<Col xs="1" sm="2" md="3" xl="4"></Col>

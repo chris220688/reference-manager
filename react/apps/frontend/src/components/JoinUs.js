@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { withTranslation } from 'react-i18next'
 
-import { Button, Jumbotron, Container } from 'react-bootstrap'
+import { Alert, Button, Jumbotron, Container } from 'react-bootstrap'
 
 
 class JoinUs extends Component {
@@ -12,7 +12,14 @@ class JoinUs extends Component {
 		setSearchOn: this.props.setSearchOn,
 		setRequestedJoin: this.props.setRequestedJoin,
 		setAlert: this.props.setAlert,
-		requested: false
+		requested: false,
+		error: null,
+	}
+
+	addError = (error) => {
+		this.setState({
+			error: error,
+		})
 	}
 
 	joinRequest = () => {
@@ -35,13 +42,20 @@ class JoinUs extends Component {
 				this.state.setSearchOn()
 			}
 		})
-		.catch(err => console.log(err))
+		.catch(err => {
+			this.addError(t('joinus.error.joinrequestfailed'))
+		})
 	}
 
 	render() {
 		const { t } = this.props
 		return (
 			<Container className="responsive-text">
+				{this.state.error ?
+					<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
+						{this.state.error}
+					</Alert> : null
+				}
 				<Jumbotron>
 					<h1>{t('joinus')}</h1>
 					<p>

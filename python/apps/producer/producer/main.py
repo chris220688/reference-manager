@@ -6,13 +6,14 @@ from fastapi import (
 	Depends,
 	FastAPI,
 	Request,
+	status,
 )
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import (
+	JSONResponse,
 	RedirectResponse,
 	Response,
-	JSONResponse,
 )
 
 from contextlog import contextlog
@@ -103,6 +104,11 @@ async def setup_request(request: Request, call_next) -> JSONResponse:
 
 	response = await call_next(request)
 
+	if response.status_code == status.HTTP_401_UNAUTHORIZED:
+		# The is the only exception where we need to redirect
+		redirect_url = f"{config.FRONTEND_URL}?error=401"
+		response = RedirectResponse(url=redirect_url)
+
 	process_time = str(round(time.time() - start_time, 3))
 	logger.info(f"Request took {process_time}s")
 
@@ -175,6 +181,7 @@ async def google_login_callback(
 		response.delete_cookie(key="state")
 
 		return response
+
 
 @app.get("/azure-login-callback/")
 async def azure_login_callback(
@@ -257,6 +264,7 @@ async def login(
 		response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True, secure=secure_cookie)
 
 		return response
+
 
 @app.get("/logout/")
 async def logout(
@@ -379,7 +387,7 @@ async def insert_reference(
 
 		if existing_references:
 			for ref in existing_references:
-				if reference.description == ref.description:
+				if reference.title == ref.title:
 					raise DocumentExists(title)
 
 		# Inject metadata related to the reference

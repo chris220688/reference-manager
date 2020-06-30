@@ -132,6 +132,53 @@ Need to wait a bit. Track the progress of Let's Encrypt
 kubectl describe certificate findsources-kubernetes-tls
 ```
 
+# 13. Backup mongo with volume snapshots
+You can achieve the same from the Digital Ocean UI but be careful to use the correct names for the snapshots.
+
+Delete the existing snapshot (we always keep the latest snapshot in the Digital Ocean account)
+```sh
+kubectl delete mongo-primary-snapshot
+```
+Change the name (appending the new date) in backup-mongo.yaml
+```sh
+kubectl create -f deployments/backup-mongo.yaml
+```
+Check snapshot has been created
+```sh
+kubectl get volumesnapshot
+```
+
+# 14. Restore mongo volume from snapshot
+This will require some short downtime as we need to take down the producer and mongo.
+The rest of the apps (including monstache) will not be affected if mongo is down.
+
+First take the producer down
+```sh
+kubectl delete -f deployments/producer.yaml
+```
+Then uninstall mongo
+```sh
+helm uninstall replica-set
+```
+Delete the existing volumes
+```sh
+kubectl get pvc
+kubectl delete pvc datadir-replica-set-mongodb-primary-0 datadir-replica-set-mongodb-secondary-0
+```
+The restore the volumes (only primary is enough) from the snapshot.
+Change the name of the snapshot to the one you want to use (date) in restore-mongo.yaml
+```sh
+kubectl create -f deployments/restore-mongo.yaml
+```
+Start mongo again
+```sh
+helm install replica-set -f deployments/mongo-values.yaml bitnami/mongodb
+```
+Start the producer
+```sh
+kubectl create -f deployments/producer.yaml
+```
+
 # Other
 #### Restart a deployment after updates
 ```sh
@@ -144,7 +191,6 @@ helm list
 ```
 
 #### Certificates
-
 If for some reason the ingress controller is destroyed, the certificates will need to be re-created when the new controller pod is up.
 
 Do not forget to delete them

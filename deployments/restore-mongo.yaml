@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: datadir-replica-set-mongodb-primary-0
+spec:
+  dataSource:
+    name: mongo-primary-snapshot-30062020
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: datadir-replica-set-mongodb-secondary-0
+# spec:
+#   dataSource:
+#     name: mongo-secondary-snapshot
+#     kind: VolumeSnapshot
+#     apiGroup: snapshot.storage.k8s.io
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 8Gi

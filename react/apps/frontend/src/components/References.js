@@ -232,6 +232,16 @@ class References extends Component {
 			return
 		}
 
+		if (this.state.title.length < 5) {
+			this.addError(t('references.form.error.titleshort'))
+			return
+		}
+
+		if (this.state.title.length > 100) {
+			this.addError(t('references.form.error.titlelong'))
+			return
+		}
+
 		if (this.state.description === null || this.state.description === '') {
 			this.addError(t('references.form.error.description'))
 			return

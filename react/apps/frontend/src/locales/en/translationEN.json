@@ -85,6 +85,8 @@
 	"references.form.error.startingpagegt": "Starting page should be less than the ending page",
 	"references.form.error.category": "Please provide a category for the subject",
 	"references.form.error.title": "Please provide a title for the subject",
+	"references.form.error.titleshort": "The title is too short",
+	"references.form.error.titlelong": "The title is too long",
 	"references.form.error.description": "Please provide a description for the subject",
 	"references.form.error.descriptionshort": "The description is too short. Please add some more details",
 	"references.form.error.descriptionlong": "The description is too long. Please remove some of the details",

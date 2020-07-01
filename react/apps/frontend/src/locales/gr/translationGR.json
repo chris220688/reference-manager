@@ -85,6 +85,8 @@
 	"references.form.error.startingpagegt": "Η αρχική σελίδα πρέπει να είναι μικρότερη της τελικής",
 	"references.form.error.category": "Προσθέστε κατηγορία για την αναφορά σας",
 	"references.form.error.title": "Προσθέστε τίτλο για την αναφορά σας",
+	"references.form.error.titleshort": "Ο τίτλος είναι πολύ μικρός",
+	"references.form.error.titlelong": "Ο τίτλος είναι πολύ μεγάλος",
 	"references.form.error.description": "Προσθέστε περιγραφή για την αναφορά σας",
 	"references.form.error.descriptionshort": "Η περιγραφή είναι πολύ μικρή. Προσθέστε μερικές ακόμη πληροφορίες",
 	"references.form.error.descriptionlong": "Η περιγραφή είναι πολύ μεγάλη. Αφαιρέστε μερικές πληροφορίες",

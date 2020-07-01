@@ -354,7 +354,7 @@ class App extends Component {
 									<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
 								}
 
-								<Dropdown className="language-dropdown" drop="left" className="language-dropdown">
+								<Dropdown drop="left" className="language-dropdown">
 									<Dropdown.Toggle id="dropdown">
 										{this.state.currentLanguage} <MdLanguage/>
 									</Dropdown.Toggle>

@@ -1,6 +1,6 @@
 {
-  "short_name": "Reference Manager",
-  "name": "Reference Manager",
+  "short_name": "Find Sources",
+  "name": "Find Sources",
   "icons": [],
   "start_url": ".",
   "display": "standalone",

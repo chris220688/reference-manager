@@ -19,16 +19,30 @@ jobs:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }} 
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }} 
       run: |
-        echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+        #echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
         
         echo "Building images"
-        docker build -t findsources/frontend:latest --file react/apps/frontend/Dockerfile .
-        docker build -t findsources/producer:latest --file python/apps/producer/Dockerfile .
-        docker build -t findsources/consumer:latest --file python/apps/consumer/Dockerfile .
-        docker build -t findsources/monstache:latest --file monstache/Dockerfile .
+        #docker build -t findsources/frontend:latest --file react/apps/frontend/Dockerfile .
+        #docker build -t findsources/producer:latest --file python/apps/producer/Dockerfile .
+        #docker build -t findsources/consumer:latest --file python/apps/consumer/Dockerfile .
+        #docker build -t findsources/monstache:latest --file monstache/Dockerfile .
         
-        echo "Pushing images"
-        docker push findsources/frontend
-        docker push findsources/producer
-        docker push findsources/consumer
-        docker push findsources/monstache
+        #echo "Pushing images"
+        #docker push findsources/frontend
+        #docker push findsources/producer
+        #docker push findsources/consumer
+        #docker push findsources/monstache
+
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Save DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig save actions-example-k8s-1-16
+
+    - name: Deploy to DigitalOcean Kubernetes
+      run: kubectl delete pod -l app=consumer
+
+    - name: Remove DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig remove actions-example-k8s-1-16

@@ -500,10 +500,6 @@ async def delete_account(
 			response: A JSON response with the status deletion operation
 	"""
 	async with exception_handling():
-		logger.info(
-			f"Received delete account request for user: {internal_user.internal_sub_id}"
-		)
-
 		deleted_count = await db_client.delete_internal_user(internal_user)
 
 		deleted = True if deleted_count else False

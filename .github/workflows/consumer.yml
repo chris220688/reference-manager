@@ -1,0 +1,46 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - 'python/apps/consumer/**'
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }} 
+        DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }} 
+      run: |
+        echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+        
+        echo "Building image"
+        docker build -t findsources/consumer:latest --file python/apps/consumer/Dockerfile .
+        
+        echo "Pushing image"
+        docker push findsources/consumer
+
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Save DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig save ${{ secrets.DIGITAL_OCEAN_CLUSTER_ID }}
+
+    - name: Deploy to DigitalOcean Kubernetes
+      run: |
+        echo "Restarting pods"
+        kubectl delete pod -l app=consumer
+
+    - name: Remove DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig remove ${{ secrets.DIGITAL_OCEAN_CLUSTER_ID }}

@@ -22,13 +22,13 @@ jobs:
         echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
         
         echo "Building images"
-        docker build -t findsources/frontend:latest --file react/apps/frontend/Dockerfile .
+        #docker build -t findsources/frontend:latest --file react/apps/frontend/Dockerfile .
         docker build -t findsources/producer:latest --file python/apps/producer/Dockerfile .
         docker build -t findsources/consumer:latest --file python/apps/consumer/Dockerfile .
         docker build -t findsources/monstache:latest --file monstache/Dockerfile .
         
         echo "Pushing images"
-        docker push findsources/frontend
+        #docker push findsources/frontend
         docker push findsources/producer
         docker push findsources/consumer
         docker push findsources/monstache

@@ -3,6 +3,8 @@ name: Docker Image CI
 on:
   push:
     branches: [ master ]
+    paths:
+    - 'react/apps/frontend/**'
   pull_request:
     branches: [ master ]
 
@@ -19,19 +21,13 @@ jobs:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }} 
         DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }} 
       run: |
-        #echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+        echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
         
-        echo "Building images"
-        #docker build -t findsources/frontend:latest --file react/apps/frontend/Dockerfile .
-        #docker build -t findsources/producer:latest --file python/apps/producer/Dockerfile .
-        #docker build -t findsources/consumer:latest --file python/apps/consumer/Dockerfile .
-        #docker build -t findsources/monstache:latest --file monstache/Dockerfile .
+        echo "Building image"
+        docker build -t findsources/frontend:latest --file react/apps/frontend/Dockerfile .
         
-        #echo "Pushing images"
-        #docker push findsources/frontend
-        #docker push findsources/producer
-        #docker push findsources/consumer
-        #docker push findsources/monstache
+        echo "Pushing image"
+        docker push findsources/frontend
 
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
@@ -42,7 +38,9 @@ jobs:
       run: doctl kubernetes cluster kubeconfig save ${{ secrets.DIGITAL_OCEAN_CLUSTER_ID }}
 
     - name: Deploy to DigitalOcean Kubernetes
-      run: kubectl delete pod -l app=consumer
+      run: |
+        echo "Restarting pod"
+        kubectl delete pod -l app=frontend
 
     - name: Remove DigitalOcean kubeconfig
       run: doctl kubernetes cluster kubeconfig remove ${{ secrets.DIGITAL_OCEAN_CLUSTER_ID }}

@@ -27,6 +27,7 @@ spec:
       containers:
       - name: consumer
         image: findsources/consumer:latest
+        imagePullPolicy: Always
         command: ["/bin/sh"]
         args: ["-c", "pipenv run uvicorn consumer.main:app --host 0.0.0.0"]
         ports:

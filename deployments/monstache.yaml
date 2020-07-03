@@ -15,6 +15,7 @@ spec:
       containers:
       - name: monstache
         image: findsources/monstache:latest
+        imagePullPolicy: Always
         command: ["/bin/sh"]
         args: ["-c", "./build/linux-amd64/monstache -f config.toml"]
         ports:

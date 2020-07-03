@@ -27,5 +27,6 @@ spec:
       containers:
       - name: frontend
         image: findsources/frontend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000

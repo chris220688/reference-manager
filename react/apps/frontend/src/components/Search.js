@@ -227,7 +227,7 @@ class Search extends Component {
 									<ResultListWrapper>
 										{
 											data.map((item, index) => (
-												<ResultList key={index}>
+												<ResultList key={index} style={{borderLeft: "none", borderRight: "none", borderTop: "none"}}>
 													<ResultList.Content>
 														<ResultList.Title>
 															<Row className="text-right">
@@ -238,7 +238,7 @@ class Search extends Component {
 														</ResultList.Title>
 														<ResultList.Description>
 															<Container>
-																<h2>{item.title}</h2>
+																<h2 className="results-title">{item.title}</h2>
 																<br/>
 																<Row>
 																	<Col className="text-left">

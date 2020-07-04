@@ -7,6 +7,10 @@
     width: 92% !important;
 }
 
+.results-title {
+   white-space: pre-wrap !important;
+}
+
 .css-16nr2ca {
 	top: 8px !important;
 }

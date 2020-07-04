@@ -4,7 +4,7 @@ metadata:
   name: datadir-replica-set-mongodb-primary-0
 spec:
   dataSource:
-    name: mongo-primary-snapshot-30062020
+    name: mongo-primary-snapshot
     kind: VolumeSnapshot
     apiGroup: snapshot.storage.k8s.io
   accessModes:

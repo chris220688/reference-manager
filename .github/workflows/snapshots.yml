@@ -1,12 +1,8 @@
-name: Consumer CI
+name: Snapshots CI
 
 on:
-  push:
-    branches: [ master ]
-    paths:
-    - 'python/apps/consumer/**'
-  pull_request:
-    branches: [ master ]
+  schedule:
+  - cron: "*/2 * * * *"
 
 jobs:
 

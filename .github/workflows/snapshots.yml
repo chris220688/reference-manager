@@ -24,6 +24,7 @@ jobs:
     - name: Deploy to DigitalOcean Kubernetes
       run: |
         echo "Backup snapshot"
+        kubectl get volumesnapshot
         kubectl delete mongo-primary-snapshot
         kubectl create -f deployments/backup-mongo.yaml
 

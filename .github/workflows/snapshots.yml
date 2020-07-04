@@ -25,7 +25,7 @@ jobs:
       run: |
         echo "Backup snapshot"
         kubectl get volumesnapshot
-        kubectl delete mongo-primary-snapshot
+        kubectl delete volumesnapshot mongo-primary-snapshot
         kubectl create -f deployments/backup-mongo.yaml
 
     - name: Remove DigitalOcean kubeconfig

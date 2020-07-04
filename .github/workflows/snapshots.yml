@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v2
+
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
       with:
@@ -21,8 +23,9 @@ jobs:
 
     - name: Deploy to DigitalOcean Kubernetes
       run: |
-        echo "Restarting pods"
-        kubectl delete pod -l app=consumer
+        echo "Backup snapshot"
+        kubectl delete mongo-primary-snapshot
+        kubectl create -f deployments/backup-mongo.yaml
 
     - name: Remove DigitalOcean kubeconfig
       run: doctl kubernetes cluster kubeconfig remove ${{ secrets.DIGITAL_OCEAN_CLUSTER_ID }}

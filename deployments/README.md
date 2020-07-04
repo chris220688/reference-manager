@@ -137,7 +137,7 @@ You can achieve the same from the Digital Ocean UI but be careful to use the cor
 
 Delete the existing snapshot (we always keep the latest snapshot in the Digital Ocean account)
 ```sh
-kubectl delete mongo-primary-snapshot
+kubectl delete volumesnapshot mongo-primary-snapshot
 ```
 Change the name (appending the new date) in backup-mongo.yaml
 ```sh

@@ -1,0 +1,29 @@
+name: Snapshots CI
+
+on:
+  schedule:
+  - cron: "*/2 * * * *"
+  #- cron: "0 2 * *"
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+    - name: Save DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig save ${{ secrets.DIGITAL_OCEAN_CLUSTER_ID }}
+
+    - name: Deploy to DigitalOcean Kubernetes
+      run: |
+        echo "Restarting pods"
+        kubectl delete pod -l app=consumer
+
+    - name: Remove DigitalOcean kubeconfig
+      run: doctl kubernetes cluster kubeconfig remove ${{ secrets.DIGITAL_OCEAN_CLUSTER_ID }}

@@ -7,7 +7,7 @@ from producer.db_clients import get_db_client
 
 if config.SENTRY_ENABLED:
 	# Initialize sentry SDK
-	sentry_sdk.init(config.SENTRY_ENDPOINT, debug=True)
+	sentry_sdk.init(config.SENTRY_ENDPOINT)
 
 # Initialize cache
 cache = Cache()

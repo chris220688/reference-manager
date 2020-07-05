@@ -9,7 +9,7 @@ logging_format = "%(asctime)s %(levelname)s %(name)s %(message)s"
 formatter = logging.Formatter(logging_format)
 
 # Create handlers for console logger
-file_handler = logging.handlers.TimedRotatingFileHandler(f"{config.APP_NAME}.log", when="midnight", interval=1)
+file_handler = logging.handlers.TimedRotatingFileHandler(f"logs/{config.APP_NAME}.log", when="midnight", interval=1)
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(formatter)
 file_handler.suffix = "%Y%m%d"

@@ -79,11 +79,11 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
 	""" Shutdown functionality """
+	logger.info("Shutting down producer service")
+
 	async with exception_handling():
 		await db_client.end_session()
 		await db_client.close_connection()
-
-	logger.info("Shutting down producer service")
 
 
 @app.middleware("http")
@@ -304,18 +304,20 @@ async def user_session_status(
 		Returns:
 			response: A JSON response with the status of the user's session
 	"""
-	logged_id = True if internal_user else False
+	async with exception_handling():
+		raise Exception("TEST from producer")
+		logged_id = True if internal_user else False
 
-	response = JSONResponse(
-		content=jsonable_encoder({
-			"userLoggedIn": logged_id,
-			"userName": internal_user.username,
-			"isAuthor": internal_user.is_author,
-			"requestedJoin": internal_user.requested_join,
-		}),
-	)
+		response = JSONResponse(
+			content=jsonable_encoder({
+				"userLoggedIn": logged_id,
+				"userName": internal_user.username,
+				"isAuthor": internal_user.is_author,
+				"requestedJoin": internal_user.requested_join,
+			}),
+		)
 
-	return response
+		return response
 
 
 @app.get("/get-categories/")
@@ -326,7 +328,6 @@ async def get_categories():
 			response: A JSON response including the available categories
 	"""
 	async with exception_handling():
-
 		response = JSONResponse(
 			content=jsonable_encoder({
 				"categories": [cat.value for cat in Category.__members__.values()]
@@ -349,7 +350,6 @@ async def get_references(
 			response: A JSON response including the references of the user
 	"""
 	async with exception_handling():
-
 		if not internal_user.is_author:
 			raise UnauthorizedUser()
 
@@ -473,7 +473,6 @@ async def get_account(
 			response: A JSON response including the account details
 	"""
 	async with exception_handling():
-
 		account_details = dict(
 			username=internal_user.username,
 			is_author=internal_user.is_author,

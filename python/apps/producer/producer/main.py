@@ -305,6 +305,7 @@ async def user_session_status(
 			response: A JSON response with the status of the user's session
 	"""
 	async with exception_handling():
+		sentry_sdk.capture_exception(Exception("This is an example of an error message."))
 		raise Exception("TEST from producer")
 		logged_id = True if internal_user else False
 

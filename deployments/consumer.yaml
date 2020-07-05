@@ -41,3 +41,8 @@ spec:
           value: 'referencemanager.referencemanager'
         - name: SEARCH_ENDPOINT
           value: '/search/referencemanager/_msearch'
+        - name: SENTRY_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: consumer-secrets
+              key: sentry_endpoint

@@ -35,6 +35,10 @@ kubectl create secret generic regcred --from-file=.dockerconfigjson=~/.docker/co
 ```sh
 kubectl create -f deployments/producer-secrets.yaml
 ```
+####  Create consumer secrets
+```sh
+kubectl create -f deployments/consumer-secrets.yaml
+```
 ####  Create mongo secrets
 ```sh
 kubectl create -f deployments/mongo-secrets.yaml

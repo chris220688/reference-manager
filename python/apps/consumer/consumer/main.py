@@ -106,6 +106,7 @@ async def search(request: Request):
 			response (fastapi.responses.JSONResponse): The json response
 	"""
 	async with exception_handling():
+		raise Exception("TEST from consumer")
 		ms = MultiSearch(using=es_client, index=config.ELASTICSEARCH_INDEX)
 
 		# Decode the body of the request

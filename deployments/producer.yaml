@@ -107,3 +107,8 @@ spec:
           value: '720'
         - name: AUTH_TOKEN_EXPIRE_MINUTES
           value: '3'
+        - name: SENTRY_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: producer-secrets
+              key: sentry_endpoint

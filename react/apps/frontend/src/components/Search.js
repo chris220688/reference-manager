@@ -130,7 +130,7 @@ class Search extends Component {
 					<Container className="responsive-text">
 						<DataSearch
 							componentId="searchBox"
-							dataField={["title"]}
+							dataField={["title", "title.english", "title.greek"]}
 							queryFormat="or"
 							placeholder={t('search.searchbar')}
 							debounce={100}

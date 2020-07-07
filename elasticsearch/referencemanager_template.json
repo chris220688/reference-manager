@@ -9,14 +9,15 @@
     },
     "analysis": {
       "analyzer": {
-        "custom": {
-          "tokenizer": "standard",
+        "default": {
+          "tokenizer": "whitespace",
           "filter": [
             "lowercase",
+            "greek_lowercase",
             "asciifolding",
             "english_stop",
-            "greek_stop",
             "english_stemmer",
+            "greek_stop",
             "greek_stemmer"
           ]
         }
@@ -39,23 +40,10 @@
         "greek_stemmer": {
           "type": "stemmer",
           "language": "greek"
-        }
-      }
-    }
-  },
-  "mappings": {
-    "properties": {
-      "title": {
-        "type": "text",
-        "fields": {
-          "english": {
-            "type": "text",
-            "analyzer": "english"
-          },
-          "greek": {
-            "type": "text",
-            "analyzer": "greek"
-          }
+        },
+        "greek_lowercase": {
+          "type": "lowercase",
+          "language": "greek"
         }
       }
     }

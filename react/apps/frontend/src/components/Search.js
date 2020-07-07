@@ -154,7 +154,7 @@ class Search extends Component {
 								}}
 								componentId="searchResult"
 								pagination={true}
-								size={5}
+								size={10}
 								renderResultStats={(stats) => {
 									return (
 										<Container>

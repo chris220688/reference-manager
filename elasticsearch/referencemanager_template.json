@@ -12,8 +12,13 @@
         "default": {
           "tokenizer": "whitespace",
           "filter": [
+            "lowercase",
+            "greek_lowercase",
+            "asciifolding",
             "english_stop",
-            "greek_stop"
+            "english_stemmer",
+            "greek_stop",
+            "greek_stemmer"
           ]
         }
       },
@@ -23,10 +28,22 @@
           "ignore_case": true,
           "stopwords": "_english_"
         },
+        "english_stemmer":{
+          "type":"stemmer",
+          "language":"english"
+        },
         "greek_stop": {
           "type": "stop",
           "ignore_case": true,
           "stopwords": "_greek_"
+        },
+        "greek_stemmer": {
+          "type": "stemmer",
+          "language": "greek"
+        },
+        "greek_lowercase": {
+          "type": "lowercase",
+          "language": "greek"
         }
       }
     }

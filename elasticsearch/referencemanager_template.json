@@ -47,5 +47,21 @@
         }
       }
     }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "fields": {
+          "english": {
+            "type": "text",
+            "analyzer": "default"
+          }
+        }
+      },
+      "category": {
+        "type": "keyword"
+      }
+    }
   }
 }

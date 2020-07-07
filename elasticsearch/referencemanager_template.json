@@ -10,7 +10,7 @@
     "analysis": {
       "analyzer": {
         "default": {
-          "tokenizer": "whitespace",
+          "tokenizer": "standard",
           "filter": [
             "lowercase",
             "greek_lowercase",

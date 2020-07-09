@@ -63,14 +63,14 @@ spec:
               serviceName: consumer
               servicePort: 80
 ---
-# Redirect www.findsources.gr to findsources.co.uk
+# Redirect www.findsources.co.uk to findsources.co.uk
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: frontend-ingress-www-redirect
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/temporal-redirect: https://findsources.co.uk
+    nginx.ingress.kubernetes.io/permanent-redirect: https://findsources.co.uk
 spec:
   rules:
     - host: www.findsources.co.uk
@@ -88,7 +88,7 @@ metadata:
   name: frontend-ingress-gr-redirect
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/temporal-redirect: https://findsources.co.uk
+    nginx.ingress.kubernetes.io/permanent-redirect: https://findsources.co.uk
 spec:
   rules:
     - host: vrespiges.gr
@@ -106,7 +106,7 @@ metadata:
   name: frontend-ingress-gr-www-redirect
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/temporal-redirect: https://findsources.co.uk
+    nginx.ingress.kubernetes.io/permanent-redirect: https://findsources.co.uk
 spec:
   rules:
     - host: www.vrespiges.gr

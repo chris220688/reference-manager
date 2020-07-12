@@ -1,3 +1,14 @@
 .text-center {
 	text-align: center;
 }
+
+.quote-box {
+  border: dashed 1px black;
+  background-color: #e7e4e4;
+  border-radius: 30px;
+  margin-bottom: 10px;
+}
+
+.quote-box p {
+	margin: 10px 50px 10px 50px;
+}

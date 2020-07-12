@@ -127,7 +127,7 @@ kubectl create -f deployments/producer.yaml
 kubectl create -f deployments/frontend.yaml
 ```
 
-# 12. Create an ingress to expose the app
+# 12. Create the ingresses to expose the apps and establish the redirects
 ```sh
 kubectl create -f deployments/ingress.yaml
 ```
@@ -135,6 +135,14 @@ Need to wait a bit. Track the progress of Let's Encrypt
 ```sh
 kubectl describe certificate findsources-kubernetes-tls
 ```
+Check that all the certificates have been created (findsources-kubernetes-tls, vrespiges-kubernetes-tls, www-findsources-kubernetes-tls, www-vrespiges-kubernetes-tls) and make sure the following permanent redirects works properly with the certificates:
+1. http://findsources.co.uk -> https://findsources.co.uk
+2. https://www.findsources.co.uk -> https://findsources.co.uk
+3. http://www.findsources.co.uk -> https://findsources.co.uk
+4. http://vrespiges.gr -> https://findsources.co.uk
+5. https://vrespiges.gr -> https://findsources.co.uk
+6. http://www.vrespiges.gr -> https://findsources.co.uk
+7. https://www.vrespiges.gr -> https://findsources.co.uk
 
 # 13. Backup mongo with volume snapshots
 You can achieve the same from the Digital Ocean UI but be careful to use the correct names for the snapshots.

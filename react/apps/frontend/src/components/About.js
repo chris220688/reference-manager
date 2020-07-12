@@ -23,7 +23,10 @@ class About extends Component {
 						<p>{t('about.vision.p2')}</p>
 						<p>{t('about.vision.p3')}</p>
 						<p>{t('about.vision.p4')}</p>
-						<p>{t('about.vision.p5')}</p>
+						<div className="quote-box">
+							<p><i><b>{t('about.vision.p5')}</b></i></p>
+						</div>
+						<p>{t('about.vision.p6')}</p>
 					</Col>
 					<Col sm="1"></Col>
 				</Row>

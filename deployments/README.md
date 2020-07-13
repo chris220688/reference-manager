@@ -81,6 +81,19 @@ kubectl create -f deployments/production_issuer.yaml
 ```sh
 helm install replica-set -f deployments/mongo-values.yaml bitnami/mongodb
 ```
+Once the mongos are up, create mongo indexes on the collections
+```sh
+export DB_PASSWORD=`kubectl get secret producer-secrets --template={{.data.db_password}} | base64 --decode`
+export DB_USERNAME=`kubectl get secret producer-secrets --template={{.data.db_username}} | base64 --decode`
+export DB_NAME=`kubectl get secret producer-secrets --template={{.data.db_name}} | base64 --decode`
+
+kubectl exec replica-set-mongodb-primary-0 mongo -- $DB_NAME -u $DB_USERNAME -p $DB_PASSWORD --eval "db.getCollection('referencemanager').createIndex({'title': 1})"
+kubectl exec replica-set-mongodb-primary-0 mongo -- $DB_NAME -u $DB_USERNAME -p $DB_PASSWORD --eval "db.getCollection('referencemanager').createIndex({'reference_id': 1})"
+kubectl exec replica-set-mongodb-primary-0 mongo -- $DB_NAME -u $DB_USERNAME -p $DB_PASSWORD --eval "db.getCollection('referencemanager').createIndex({'metadata.author_id': 1})"
+
+kubectl exec replica-set-mongodb-primary-0 mongo -- $DB_NAME -u $DB_USERNAME -p $DB_PASSWORD --eval "db.getCollection('users').createIndex({'internal_sub_id': 1})"
+kubectl exec replica-set-mongodb-primary-0 mongo -- $DB_NAME -u $DB_USERNAME -p $DB_PASSWORD --eval "db.getCollection('users').createIndex({'external_sub_id': 1})"
+```
 #### Port forward
 ```sh
 kubectl port-forward replica-set-mongodb-primary-0 27017:27017

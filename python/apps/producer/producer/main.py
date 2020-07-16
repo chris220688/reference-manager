@@ -15,6 +15,7 @@ from starlette.responses import (
 	RedirectResponse,
 	Response,
 )
+from sentry_sdk import capture_message
 
 from contextlog import contextlog
 from producer.auth import (
@@ -104,8 +105,12 @@ async def setup_request(request: Request, call_next) -> JSONResponse:
 
 	response = await call_next(request)
 
-	if response.status_code == status.HTTP_401_UNAUTHORIZED:
-		# The is the only exception where we need to redirect
+	if (
+		response.status_code == status.HTTP_401_UNAUTHORIZED and
+		request.url.path != "/user-session-status/"
+	):
+		# If the request to any resource apart from /user-session-status/ is
+		# unauthorized, this is the only exception where we need to redirect
 		redirect_url = f"{config.FRONTEND_URL}?error=401"
 		response = RedirectResponse(url=redirect_url)
 
@@ -452,6 +457,8 @@ async def join(
 
 		if updated_user:
 			requested = True
+			# Sent a notification to sentry
+			capture_message(f"Join request: {internal_user.internal_sub_id}")
 
 		response = JSONResponse(
 			content=jsonable_encoder({"requested": requested}),

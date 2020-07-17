@@ -127,20 +127,20 @@
 @media (min-width: 100px) and (max-width:320px) {
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:15px;}
-  .custom-jumbotron p {font-size:10px;}
+  .custom-jumbotron p {font-size:12px;}
 }
 
 /* Small devices (landscape phones, 544px and up) */
 @media (min-width: 321px) and (max-width:544px) {
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:22px;}
-  .custom-jumbotron p {font-size:11px;}
+  .custom-jumbotron p {font-size:13px;}
 }
 
 @media (min-width: 544px) and (max-width:768px) {
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:30px;}
-  .custom-jumbotron p {font-size:15px;}
+  .custom-jumbotron p {font-size:14px;}
 }
 
 @media (min-width: 769px) {

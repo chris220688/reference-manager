@@ -10,47 +10,24 @@ code {
     monospace;
 }
 
-@media (min-width: 100px) and (max-width:320px) {
-  .responsive-text {font-size:7px; padding-right:0px; padding-left:0px;} /*1rem = 16px*/
-  .responsive-text span {font-size:7px; padding-right:0px; padding-left:0px;}
-  .responsive-text h1 {font-size:12px;}
-  .responsive-text h2 {font-size:11px;}
-  .responsive-text h3 {font-size:10px;}
-  .responsive-text h4 {font-size:9px;}
+@media (min-width: 100px) and (max-width:544px) {
+  .responsive-text {font-size:12px; padding-right:0px; padding-left:0px;} /*1rem = 16px*/
+  .responsive-text span {font-size:12px; padding-right:0px; padding-left:0px;}
+  .responsive-text h1 {font-size:15px;}
+  .responsive-text h2 {font-size:14px;}
+  .responsive-text h3 {font-size:13px;}
+  .responsive-text h4 {font-size:12px;}
   .responsive-text button {
-    font-size:7px !important;
+    font-size:12px !important;
   }
   .responsive-text input {
-    font-size:7px !important;
+    font-size:12px !important;
   }
   .responsive-text textarea {
-    font-size:7px !important;
+    font-size:12px !important;
   }
   .responsive-text a {
-    font-size:7px !important;
-  }
-  .reference-tabs {font-size:12px;}
-}
-
-/* Small devices (landscape phones, 544px and up) */
-@media (min-width: 321px) and (max-width:544px) {
-  .responsive-text {font-size:9px; padding-right:0px; padding-left:0px;}
-  .responsive-text span {font-size:9px; padding-right:0px; padding-left:0px;}
-  .responsive-text h1 {font-size:13px;}
-  .responsive-text h2 {font-size:12px;}
-  .responsive-text h3 {font-size:11px;}
-  .responsive-text h4 {font-size:10px;}
-  .responsive-text button {
-    font-size:9px !important;
-  }
-  .responsive-text input {
-    font-size:9px !important;
-  }
-  .responsive-text textarea {
-    font-size:9px !important;
-  }
-  .responsive-text a {
-    font-size:9px !important;
+    font-size:12px !important;
   }
   .reference-tabs {font-size:12px;}
 }

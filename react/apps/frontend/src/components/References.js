@@ -400,7 +400,7 @@ class References extends Component {
 			<Container className="responsive-text">
 				<Tabs defaultActiveKey="references" className="reference-tabs">
 					<Tab eventKey="references" title={t('references.myreferences')}>
-						<Container fluid>
+						<div fluid>
 							<Row>
 								<Col>
 									<br/>
@@ -415,7 +415,7 @@ class References extends Component {
 										<ListGroup variant="flush">
 											{this.state.references.map((reference, index) => (
 												<ListGroup.Item key={index}>
-													<Container>
+													<div>
 														<Row className="text-right">
 															<Col>
 																<b>{t('references.categories.' + reference.category)}</b>
@@ -462,7 +462,7 @@ class References extends Component {
 																</Button>
 															</Col>
 														</Row>
-													</Container>
+													</div>
 													<br/>
 												</ListGroup.Item>
 											))}
@@ -470,7 +470,7 @@ class References extends Component {
 									)}
 								</Col>
 							</Row>
-						</Container>
+						</div>
 					</Tab>
 
 					<Tab eventKey="addReference" title={t('references.addreference')}>

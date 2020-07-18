@@ -45,6 +45,7 @@ JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", None)
 ALGORITHM = os.environ.get("ALGORITHM", None)
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 15))
 AUTH_TOKEN_EXPIRE_MINUTES = int(os.environ.get("AUTH_TOKEN_EXPIRE_MINUTES", 1))
+ACCESS_COOKIE_EXPIRE_SECONDS = int(os.environ.get("ACCESS_COOKIE_EXPIRE_SECONDS", 900))
 
 # Sentry configuration
 SENTRY_ENABLED = True if not LOCAL_DEPLOYMENT else False

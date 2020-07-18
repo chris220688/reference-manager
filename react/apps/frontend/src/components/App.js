@@ -454,8 +454,8 @@ class App extends Component {
 							<Nav>
 								<Nav.Link onClick={this.openAbout}>{t('about')}</Nav.Link>
 								<Nav.Link onClick={this.openContact}>{t('contact')}</Nav.Link>
-								<Nav.Link onClick={this.openPrivacyPolicy}>{t('privacypolicy')}</Nav.Link>
 								<Nav.Link onClick={this.openTerms}>{t('terms')}</Nav.Link>
+								<Nav.Link onClick={this.openPrivacyPolicy}>{t('privacypolicy')}</Nav.Link>
 							</Nav>
 						</Navbar>
 					</div>

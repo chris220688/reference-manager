@@ -113,8 +113,8 @@ class Search extends Component {
 										<Col sm="1"></Col>
 									</Row>
 									<Row>
-										<Col xs="3" sm="1" md="1"></Col>
-										<Col xs="6" sm="10" md="10">
+										<Col xs="2" sm="2" md="1"></Col>
+										<Col xs="8" sm="8" md="10">
 											<div className="toggle-categories-btn">
 												<ToggleButton
 													componentId="categoryFilter"
@@ -126,7 +126,7 @@ class Search extends Component {
 												/>
 											</div>
 										</Col>
-										<Col xs="3" sm="1" md="1"></Col>
+										<Col xs="2" sm="2" md="1"></Col>
 									</Row>
 								</div>
 							</Col>

@@ -487,7 +487,7 @@ class References extends Component {
 										size="sm"
 										variant="secondary"
 										id="dropdown-basic-button"
-										title={this.state.category ? this.state.category : t('references.form.category')}
+										title={this.state.category ? t('search.categories.' + this.state.category) : t('references.form.category')}
 									>
 										{this.state.categories.map((category, index) => (
 											<Dropdown.Item

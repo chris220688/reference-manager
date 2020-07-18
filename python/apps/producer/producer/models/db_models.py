@@ -26,6 +26,7 @@ class Category(str, Enum):
 	arts = "arts"
 	sports = "sports"
 	travel = "travel"
+	other = "other"
 
 
 class Reference(BaseModel):

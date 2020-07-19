@@ -36,6 +36,7 @@ class App extends Component {
 		producerDeleteEndpoint: constants.producerDeleteEndpoint,
 		producerReferencesEndpoint: constants.producerReferencesEndpoint,
 		producerCaregoriesEndpoint: constants.producerCaregoriesEndpoint,
+		producerBookmarksEndpoint: constants.producerBookmarksEndpoint,
 		producerJoinEndpoint: constants.producerJoinEndpoint,
 		producerAccountDetailsEndpoint: constants.producerAccountDetailsEndpoint,
 		producerDeleteAccountEndpoint: constants.producerDeleteAccountEndpoint,
@@ -340,7 +341,7 @@ class App extends Component {
 									<Nav.Link onClick={this.openAccount}>{t('myaccount')}</Nav.Link> : null
 								}
 								<Nav.Link onClick={this.openSearch}>{t('search.search')}</Nav.Link>
-								{this.state.userLoggedIn && this.state.isAuthor ?
+								{this.state.userLoggedIn ?
 									<Nav.Link style={{color:"white"}} onClick={this.openReferences}>{t('search.references')}</Nav.Link> : null
 								}
 								{this.state.userLoggedIn && !this.state.isAuthor && !this.state.requestedJoin ?
@@ -406,7 +407,9 @@ class App extends Component {
 						{this.state.searchOn && this.state.consumerSearchEndpoint ?
 							<Search
 								producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+								producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
 								consumerSearchEndpoint={this.state.consumerSearchEndpoint}
+								userLoggedIn={this.state.userLoggedIn}
 							/> : null
 						}
 						{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
@@ -423,6 +426,8 @@ class App extends Component {
 								producerDeleteEndpoint={this.state.producerDeleteEndpoint}
 								producerReferencesEndpoint={this.state.producerReferencesEndpoint}
 								producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+								producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
+								isAuthor={this.state.isAuthor}
 							/> : null
 						}
 						{this.state.aboutOn ? <About/> : null }

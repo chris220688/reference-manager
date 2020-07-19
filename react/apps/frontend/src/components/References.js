@@ -19,8 +19,11 @@ class References extends Component {
 		producerDeleteEndpoint: this.props.producerDeleteEndpoint,
 		producerReferencesEndpoint: this.props.producerReferencesEndpoint,
 		producerCaregoriesEndpoint: this.props.producerCaregoriesEndpoint,
+		producerBookmarksEndpoint: this.props.producerBookmarksEndpoint,
+		isAuthor: this.props.isAuthor,
 		categories: [],
 		references: [],
+		bookmarkedReferences: [],
 		books: {},
 		currentBook: '',
 		currentBookAuthor: '',
@@ -28,28 +31,19 @@ class References extends Component {
 		title: null,
 		category: null,
 		description: null,
-		loading: true,
+		referencesLoading: true,
+		bookmarkedReferencesLoading: true,
 		error: null
 	}
 
 	componentDidMount() {
 		const { t } = this.props
-		const referencesRequest = {
-			method: 'GET',
-			credentials: 'include',
+
+		if ( this.props.isAuthor ) {
+			this.getReferences()
 		}
 
-		fetch(this.state.producerReferencesEndpoint, referencesRequest)
-		.then(response => response.json())
-		.then(data => {
-			this.setState({
-				references: data['references'],
-				loading: false
-			})
-		})
-		.catch(err => {
-			this.addError(t('references.error.genericerror'))
-		})
+		this.getBookmarkedReferences()
 
 		const categoriesRequest = {
 			method: 'GET',
@@ -340,6 +334,26 @@ class References extends Component {
 		})
 	}
 
+	getReferences = () => {
+		const { t } = this.props
+		const referencesRequest = {
+			method: 'GET',
+			credentials: 'include',
+		}
+
+		fetch(this.state.producerReferencesEndpoint, referencesRequest)
+		.then(response => response.json())
+		.then(data => {
+			this.setState({
+				references: data['references'],
+				referencesLoading: false
+			})
+		})
+		.catch(err => {
+			this.addError(t('references.error.genericerror'))
+		})
+	}
+
 	deleteReference = (reference) => {
 		const { t } = this.props
 		const request = {
@@ -362,7 +376,47 @@ class References extends Component {
 		.catch(err => {
 			this.addError(t('references.error.genericerror'))
 		})
+	}
 
+	getBookmarkedReferences = () => {
+		const { t } = this.props
+		const referencesRequest = {
+			method: 'GET',
+			credentials: 'include',
+		}
+
+		fetch(this.state.producerBookmarksEndpoint, referencesRequest)
+		.then(response => response.json())
+		.then(data => {
+			this.setState({
+				bookmarkedReferences: data['bookmarkedReferences'],
+				bookmarkedReferencesLoading: false
+			})
+		})
+		.catch(err => {
+			this.addError(t('references.error.genericerror'))
+		})
+	}
+
+	removeBookmark = (reference) => {
+		const deleteBookmarkRequest = {
+			method: 'DELETE',
+			credentials: 'include',
+			body: JSON.stringify(reference)
+		}
+
+		fetch(this.state.producerBookmarksEndpoint, deleteBookmarkRequest)
+		.then(response => response.json())
+		.then(data => {
+			if ( data.success ) {
+				var bookmarkedReferences = this.state.bookmarkedReferences
+				var filteredBookmarkedReferences = bookmarkedReferences.filter(function(e) { return e.reference_id !== reference.reference_id })
+				this.setState({
+					bookmarkedReferences: filteredBookmarkedReferences,
+				})
+			}
+		})
+		.catch(err => console.log(err))
 	}
 
 	clearForm = () => {
@@ -398,7 +452,82 @@ class References extends Component {
 
 		return (
 			<Container className="responsive-text">
-				<Tabs defaultActiveKey="references" className="reference-tabs">
+				<Tabs defaultActiveKey="bookmarked" className="reference-tabs">
+					<Tab eventKey="bookmarked" title={t('references.bookmarked')}>
+						<div>
+							<Row>
+								<Col>
+									<br/>
+									{this.state.bookmarkedReferences.length === 0 ? <span>{t('references.noreferences')}</span> : null}
+								</Col>
+							</Row>
+
+							<Row>
+								<Col>
+									{this.state.bookmarkedReferencesLoading ? (
+										t('references.loading')
+									) : (
+										<ListGroup variant="flush">
+											{this.state.bookmarkedReferences.map((reference, index) => (
+												<ListGroup.Item key={index}>
+													<div>
+														<Row className="text-right">
+															<Col>
+																<b>{t('references.categories.' + reference.category)}</b>
+															</Col>
+														</Row>
+														<Row >
+															<Col>
+																<h2>{reference.title}</h2>
+															</Col>
+														</Row>
+														<br/>
+														<Row>
+															<Col className="text-left">
+																{reference.description}
+															</Col>
+														</Row>
+														<Row>
+															<Col>
+																<ListGroup>
+																{reference.books.map(({ name, author, book_sections }, bookIndex) => (
+																	<ListGroup.Item style={{border: "none"}} key={bookIndex}>
+																		<div>
+																			<b>{name}</b> - <span>{author}</span>
+																		</div>
+																		<div>
+																			{book_sections.map(({ starting_page, ending_page }, sectionsIndex) => (
+																				<span key={sectionsIndex}>|{starting_page}-{ending_page}| </span>
+																			))}
+																		</div>
+																	</ListGroup.Item>
+																))}
+																</ListGroup>
+															</Col>
+														</Row>
+														<Row>
+															<Col>
+																<Button
+																	className="float-right"
+																	size="sm"
+																	variant="danger"
+																	onClick={() => this.removeBookmark(reference)}
+																>
+																	{t('references.deletebookmark')}
+																</Button>
+															</Col>
+														</Row>
+													</div>
+													<br/>
+												</ListGroup.Item>
+											))}
+										</ListGroup>
+									)}
+								</Col>
+							</Row>
+						</div>
+					</Tab>
+					{this.state.isAuthor ?
 					<Tab eventKey="references" title={t('references.myreferences')}>
 						<div fluid>
 							<Row>
@@ -407,9 +536,10 @@ class References extends Component {
 									{this.state.references.length === 0 ? <span>{t('references.noreferences')}</span> : null}
 								</Col>
 							</Row>
+
 							<Row>
 								<Col>
-									{this.state.loading ? (
+									{this.state.referencesLoading ? (
 										t('references.loading')
 									) : (
 										<ListGroup variant="flush">
@@ -471,8 +601,9 @@ class References extends Component {
 								</Col>
 							</Row>
 						</div>
-					</Tab>
-
+					</Tab> : null
+					}
+					{this.state.isAuthor ?
 					<Tab eventKey="addReference" title={t('references.addreference')}>
 						<br/>
 							{this.state.error ?
@@ -641,7 +772,8 @@ class References extends Component {
 								</Col>
 							</Form.Row>
 						</Form>
-					</Tab>
+					</Tab> : null
+					}
 				</Tabs>
 			</Container>
 		);

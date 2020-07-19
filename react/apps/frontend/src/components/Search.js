@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { withTranslation } from 'react-i18next'
 import { ReactiveBase, ReactiveList, DataSearch, ResultList, ToggleButton } from '@appbaseio/reactivesearch';
-
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import {
 	Button, Col, Container, ListGroup, Pagination, Row
 } from 'react-bootstrap'
@@ -16,7 +16,10 @@ class Search extends Component {
 
 	state = {
 		producerCaregoriesEndpoint: this.props.producerCaregoriesEndpoint,
+		producerBookmarksEndpoint: this.props.producerBookmarksEndpoint,
 		consumerSearchEndpoint: this.props.consumerSearchEndpoint,
+		userLoggedIn: this.props.userLoggedIn,
+		bookmarkedReferences: [],
 		category: null,
 		categories: [],
 		categoriesStyle: {},
@@ -32,6 +35,19 @@ class Search extends Component {
 		.then(response => response.json())
 		.then(data => this.setCategories(data))
 		.catch(err => console.log(err))
+
+		if (this.state.userLoggedIn) {
+			this.getBookmarkedReferences()
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		if (this.props.userLoggedIn !== prevProps.userLoggedIn) {
+			this.setState({
+				"userLoggedIn": this.props.userLoggedIn
+			})
+			this.getBookmarkedReferences()
+		}
 	}
 
 	setCategories = (data) => {
@@ -89,6 +105,83 @@ class Search extends Component {
 				showSearchResults: false
 			})
 		}
+	}
+
+	getBookmarkedReferences = () => {
+		const referencesRequest = {
+			method: 'GET',
+			credentials: 'include',
+		}
+
+		fetch(this.state.producerBookmarksEndpoint, referencesRequest)
+		.then(response => response.json())
+		.then(data => {
+			this.setState({
+				bookmarkedReferences: data['bookmarkedReferences'],
+			})
+		})
+		.catch(err => console.log(err))
+	}
+
+	addBookmark = (item) => {
+		const reference = {
+			reference_id: item.reference_id,
+			title: item.title,
+			category: item.category,
+			description: item.description,
+			books: item.books,
+		}
+
+		const addBookmarkRequest = {
+			method: 'PUT',
+			credentials: 'include',
+			body: JSON.stringify(reference)
+		}
+
+		fetch(this.state.producerBookmarksEndpoint, addBookmarkRequest)
+		.then(response => response.json())
+		.then(data => {
+			if ( data.success ) {
+				var bookmarkedReferences = this.state.bookmarkedReferences
+				bookmarkedReferences.push(reference)
+				this.setState({
+					bookmarkedReferences: bookmarkedReferences,
+				})
+			}
+		})
+		.catch(err => console.log(err))
+	}
+
+	removeBookmark = (item) => {
+		const reference = {
+			reference_id: item.reference_id,
+			title: item.title,
+			category: item.category,
+			description: item.description,
+			books: item.books,
+		}
+
+		const deleteBookmarkRequest = {
+			method: 'DELETE',
+			credentials: 'include',
+			body: JSON.stringify(reference)
+		}
+
+		fetch(this.state.producerBookmarksEndpoint, deleteBookmarkRequest)
+		.then(response => response.json())
+		.then(data => {
+			if ( data.success ) {
+				var bookmarkedReferences = this.state.bookmarkedReferences
+				var filteredBookmarkedReferences = bookmarkedReferences.filter(
+					function(e) { return e.reference_id !== reference.reference_id }
+				)
+
+				this.setState({
+					bookmarkedReferences: filteredBookmarkedReferences,
+				})
+			}
+		})
+		.catch(err => console.log(err))
 	}
 
 	render() {
@@ -231,18 +324,26 @@ class Search extends Component {
 												<ResultListWrapper>
 													{
 														data.map((item, index) => (
-															<ResultList key={index} style={{borderLeft: "none", borderRight: "none", borderTop: "none"}}>
+															<ResultList key={index} style={{borderLeft: "none", borderRight: "none", borderTop: "none", "padding": "unset", "paddingTop": "10px"}}>
 																<ResultList.Content>
 																	<ResultList.Title>
-																		<Row className="text-right">
-																			<Col>
+																		<Row>
+																			{this.state.userLoggedIn ?
+																				<Col>
+																					{this.state.bookmarkedReferences.map(ref => ref.reference_id).indexOf(item.reference_id) === -1 ?
+																						<BsBookmark style={{"cursor": "pointer"}} onClick={() => this.addBookmark(item)}/> :
+																						<BsBookmarkFill style={{"cursor": "pointer"}} onClick={() => this.removeBookmark(item)}/>
+																					}
+																				</Col> : null
+																			}
+																			<Col className="text-right">
 																				{t('search.categories.' + item.category)}
 																			</Col>
 																		</Row>
 																	</ResultList.Title>
 																	<ResultList.Description>
 																		<div>
-																			<h2 className="results-title">{item.title}</h2>
+																			<h2 className="results-title" style={{"paddingTop": "10px"}}>{item.title}</h2>
 																			<br/>
 																			<Row>
 																				<Col className="text-left">

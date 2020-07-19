@@ -261,6 +261,7 @@ async def login(
 				"userName": internal_user.username,
 				"isAuthor": internal_user.is_author,
 				"requestedJoin": internal_user.requested_join,
+				"bookmarkedReferences": internal_user.bookmarked_references,
 			}),
 		)
 
@@ -324,6 +325,7 @@ async def user_session_status(
 				"userName": internal_user.username,
 				"isAuthor": internal_user.is_author,
 				"requestedJoin": internal_user.requested_join,
+				"bookmarkedReferences": internal_user.bookmarked_references,
 			}),
 		)
 
@@ -446,6 +448,7 @@ async def delete_reference(
 
 		return response
 
+
 @app.put("/join/")
 async def join(
 	internal_user: InternalUser = Depends(access_token_cookie_scheme)
@@ -471,6 +474,7 @@ async def join(
 		)
 
 		return response
+
 
 @app.get("/get-account/")
 async def get_account(
@@ -498,6 +502,7 @@ async def get_account(
 
 		return response
 
+
 @app.delete("/delete-account/")
 async def delete_account(
 	internal_user: InternalUser = Depends(access_token_cookie_scheme)
@@ -520,5 +525,53 @@ async def delete_account(
 		)
 
 		response.delete_cookie(key="access_token")
+
+		return response
+
+
+@app.get("/bookmark/")
+async def bookmark(
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	async with exception_handling():
+		references = await db_client.find_bookmarked_by_author(internal_user)
+
+		response = JSONResponse(
+			content=jsonable_encoder({"bookmarkedReferences": references}),
+		)
+
+		return response
+
+
+@app.put("/bookmark/")
+async def bookmark(
+	reference: Reference,
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	async with exception_handling():
+		inserted_count = await db_client.add_bookmark(reference, internal_user)
+
+		success = True if inserted_count else False
+
+		response = JSONResponse(
+			content=jsonable_encoder({"success": True}),
+		)
+
+		return response
+
+
+@app.delete("/bookmark/")
+async def bookmark(
+	reference: Reference,
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	async with exception_handling():
+		deleted_count = await db_client.remove_bookmark(reference, internal_user)
+
+		success = True if deleted_count else False
+
+		response = JSONResponse(
+			content=jsonable_encoder({"success": success}),
+		)
 
 		return response

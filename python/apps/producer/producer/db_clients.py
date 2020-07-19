@@ -133,6 +133,18 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
+	async def find_bookmarked_by_author(self, internal_sub_id: str) -> List[Reference]:
+		""" Searches for reference documents by bookmarked ids of the author.
+
+			Args:
+				internal_sub_id: The unique id of the user as defined in this application
+
+			Returns:
+				references: A list of references that match the author
+		"""
+		...
+
+	@abstractmethod
 	async def insert_reference(self, document: Reference, metadata: ReferenceMetadata) -> Reference:
 		""" Inserts a reference in the database.
 
@@ -141,6 +153,29 @@ class DatabaseClient(ABC):
 
 			Returns:
 				reference_id: The id of the inserted item
+		"""
+		...
+
+	@abstractmethod
+	async def add_bookmark(self, reference: Reference, internal_user: InternalUser):
+		""" Creates a new bookmark in the user's account, for a given reference
+
+			Args:
+				reference: The reference to add to the bookmarks
+				internal_user: A user objects as defined in this application
+		"""
+		...
+
+	@abstractmethod
+	async def remove_bookmark(self, reference: Reference, internal_user: InternalUser):
+		""" Given a reference_id, it deletes the bookmark from the user's account
+
+			Args:
+				reference: The reference to remove from the bookmarks
+				internal_user: A user objects as defined in this application
+
+			Returns:
+				deleted_count: Number of deleted items
 		"""
 		...
 
@@ -332,6 +367,19 @@ class MongoDBClient(DatabaseClient):
 
 		return references
 
+	async def find_bookmarked_by_author(self, internal_user: InternalUser) -> List[Reference]:
+		references = []
+
+		async for document in self._reference_manager_coll.find({
+			"reference_id": {"$in": internal_user.bookmarked_references}
+		}):
+			# Clear DB specific data
+			del document["metadata"]
+			del document["_id"]
+			references.append(Reference(**document))
+
+		return references
+
 	async def insert_reference(self, document: Reference, metadata: ReferenceMetadata) -> Reference:
 		inserted_reference = None
 
@@ -348,6 +396,31 @@ class MongoDBClient(DatabaseClient):
 
 		return inserted_reference
 
+	async def add_bookmark(self, reference: Reference, internal_user: InternalUser):
+		if reference.reference_id not in internal_user.bookmarked_references:
+
+			internal_user.bookmarked_references.append(reference.reference_id)
+
+			result = await self._users_coll.update_one(
+				{"internal_sub_id": internal_user.internal_sub_id},
+				{"$set": {"bookmarked_references": internal_user.bookmarked_references}}
+			)
+
+			return result.modified_count
+
+	async def remove_bookmark(self, reference: Reference, internal_user: InternalUser):
+		if reference.reference_id in internal_user.bookmarked_references:
+
+			internal_user.bookmarked_references.remove(reference.reference_id)
+
+			result = await self._users_coll.update_one(
+				{"internal_sub_id": internal_user.internal_sub_id},
+				{"$set": {"bookmarked_references": internal_user.bookmarked_references}}
+			)
+
+			return result.modified_count
+
+
 	async def get_user_by_external_sub_id(self, external_user: ExternalUser) -> InternalUser:
 		internal_user = None
 
@@ -362,6 +435,7 @@ class MongoDBClient(DatabaseClient):
 				username=mongo_user["username"],
 				is_author=mongo_user["is_author"],
 				requested_join=mongo_user["requested_join"],
+				bookmarked_references=mongo_user["bookmarked_references"],
 				created_at=mongo_user["created_at"],
 			)
 
@@ -379,6 +453,7 @@ class MongoDBClient(DatabaseClient):
 				username=mongo_user["username"],
 				is_author=mongo_user["is_author"],
 				requested_join=mongo_user["requested_join"],
+				bookmarked_references=mongo_user["bookmarked_references"],
 				created_at=mongo_user["created_at"],
 			)
 
@@ -396,6 +471,7 @@ class MongoDBClient(DatabaseClient):
 				username=external_user.username,
 				is_author=False,
 				requested_join=False,
+				bookmarked_references=[],
 				created_at=datetime.datetime.utcnow(),
 			)
 		)
@@ -410,6 +486,7 @@ class MongoDBClient(DatabaseClient):
 			username=mongo_user["username"],
 			is_author=mongo_user["is_author"],
 			requested_join=mongo_user["requested_join"],
+			bookmarked_references=mongo_user["bookmarked_references"],
 			created_at=mongo_user["created_at"],
 		)
 

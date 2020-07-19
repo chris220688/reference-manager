@@ -17,6 +17,7 @@ var producerInsertEndpoint = producerDomain + '/api/producer/insert-reference/'
 var producerDeleteEndpoint = producerDomain + '/api/producer/delete-reference/'
 var producerReferencesEndpoint = producerDomain + '/api/producer/get-references/'
 var producerCaregoriesEndpoint = producerDomain + '/api/producer/get-categories/'
+var producerBookmarksEndpoint = producerDomain + '/api/producer/bookmark/'
 var producerJoinEndpoint = producerDomain + '/api/producer/join/'
 var producerAccountDetailsEndpoint = producerDomain + '/api/producer/get-account/'
 var producerDeleteAccountEndpoint = producerDomain + '/api/producer/delete-account/'
@@ -33,6 +34,7 @@ if (localDeployment) {
 	producerDeleteEndpoint = producerDomain + '/delete-reference/'
 	producerReferencesEndpoint = producerDomain + '/get-references/'
 	producerCaregoriesEndpoint = producerDomain + '/get-categories/'
+	producerBookmarksEndpoint = producerDomain + '/bookmark/'
 	producerJoinEndpoint = producerDomain + '/join/'
 	producerAccountDetailsEndpoint = producerDomain + '/get-account/'
 	producerDeleteAccountEndpoint = producerDomain + '/delete-account/'
@@ -49,6 +51,7 @@ export const constants = {
 	producerDeleteEndpoint: producerDeleteEndpoint,
 	producerReferencesEndpoint: producerReferencesEndpoint,
 	producerCaregoriesEndpoint: producerCaregoriesEndpoint,
+	producerBookmarksEndpoint: producerBookmarksEndpoint,
 	producerJoinEndpoint: producerJoinEndpoint,
 	producerAccountDetailsEndpoint: producerAccountDetailsEndpoint,
 	producerDeleteAccountEndpoint: producerDeleteAccountEndpoint,

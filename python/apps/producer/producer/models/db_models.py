@@ -51,4 +51,5 @@ class InternalUser(BaseModel):
 	username: str
 	is_author: bool
 	requested_join: bool
+	bookmarked_references: list
 	created_at: datetime.datetime

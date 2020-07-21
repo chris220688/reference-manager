@@ -17,6 +17,7 @@ import JoinUs from './JoinUs';
 import PrivacyPolicy from './PrivacyPolicy';
 import Terms from './Terms';
 import Contact from './Contact';
+import Home from './Home';
 import { constants } from '../constants/Constants.js'
 
 import logo from '../icons/logo.png'
@@ -46,7 +47,8 @@ class App extends Component {
 		userLoggedIn: false,
 		userName: null,
 		permissions: [],
-		searchOn: true,
+		homeOn: true,
+		searchOn: false,
 		accountOn: false,
 		referencesOn: false,
 		joinUsOn: false,
@@ -173,6 +175,7 @@ class App extends Component {
 	openReferences = () => {
 		this.setState({
 			referencesOn: true,
+			homeOn: false,
 			accountOn: false,
 			searchOn: false,
 			joinUsOn: false,
@@ -186,6 +189,7 @@ class App extends Component {
 	openSearch = () => {
 		this.setState({
 			referencesOn: false,
+			homeOn: false,
 			accountOn: false,
 			searchOn: true,
 			joinUsOn: false,
@@ -199,6 +203,7 @@ class App extends Component {
 	openAccount = () => {
 		this.setState({
 			referencesOn: false,
+			homeOn: false,
 			accountOn: true,
 			searchOn: false,
 			joinUsOn: false,
@@ -212,6 +217,7 @@ class App extends Component {
 	openJoinus = () => {
 		this.setState({
 			referencesOn: false,
+			homeOn: false,
 			accountOn: false,
 			searchOn: false,
 			joinUsOn: true,
@@ -225,6 +231,7 @@ class App extends Component {
 	openAbout = () => {
 		this.setState({
 			referencesOn: false,
+			homeOn: false,
 			accountOn: false,
 			searchOn: false,
 			joinUsOn: false,
@@ -238,6 +245,7 @@ class App extends Component {
 	openPrivacyPolicy = () => {
 		this.setState({
 			referencesOn: false,
+			homeOn: false,
 			accountOn: false,
 			searchOn: false,
 			joinUsOn: false,
@@ -251,6 +259,7 @@ class App extends Component {
 	openTerms = () => {
 		this.setState({
 			referencesOn: false,
+			homeOn: false,
 			accountOn: false,
 			searchOn: false,
 			joinUsOn: false,
@@ -264,6 +273,7 @@ class App extends Component {
 	openContact = () => {
 		this.setState({
 			referencesOn: false,
+			homeOn: false,
 			accountOn: false,
 			searchOn: false,
 			joinUsOn: false,
@@ -277,8 +287,23 @@ class App extends Component {
 	setSearchOn = () => {
 		this.setState({
 			referencesOn: false,
+			homeOn: false,
 			accountOn: false,
 			searchOn: true,
+			joinUsOn: false,
+			aboutOn: false,
+			privacyPolicyOn: false,
+			termsOn: false,
+			contactOn: false,
+		})
+	}
+
+	openHome = () => {
+		this.setState({
+			referencesOn: true,
+			homeOn: false,
+			accountOn: false,
+			searchOn: false,
 			joinUsOn: false,
 			aboutOn: false,
 			privacyPolicyOn: false,
@@ -324,7 +349,7 @@ class App extends Component {
 			<section id="page-container">
 				<div id="content-wrap">
 					<Navbar bg="dark" expand="md" sticky="top">
-						<Navbar.Brand href="/" onClick={this.openSearch}>
+						<Navbar.Brand href="/" onClick={this.openHome}>
 							<img
 								src={logo}
 								width="35"
@@ -369,13 +394,19 @@ class App extends Component {
 						</Navbar.Collapse>
 					</Navbar>
 
+					{this.state.homeOn ?
+						<section>
+							<Home/>
+						</section> : null
+					}
+
 					{this.state.searchOn ?
 						<Jumbotron fluid className="custom-jumbotron">
 							<Container className="text-center">
 								<h1>{t('banner.header')}</h1>
 								<p>{t('banner.paragraph')}</p>
 							</Container>
-						</Jumbotron>: null
+						</Jumbotron> : null
 					}
 
 					<br/>

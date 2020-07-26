@@ -395,9 +395,7 @@ class App extends Component {
 					</Navbar>
 
 					{this.state.homeOn ?
-						<section>
-							<Home/>
-						</section> : null
+						<Home/> : null
 					}
 
 					{this.state.searchOn ?

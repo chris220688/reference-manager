@@ -44,11 +44,21 @@
 .footer-container nav {
   font-size: 15px;
   padding: 0px;
+  background-color: #343a40;
+  min-height: 100px;
 }
 
 .footer-container hr {
   margin-top: 50px;
   margin-bottom: 0px;
+}
+
+.footer-container a {
+  color: #fff !important;
+}
+
+.footer-container a:hover {
+    color: #86ddf8 !important;
 }
 
 .language-dropdown > button {

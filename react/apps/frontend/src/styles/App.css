@@ -44,11 +44,21 @@
 .footer-container nav {
   font-size: 15px;
   padding: 0px;
+  background-color: #343a40;
+  min-height: 100px;
 }
 
 .footer-container hr {
   margin-top: 50px;
   margin-bottom: 0px;
+}
+
+.footer-container a {
+  color: #fff !important;
+}
+
+.footer-container a:hover {
+    color: #86ddf8 !important;
 }
 
 .language-dropdown > button {
@@ -82,6 +92,10 @@
   content: none;
 }
 
+.navbar-brand-img {
+  cursor: pointer;
+}
+
 .custom-nav-items .nav-link {
   color: #fff !important;
 }
@@ -104,14 +118,14 @@
 }
 
 #content-wrap {
-  padding-bottom: 2.5rem;    /* Footer height */
+  padding-bottom: 2.5rem;
 }
 
 #page-footer {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 2.5rem;            /* Footer height */
+  height: 2.5rem;
 }
 
 .text-center {
@@ -142,10 +156,12 @@
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:30px;}
   .custom-jumbotron p {font-size:14px;}
+  .footer-container nav {padding-right: 100px;}
 }
 
 @media (min-width: 769px) {
   .custom-jumbotron {padding: 4rem 2rem;}
   .custom-jumbotron h1 {font-size:40px;}
   .custom-jumbotron p {font-size:17px;}
+  .footer-container nav {padding-right: 100px;}
 }

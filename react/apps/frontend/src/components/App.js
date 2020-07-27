@@ -300,8 +300,8 @@ class App extends Component {
 
 	openHome = () => {
 		this.setState({
-			referencesOn: true,
-			homeOn: false,
+			referencesOn: false,
+			homeOn: true,
 			accountOn: false,
 			searchOn: false,
 			joinUsOn: false,
@@ -349,12 +349,12 @@ class App extends Component {
 			<section id="page-container">
 				<div id="content-wrap">
 					<Navbar bg="dark" expand="md" sticky="top">
-						<Navbar.Brand href="/" onClick={this.openHome}>
+						<Navbar.Brand onClick={this.openHome}>
 							<img
 								src={logo}
 								width="35"
 								height="35"
-								className="d-inline-block align-top"
+								className="d-inline-block align-top navbar-brand-img"
 								alt="React Bootstrap logo"
 							/>
 						</Navbar.Brand>

@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 
 import { withTranslation } from 'react-i18next'
-import { FaQuoteLeft } from "react-icons/fa";
 
 import {
-	Col, Container, Row, ListGroup
+	Col, Container, Row
 } from 'react-bootstrap'
 
 import '../styles/Home.css'
@@ -15,8 +14,6 @@ import react from '../icons/react.png'
 import reactivesearch from '../icons/reactivesearch.png'
 import mongo from '../icons/mongo.png'
 import iphone from '../icons/iphone.png'
-
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 
 
 class Home extends Component {
@@ -32,10 +29,14 @@ class Home extends Component {
 							<div className="first-row-left vertical-align">
 								<span>
 									<p>
-										<h1><b>What?</b></h1>
+										<h1>
+											<b>
+												{t('home.firstrow.left.title')}
+											</b>
+										</h1>
 									</p>
 									<p>
-										A social friendly search engine for books, powered by the users
+										{t('home.firstrow.left.text')}
 									</p>
 								</span>
 							</div>
@@ -53,10 +54,14 @@ class Home extends Component {
 							<div className="first-row-right vertical-align">
 								<span>
 									<p>
-										<h1><b>More?</b></h1>
+										<h1>
+											<b>
+												{t('home.firstrow.right.title')}
+											</b>
+										</h1>
 									</p>
 									<p>
-										An 'inverted index' to look up books based on their content
+										{t('home.firstrow.right.text')}
 									</p>
 								</span>
 							</div>
@@ -71,10 +76,16 @@ class Home extends Component {
 						<Col xs="12" sm="12" md="8" xl="6">
 							<div className="iphone-image-text">
 								<div>
-									<p><h1><b>How?</b></h1></p>
+									<p>
+										<h1>
+											<b>
+												{t('home.secondrow.title')}
+											</b>
+										</h1>
+									</p>
 								</div>
 								<div>
-									Simply, type what you are looking for and we'll try to find you some books!
+									{t('home.secondrow.text')}
 								</div>
 							</div>
 							<div className="second-row-middle vertical-align">
@@ -95,10 +106,24 @@ class Home extends Component {
 						<Col xs="12" sm="12" md="8" xl="6">
 							<div className="third-row-left vertical-align">
 								<div>
-									<p><h1><b>Join Us!</b></h1></p>
-									<p>Do you want to go further?</p>
-									<p>Request to become an author so that you can create your own references and share them with the rest of the world.</p>
-									<p><b>Read, publish, share!</b></p>
+									<p>
+										<h1>
+											<b>
+												{t('home.third.title')}
+											</b>
+										</h1>
+									</p>
+									<p>
+										{t('home.third.p1')}
+									</p>
+									<p>
+										{t('home.third.p2')}
+									</p>
+									<p>
+										<b>
+											{t('home.third.p3')}
+										</b>
+									</p>
 								</div>
 							</div>
 						</Col>
@@ -108,7 +133,13 @@ class Home extends Component {
 
 				<Container>
 					<div className="powered">
-						<p><h1><b>Powered by</b></h1></p>
+						<p>
+							<h1>
+								<b>
+									{t('home.fourth.title')}
+								</b>
+							</h1>
+						</p>
 					</div>
 					<Row className="fourth-row">
 						<Col xs="12" sm="12" md="3" xl="4">

@@ -92,6 +92,10 @@
   content: none;
 }
 
+.navbar-brand-img {
+  cursor: pointer;
+}
+
 .custom-nav-items .nav-link {
   color: #fff !important;
 }
@@ -152,10 +156,12 @@
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:30px;}
   .custom-jumbotron p {font-size:14px;}
+  .footer-container nav {padding-right: 100px;}
 }
 
 @media (min-width: 769px) {
   .custom-jumbotron {padding: 4rem 2rem;}
   .custom-jumbotron h1 {font-size:40px;}
   .custom-jumbotron p {font-size:17px;}
+  .footer-container nav {padding-right: 100px;}
 }

@@ -5,7 +5,7 @@
     <title>Find Sources</title>
     <meta charset="utf-8" />
     <meta name="title" content="Find Sources - A 'social friendly' search engine for books!">
-    <meta name="description" content="Did you like the spaghetti recipe you read in 'Awesome recipes - 3rd edition'? Mark it down and let the rest of the world know where to find it!">
+    <meta name="description" content="Read a book, publish your favorite highlights and let the rest of the world know!">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
@@ -14,14 +14,14 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://findsources.co.uk/">
     <meta property="og:title" content="Find Sources - A 'social friendly' search engine for books!">
-    <meta property="og:description" content="Did you like the spaghetti recipe you read in 'Awesome recipes - 3rd edition'? Mark it down and let the rest of the world know where to find it!">
+    <meta property="og:description" content="Read a book, publish your favorite highlights and let the rest of the world know!">
     <meta property="og:image" content="%PUBLIC_URL%/logo.jpeg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://findsources.co.uk/">
     <meta property="twitter:title" content="Find Sources - A 'social friendly' search engine for books!">
-    <meta property="twitter:description" content="Did you like the spaghetti recipe you read in 'Awesome recipes - 3rd edition'? Mark it down and let the rest of the world know where to find it!">
+    <meta property="twitter:description" content="Read a book, publish your favorite highlights and let the rest of the world know!">
     <meta property="twitter:image" content="%PUBLIC_URL%/logo.jpeg">
 
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
@@ -31,5 +31,28 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <!-- Load Facebook SDK for JavaScript -->
+      <div id="fb-root"></div>
+      <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            xfbml            : true,
+            version          : 'v7.0'
+          });
+        };
+
+        (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));</script>
+
+      <!-- Your Chat Plugin code -->
+      <div class="fb-customerchat"
+        attribution=setup_tool
+        page_id="115680326898013">
+      </div>
   </body>
 </html>

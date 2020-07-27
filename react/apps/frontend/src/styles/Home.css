@@ -33,17 +33,17 @@
 
 @media (min-width: 100px) and (max-width:544px) {
 	.first-row-right {
-		height: 200px;
+		height: 250px;
 		font-size: 20px;
 		padding-right: 100px;
 	}
 
 	.first-row-middle {
-		height: 200px;
+		height: 250px;
 	}
 
 	.first-row-left {
-		height: 200px;
+		height: 250px;
 		font-size: 20px;
 		padding-left: 100px;
 	}
@@ -97,17 +97,17 @@
 
 @media (min-width: 545px) and (max-width:1199px) {
 	.first-row-right {
-		height: 200px;
+		height: 300px;
 		font-size: 25px;
 		padding-right: 300px;
 	}
 
 	.first-row-middle {
-		height: 200px;
+		height: 300px;
 	}
 
 	.first-row-left {
-		height: 200px;
+		height: 300px;
 		font-size: 25px;
 		padding-left: 300px;
 	}

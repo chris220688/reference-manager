@@ -13,7 +13,7 @@ import fastapi from '../icons/fastapi.png'
 import react from '../icons/react.svg'
 import reactivesearch from '../icons/reactivesearch.png'
 import mongo from '../icons/mongo.svg'
-import iphone from '../icons/iphone.png'
+import iphone from '../icons/iphone.webp'
 
 
 class Home extends Component {

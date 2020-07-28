@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Suspense, Component, lazy } from 'react';
 
 import { withTranslation } from 'react-i18next'
 import i18n from './i18n';
@@ -7,22 +7,21 @@ import {
 	Alert, Container, Dropdown, Jumbotron, Navbar, Nav
 } from 'react-bootstrap'
 
-
-import About from './About';
-import Account from './Account';
-import Search from './Search';
-import Login from './Login';
-import References from './References';
-import JoinUs from './JoinUs';
-import PrivacyPolicy from './PrivacyPolicy';
-import Terms from './Terms';
-import Contact from './Contact';
-import Home from './Home';
 import { constants } from '../constants/Constants.js'
-
 import logo from '../icons/logo-white.svg'
-
 import '../styles/App.css'
+
+// Lazy load components
+const About = lazy(() => import('./About'));
+const Account = lazy(() => import('./Account'));
+const Search = lazy(() => import('./Search'));
+const Login = lazy(() => import('./Login'));
+const References = lazy(() => import('./References'));
+const JoinUs = lazy(() => import('./JoinUs'));
+const PrivacyPolicy = lazy(() => import('./PrivacyPolicy'));
+const Terms = lazy(() => import('./Terms'));
+const Contact = lazy(() => import('./Contact'));
+const Home = lazy(() => import('./Home'));
 
 
 class App extends Component {
@@ -377,7 +376,9 @@ class App extends Component {
 							<Nav>
 								{this.state.userLoggedIn ?
 									<Nav.Link onClick={this.logout}>{t('search.logout')}</Nav.Link> :
-									<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
+									<Suspense fallback={null}>
+										<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
+									</Suspense>
 								}
 
 								<Dropdown drop="left" className="language-dropdown">
@@ -395,7 +396,9 @@ class App extends Component {
 					</Navbar>
 
 					{this.state.homeOn ?
-						<Home/> : null
+						<Suspense fallback={null}>
+							<Home/>
+						</Suspense> : null
 					}
 
 					{this.state.searchOn ?
@@ -428,55 +431,72 @@ class App extends Component {
 							</Container> : null
 						}
 						{this.state.accountOn ?
-							<Account
-								producerAccountDetailsEndpoint={this.state.producerAccountDetailsEndpoint}
-								producerDeleteAccountEndpoint={this.state.producerDeleteAccountEndpoint}
-							/> : null
+							<Suspense fallback={null}>
+								<Account
+									producerAccountDetailsEndpoint={this.state.producerAccountDetailsEndpoint}
+									producerDeleteAccountEndpoint={this.state.producerDeleteAccountEndpoint}
+								/>
+							</Suspense> : null
 						}
 						{this.state.searchOn && this.state.consumerSearchEndpoint ?
-							<Search
-								producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
-								producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
-								consumerSearchEndpoint={this.state.consumerSearchEndpoint}
-								userLoggedIn={this.state.userLoggedIn}
-							/> : null
+							<Suspense fallback={null}>
+								<Search
+									producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+									producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
+									consumerSearchEndpoint={this.state.consumerSearchEndpoint}
+									userLoggedIn={this.state.userLoggedIn}
+								/>
+							</Suspense> : null
 						}
 						{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
-							<JoinUs
-								producerJoinEndpoint={this.state.producerJoinEndpoint}
-								setSearchOn={this.setSearchOn}
-								setRequestedJoin={this.setRequestedJoin}
-								setAlert={this.setAlert}
-							/> : null
+							<Suspense fallback={null}>
+								<JoinUs
+									producerJoinEndpoint={this.state.producerJoinEndpoint}
+									setSearchOn={this.setSearchOn}
+									setRequestedJoin={this.setRequestedJoin}
+									setAlert={this.setAlert}
+								/>
+							</Suspense> : null
 						}
 						{this.state.userLoggedIn && this.state.referencesOn ?
-							<References
-								producerInsertEndpoint={this.state.producerInsertEndpoint}
-								producerDeleteEndpoint={this.state.producerDeleteEndpoint}
-								producerReferencesEndpoint={this.state.producerReferencesEndpoint}
-								producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
-								producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
-								isAuthor={this.state.isAuthor}
-							/> : null
+							<Suspense fallback={null}>
+								<References
+									producerInsertEndpoint={this.state.producerInsertEndpoint}
+									producerDeleteEndpoint={this.state.producerDeleteEndpoint}
+									producerReferencesEndpoint={this.state.producerReferencesEndpoint}
+									producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+									producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
+									isAuthor={this.state.isAuthor}
+								/>
+							</Suspense> : null
 						}
-						{this.state.aboutOn ? <About/> : null }
+						{this.state.aboutOn ?
+							<Suspense fallback={null}>
+								<About/>
+							</Suspense> : null }
 						{this.state.contactOn ?
-							<Contact
-								emailContact={this.state.emailContact}
-							/> : null
+							<Suspense fallback={null}>
+								<Contact
+									emailContact={this.state.emailContact}
+								/>
+							</Suspense> : null
 						}
 						{this.state.privacyPolicyOn ?
-							<PrivacyPolicy
-								emailContact={this.state.emailContact}
-								domainName={this.state.domainName}
-								serversLocation={this.state.serversLocation}
-							/> : null
+							<Suspense fallback={null}>
+								<PrivacyPolicy
+									emailContact={this.state.emailContact}
+									domainName={this.state.domainName}
+									serversLocation={this.state.serversLocation}
+								/>
+							</Suspense> : null
 						}
 						{this.state.termsOn ?
-							<Terms
-								emailContact={this.state.emailContact}
-								domainName={this.state.domainName}
-							/> : null
+							<Suspense fallback={null}>
+								<Terms
+									emailContact={this.state.emailContact}
+									domainName={this.state.domainName}
+								/>
+							</Suspense> : null
 						}
 					</Container>
 				</div>

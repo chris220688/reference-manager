@@ -13,7 +13,8 @@ import fastapi from '../icons/fastapi.png'
 import react from '../icons/react.svg'
 import reactivesearch from '../icons/reactivesearch.png'
 import mongo from '../icons/mongo.svg'
-import iphone from '../icons/iphone.webp'
+import iphonewebp from '../icons/iphone.webp'
+import iphonepng from '../icons/iphone.png'
 
 
 class Home extends Component {
@@ -89,11 +90,10 @@ class Home extends Component {
 								</div>
 							</div>
 							<div className="second-row-middle vertical-align">
-								<img
-									src={iphone}
-									className="iphone-image"
-									alt="logo"
-								/>
+								<picture>
+									<source srcset={iphonewebp}/>
+									<img src={iphonepng} className="iphone-image" alt="logo"/>
+								</picture>
 							</div>
 						</Col>
 						<Col className="d-xs-none d-sm-none d-md-block d-xl-block" md="2" xl="3" ></Col>

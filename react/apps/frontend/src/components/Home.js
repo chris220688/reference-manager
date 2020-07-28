@@ -17,6 +17,20 @@ import iphonewebp from '../icons/iphone.webp'
 import iphonepng from '../icons/iphone.png'
 
 
+const ImgWithFallback = ({
+	src,
+	fallback,
+	type = 'image/webp',
+	...delegated
+}) => {
+	return (
+		<picture>
+			<source srcSet={src} type={type} />
+			<img src={fallback} {...delegated} className="iphone-image"/>
+		</picture>
+	)
+}
+
 class Home extends Component {
 
 	render() {
@@ -90,10 +104,11 @@ class Home extends Component {
 								</div>
 							</div>
 							<div className="second-row-middle vertical-align">
-								<picture>
-									<source srcset={iphonewebp}/>
-									<img src={iphonepng} className="iphone-image" alt="logo"/>
-								</picture>
+								<ImgWithFallback
+									src={iphonewebp}
+									fallback={iphonepng}
+									alt="logo"
+								/>
 							</div>
 						</Col>
 						<Col className="d-xs-none d-sm-none d-md-block d-xl-block" md="2" xl="3" ></Col>

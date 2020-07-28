@@ -7,12 +7,12 @@ import {
 } from 'react-bootstrap'
 
 import '../styles/Home.css'
-import logo from '../icons/logo-black.png'
-import elasticsearch from '../icons/elasticsearch.png'
+import logo from '../icons/logo-black.svg'
+import elasticsearch from '../icons/elasticsearch.svg'
 import fastapi from '../icons/fastapi.png'
-import react from '../icons/react.png'
+import react from '../icons/react.svg'
 import reactivesearch from '../icons/reactivesearch.png'
-import mongo from '../icons/mongo.png'
+import mongo from '../icons/mongo.svg'
 import iphone from '../icons/iphone.png'
 
 

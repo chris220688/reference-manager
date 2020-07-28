@@ -20,7 +20,7 @@ import Contact from './Contact';
 import Home from './Home';
 import { constants } from '../constants/Constants.js'
 
-import logo from '../icons/logo.png'
+import logo from '../icons/logo-white.svg'
 
 import '../styles/App.css'
 

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { withTranslation } from 'react-i18next'
 import { ReactiveBase, ReactiveList, DataSearch, ResultList, ToggleButton } from '@appbaseio/reactivesearch';
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
 import {
 	Button, Col, Container, ListGroup, Pagination, Row
 } from 'react-bootstrap'
@@ -17,9 +18,11 @@ class Search extends Component {
 	state = {
 		producerCaregoriesEndpoint: this.props.producerCaregoriesEndpoint,
 		producerBookmarksEndpoint: this.props.producerBookmarksEndpoint,
+		producerRateReferenceEndpoint: this.props.producerRateReferenceEndpoint,
 		consumerSearchEndpoint: this.props.consumerSearchEndpoint,
-		userLoggedIn: this.props.userLoggedIn,
-		bookmarkedReferences: [],
+		userData: this.props.userData,
+		bookmarkedReferences: this.props.userData.bookmarkedReferences,
+		ratedReferences: this.props.userData.ratedReferences,
 		category: null,
 		categories: [],
 		categoriesStyle: {},
@@ -35,19 +38,15 @@ class Search extends Component {
 		.then(response => response.json())
 		.then(data => this.setCategories(data))
 		.catch(err => console.log(err))
-
-		if (this.state.userLoggedIn) {
-			this.getBookmarkedReferences()
-		}
 	}
 
 	componentDidUpdate(prevProps) {
-		if (this.props.userLoggedIn !== prevProps.userLoggedIn) {
+		if (this.props.userData !== prevProps.userData) {
 			this.setState({
-				"userLoggedIn": this.props.userLoggedIn
+				"userData": this.props.userData,
 			})
-			this.getBookmarkedReferences()
 		}
+
 	}
 
 	setCategories = (data) => {
@@ -107,29 +106,9 @@ class Search extends Component {
 		}
 	}
 
-	getBookmarkedReferences = () => {
-		const referencesRequest = {
-			method: 'GET',
-			credentials: 'include',
-		}
-
-		fetch(this.state.producerBookmarksEndpoint, referencesRequest)
-		.then(response => response.json())
-		.then(data => {
-			this.setState({
-				bookmarkedReferences: data['bookmarkedReferences'],
-			})
-		})
-		.catch(err => console.log(err))
-	}
-
-	addBookmark = (item) => {
+	addBookmark = (reference_id) => {
 		const reference = {
-			reference_id: item.reference_id,
-			title: item.title,
-			category: item.category,
-			description: item.description,
-			books: item.books,
+			reference_id: reference_id,
 		}
 
 		const addBookmarkRequest = {
@@ -142,8 +121,8 @@ class Search extends Component {
 		.then(response => response.json())
 		.then(data => {
 			if ( data.success ) {
-				var bookmarkedReferences = this.state.bookmarkedReferences
-				bookmarkedReferences.push(reference)
+				var bookmarkedReferences = this.props.userData.bookmarkedReferences
+				bookmarkedReferences.push(reference_id)
 				this.setState({
 					bookmarkedReferences: bookmarkedReferences,
 				})
@@ -152,13 +131,9 @@ class Search extends Component {
 		.catch(err => console.log(err))
 	}
 
-	removeBookmark = (item) => {
+	removeBookmark = (reference_id) => {
 		const reference = {
-			reference_id: item.reference_id,
-			title: item.title,
-			category: item.category,
-			description: item.description,
-			books: item.books,
+			reference_id: reference_id,
 		}
 
 		const deleteBookmarkRequest = {
@@ -173,12 +148,73 @@ class Search extends Component {
 			if ( data.success ) {
 				var bookmarkedReferences = this.state.bookmarkedReferences
 				var filteredBookmarkedReferences = bookmarkedReferences.filter(
-					function(e) { return e.reference_id !== reference.reference_id }
+					ref_id => ref_id !== reference_id
 				)
 
 				this.setState({
 					bookmarkedReferences: filteredBookmarkedReferences,
 				})
+			}
+		})
+		.catch(err => console.log(err))
+	}
+
+	rateReference = (referenceId, rateOption) => {
+		debugger
+		const request = {
+			reference_id: referenceId,
+			rate_option: rateOption,
+		}
+
+		const rateOptionRequest = {
+			method: 'PUT',
+			credentials: 'include',
+			body: JSON.stringify(request)
+		}
+
+		fetch(this.state.producerRateReferenceEndpoint, rateOptionRequest)
+		.then(response => response.json())
+		.then(data => {
+			if (data['success']) {
+
+				var ratedReferences = this.state.ratedReferences
+
+				console.log(ratedReferences)
+
+				if (referenceId in ratedReferences) {
+					if (ratedReferences[referenceId] === rateOption) {
+						if (rateOption === 'thumbs_up') {
+							console.log("Remove color from thumbs up")
+						} else if (rateOption === 'thumbs_down') {
+							console.log("Remove color from thumbs down")
+						}
+						console.log("Delete reference from ratedReferences")
+						delete ratedReferences[referenceId]
+					} else {
+						if (ratedReferences[referenceId] === 'thumbs_up' && rateOption === 'thumbs_down') {
+							console.log("Remove color from thumbs up")
+							console.log("Add color to thumbs down")
+						} else {
+							console.log("Add color from thumbs up")
+							console.log("Remove color to thumbs down")
+						}
+						ratedReferences[referenceId] = rateOption
+					}
+				} else {
+					if (rateOption === 'thumbs_up') {
+						console.log("Add color to thumbs up")
+					} else if (rateOption === 'thumbs_down') {
+						console.log("Add color to thumbs down")
+					}
+					ratedReferences[referenceId] = rateOption
+				}
+
+				console.log(ratedReferences)
+
+				this.setState({
+					ratedReferences: ratedReferences,
+				})
+
 			}
 		})
 		.catch(err => console.log(err))
@@ -328,11 +364,11 @@ class Search extends Component {
 																<ResultList.Content>
 																	<ResultList.Title>
 																		<Row>
-																			{this.state.userLoggedIn ?
+																			{this.props.userData.userLoggedIn ?
 																				<Col>
-																					{this.state.bookmarkedReferences.map(ref => ref.reference_id).indexOf(item.reference_id) === -1 ?
-																						<BsBookmark style={{"cursor": "pointer"}} onClick={() => this.addBookmark(item)}/> :
-																						<BsBookmarkFill style={{"cursor": "pointer"}} onClick={() => this.removeBookmark(item)}/>
+																					{this.state.bookmarkedReferences.indexOf(item.reference_id) === -1 ?
+																						<BsBookmark style={{"cursor": "pointer"}} onClick={() => this.addBookmark(item.reference_id)}/> :
+																						<BsBookmarkFill style={{"cursor": "pointer"}} onClick={() => this.removeBookmark(item.reference_id)}/>
 																					}
 																				</Col> : null
 																			}
@@ -365,6 +401,40 @@ class Search extends Component {
 																								{book_sections.map(({ starting_page, ending_page }, index) => (
 																									<span key={index}>|{starting_page}-{ending_page}| </span>
 																								))}
+																							</div>
+																							<div className="text-right">
+																								<span style={{marginRight: "10px"}}>
+																									{item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_up' ?
+																										<span>
+																											<FiThumbsUp
+																												style={{"cursor": "pointer", "fill": "black"}}
+																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_up")}
+																											/> <span id={item.reference_id}>{item.rating.positive}</span>
+																										</span> :
+																										<span>
+																											<FiThumbsUp
+																												style={{"cursor": "pointer", "fill": "white"}}
+																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_up")}
+																											/> <span id={item.reference_id}>{item.rating.positive}</span>
+																										</span>
+																									}
+																								</span>
+																								<span>
+																									{item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_down' ?
+																										<span>
+																											<FiThumbsDown
+																												style={{"cursor": "pointer", "fill": "black"}}
+																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_down")}
+																											/> <span id={item.reference_id}>{item.rating.negative}</span>
+																										</span> :
+																										<span>
+																											<FiThumbsDown
+																												style={{"cursor": "pointer", "fill": "white"}}
+																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_down")}
+																											/> <span id={item.reference_id}>{item.rating.negative}</span>
+																										</span>
+																									}
+																								</span>
 																							</div>
 																						</ListGroup.Item>
 																					))}

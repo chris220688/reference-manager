@@ -19,8 +19,10 @@ from producer.exceptions import (
 )
 from producer.models.db_models import (
 	InternalUser,
+	RatingOptions,
 	Reference,
 	ReferenceMetadata,
+	UserRating,
 )
 from producer.models.auth_models import (
 	ExternalUser,
@@ -157,21 +159,37 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
-	async def add_bookmark(self, reference: Reference, internal_user: InternalUser):
+	async def rate_reference(self, reference_id: int, rate_option: str, internal_user: InternalUser) -> bool:
+		""" Updates the reference status of a user's rated references.
+
+			Also updates the count of thumbs_up/thumbs_down of a reference
+
+			Args:
+				reference_id: The reference_id to add to the bookmarks
+				rate_option: One of thumbs_up/thumbs_down/not_rated
+				internal_user: A user objects as defined in this application
+
+			Returns:
+				success: True if the updates were successful
+		"""
+		...
+
+	@abstractmethod
+	async def add_bookmark(self, reference_id: int, internal_user: InternalUser):
 		""" Creates a new bookmark in the user's account, for a given reference
 
 			Args:
-				reference: The reference to add to the bookmarks
+				reference_id: The reference_id to add to the bookmarks
 				internal_user: A user objects as defined in this application
 		"""
 		...
 
 	@abstractmethod
-	async def remove_bookmark(self, reference: Reference, internal_user: InternalUser):
+	async def remove_bookmark(self, reference_id: int, internal_user: InternalUser):
 		""" Given a reference_id, it deletes the bookmark from the user's account
 
 			Args:
-				reference: The reference to remove from the bookmarks
+				reference_id: The reference_id to remove from the bookmarks
 				internal_user: A user objects as defined in this application
 
 			Returns:
@@ -396,10 +414,61 @@ class MongoDBClient(DatabaseClient):
 
 		return inserted_reference
 
-	async def add_bookmark(self, reference: Reference, internal_user: InternalUser):
-		if reference.reference_id not in internal_user.bookmarked_references:
+	async def rate_reference(self, reference_id: int, rate_option: str, internal_user: InternalUser) -> bool:
+		reference_doc = await self._reference_manager_coll.find_one({'_id': reference_id})
 
-			internal_user.bookmarked_references.append(reference.reference_id)
+		if not reference_doc:
+			return
+
+		if reference_id in internal_user.rated_references:
+			existing_rating_option = internal_user.rated_references[reference_id]
+			if rate_option == existing_rating_option:
+				del internal_user.rated_references[reference_id]
+
+				if rate_option == RatingOptions.thumbs_up:
+					reference_doc["rating"]["positive"] = reference_doc["rating"]["positive"] - 1
+				elif rate_option == RatingOptions.thumbs_down:
+					reference_doc["rating"]["negative"] = reference_doc["rating"]["negative"] - 1
+
+			else:
+				if rate_option == RatingOptions.thumbs_up and existing_rating_option == RatingOptions.thumbs_down:
+					reference_doc["rating"]["positive"] = reference_doc["rating"]["positive"] + 1
+					reference_doc["rating"]["negative"] = reference_doc["rating"]["negative"] - 1
+
+				elif rate_option == RatingOptions.thumbs_down and existing_rating_option == RatingOptions.thumbs_up:
+					reference_doc["rating"]["positive"] = reference_doc["rating"]["positive"] - 1
+					reference_doc["rating"]["negative"] = reference_doc["rating"]["negative"] + 1
+
+				internal_user.rated_references[reference_id] = rate_option
+		else:
+			internal_user.rated_references[reference_id] = rate_option
+
+			if rate_option == RatingOptions.thumbs_up:
+				reference_doc["rating"]["positive"] = reference_doc["rating"]["positive"] + 1
+			elif rate_option == RatingOptions.thumbs_down:
+				reference_doc["rating"]["negative"] = reference_doc["rating"]["negative"] + 1
+
+		reference_update_result = await self._reference_manager_coll.update_one(
+			{"reference_id": reference_id},
+			{"$set": {"rating": reference_doc["rating"]}}
+		)
+
+		user_update_result = await self._users_coll.update_one(
+			{"internal_sub_id": internal_user.internal_sub_id},
+			{"$set": {"rated_references": internal_user.rated_references}}
+		)
+
+		if reference_update_result.modified_count and user_update_result.modified_count:
+			return True
+
+		return False
+
+
+
+	async def add_bookmark(self, reference_id: int, internal_user: InternalUser):
+		if reference_id not in internal_user.bookmarked_references:
+
+			internal_user.bookmarked_references.append(reference_id)
 
 			result = await self._users_coll.update_one(
 				{"internal_sub_id": internal_user.internal_sub_id},
@@ -408,10 +477,10 @@ class MongoDBClient(DatabaseClient):
 
 			return result.modified_count
 
-	async def remove_bookmark(self, reference: Reference, internal_user: InternalUser):
-		if reference.reference_id in internal_user.bookmarked_references:
+	async def remove_bookmark(self, reference_id: int, internal_user: InternalUser):
+		if reference_id in internal_user.bookmarked_references:
 
-			internal_user.bookmarked_references.remove(reference.reference_id)
+			internal_user.bookmarked_references.remove(reference_id)
 
 			result = await self._users_coll.update_one(
 				{"internal_sub_id": internal_user.internal_sub_id},
@@ -436,6 +505,7 @@ class MongoDBClient(DatabaseClient):
 				is_author=mongo_user["is_author"],
 				requested_join=mongo_user["requested_join"],
 				bookmarked_references=mongo_user["bookmarked_references"],
+				rated_references=mongo_user["rated_references"],
 				created_at=mongo_user["created_at"],
 			)
 
@@ -454,6 +524,7 @@ class MongoDBClient(DatabaseClient):
 				is_author=mongo_user["is_author"],
 				requested_join=mongo_user["requested_join"],
 				bookmarked_references=mongo_user["bookmarked_references"],
+				rated_references=mongo_user["rated_references"],
 				created_at=mongo_user["created_at"],
 			)
 
@@ -472,6 +543,7 @@ class MongoDBClient(DatabaseClient):
 				is_author=False,
 				requested_join=False,
 				bookmarked_references=[],
+				rated_references=[],
 				created_at=datetime.datetime.utcnow(),
 			)
 		)
@@ -487,6 +559,7 @@ class MongoDBClient(DatabaseClient):
 			is_author=mongo_user["is_author"],
 			requested_join=mongo_user["requested_join"],
 			bookmarked_references=mongo_user["bookmarked_references"],
+			rated_references=mongo_user["rated_references"],
 			created_at=mongo_user["created_at"],
 		)
 

@@ -40,10 +40,12 @@ class App extends Component {
 		producerJoinEndpoint: constants.producerJoinEndpoint,
 		producerAccountDetailsEndpoint: constants.producerAccountDetailsEndpoint,
 		producerDeleteAccountEndpoint: constants.producerDeleteAccountEndpoint,
+		producerRateReferenceEndpoint: constants.producerRateReferenceEndpoint,
 		consumerSearchEndpoint: constants.consumerSearchEndpoint,
 		emailContact: constants.emailContact,
 		serversLocation: constants.serversLocation,
 		userLoggedIn: false,
+		userData: {},
 		userName: null,
 		permissions: [],
 		homeOn: true,
@@ -154,6 +156,7 @@ class App extends Component {
 				userName: data['userName'],
 				isAuthor: data['isAuthor'],
 				requestedJoin: data['requestedJoin'],
+				userData: data,
 			})
 		})
 		.catch(err => {})
@@ -443,8 +446,10 @@ class App extends Component {
 								<Search
 									producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
 									producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
+									producerRateReferenceEndpoint={this.state.producerRateReferenceEndpoint}
 									consumerSearchEndpoint={this.state.consumerSearchEndpoint}
 									userLoggedIn={this.state.userLoggedIn}
+									userData={this.state.userData}
 								/>
 							</Suspense> : null
 						}

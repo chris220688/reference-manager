@@ -21,6 +21,7 @@ var producerBookmarksEndpoint = producerDomain + '/api/producer/bookmark/'
 var producerJoinEndpoint = producerDomain + '/api/producer/join/'
 var producerAccountDetailsEndpoint = producerDomain + '/api/producer/get-account/'
 var producerDeleteAccountEndpoint = producerDomain + '/api/producer/delete-account/'
+var producerRateReferenceEndpoint = producerDomain + '/api/producer/rate-reference/'
 var consumerSearchEndpoint = consumerDomain + '/api/consumer/search/'
 
 if (localDeployment) {
@@ -38,6 +39,7 @@ if (localDeployment) {
 	producerJoinEndpoint = producerDomain + '/join/'
 	producerAccountDetailsEndpoint = producerDomain + '/get-account/'
 	producerDeleteAccountEndpoint = producerDomain + '/delete-account/'
+	producerRateReferenceEndpoint = producerDomain + '/rate-reference/'
 	consumerSearchEndpoint = consumerDomain + '/search/'
 }
 
@@ -55,6 +57,7 @@ export const constants = {
 	producerJoinEndpoint: producerJoinEndpoint,
 	producerAccountDetailsEndpoint: producerAccountDetailsEndpoint,
 	producerDeleteAccountEndpoint: producerDeleteAccountEndpoint,
+	producerRateReferenceEndpoint: producerRateReferenceEndpoint,
 	consumerSearchEndpoint: consumerSearchEndpoint,
 	emailContact: emailContact,
 	serversLocation: serversLocation,

@@ -43,16 +43,16 @@ class Home extends Component {
 						<Col xs="12" sm="12" md="12" xl="3">
 							<div className="first-row-left vertical-align">
 								<span>
-									<p>
+									<div>
 										<h1>
 											<b>
 												{t('home.firstrow.left.title')}
 											</b>
 										</h1>
-									</p>
-									<p>
+									</div>
+									<div>
 										{t('home.firstrow.left.text')}
-									</p>
+									</div>
 								</span>
 							</div>
 						</Col>
@@ -68,16 +68,16 @@ class Home extends Component {
 						<Col xs="12" sm="12" md="12" xl="3">
 							<div className="first-row-right vertical-align">
 								<span>
-									<p>
+									<div>
 										<h1>
 											<b>
 												{t('home.firstrow.right.title')}
 											</b>
 										</h1>
-									</p>
-									<p>
+									</div>
+									<div>
 										{t('home.firstrow.right.text')}
-									</p>
+									</div>
 								</span>
 							</div>
 						</Col>
@@ -91,13 +91,13 @@ class Home extends Component {
 						<Col xs="12" sm="12" md="8" xl="6">
 							<div className="iphone-image-text">
 								<div>
-									<p>
+									<div>
 										<h1>
 											<b>
 												{t('home.secondrow.title')}
 											</b>
 										</h1>
-									</p>
+									</div>
 								</div>
 								<div>
 									{t('home.secondrow.text')}
@@ -121,24 +121,24 @@ class Home extends Component {
 						<Col xs="12" sm="12" md="8" xl="6">
 							<div className="third-row-left vertical-align">
 								<div>
-									<p>
+									<div>
 										<h1>
 											<b>
 												{t('home.third.title')}
 											</b>
 										</h1>
-									</p>
-									<p>
+									</div>
+									<div>
 										{t('home.third.p1')}
-									</p>
-									<p>
+									</div>
+									<div>
 										{t('home.third.p2')}
-									</p>
-									<p>
+									</div>
+									<div>
 										<b>
 											{t('home.third.p3')}
 										</b>
-									</p>
+									</div>
 								</div>
 							</div>
 						</Col>
@@ -148,13 +148,13 @@ class Home extends Component {
 
 				<Container>
 					<div className="powered">
-						<p>
+						<div>
 							<h1>
 								<b>
 									{t('home.fourth.title')}
 								</b>
 							</h1>
-						</p>
+						</div>
 					</div>
 					<Row className="fourth-row">
 						<Col xs="12" sm="12" md="3" xl="4">

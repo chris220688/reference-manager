@@ -1,6 +1,6 @@
 import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, conint, conlist, constr
 
@@ -29,6 +29,11 @@ class Category(str, Enum):
 	other = "other"
 
 
+class Rating(BaseModel):
+	positive: conint(gt=-1)
+	negative: conint(gt=-1)
+
+
 class Reference(BaseModel):
 	""" A reference of an event """
 	reference_id: Optional[constr(min_length=36, max_length=36)]
@@ -36,13 +41,23 @@ class Reference(BaseModel):
 	category: Category
 	description: constr(min_length=30, max_length=600)
 	books: conlist(Book, min_items=1, max_items=50)
-	rating: Optional[conint(gt=0, lt=6)]
+	rating: Rating
 
 
 class ReferenceMetadata(BaseModel):
 	""" Reference metadata """
 	created_at: datetime.datetime
 	author_id: str
+
+
+class RatingOptions(str, Enum):
+	thumbs_up = "thumbs_up"
+	thumbs_down = "thumbs_down"
+	not_rated = "not_rated"
+
+
+class UserRating(BaseModel):
+	rating = RatingOptions
 
 
 class InternalUser(BaseModel):
@@ -52,4 +67,5 @@ class InternalUser(BaseModel):
 	is_author: bool
 	requested_join: bool
 	bookmarked_references: list
+	rated_references: Optional[Dict[str, UserRating.rating]]
 	created_at: datetime.datetime

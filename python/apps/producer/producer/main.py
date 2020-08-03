@@ -36,6 +36,7 @@ from producer.models.db_models import (
 	InternalUser,
 	Reference,
 	ReferenceMetadata,
+	RatingOptions,
 )
 from producer.models.auth_models import (
 	ExternalAuthToken,
@@ -262,6 +263,7 @@ async def login(
 				"isAuthor": internal_user.is_author,
 				"requestedJoin": internal_user.requested_join,
 				"bookmarkedReferences": internal_user.bookmarked_references,
+				"ratedReferences": internal_user.rated_references,
 			}),
 		)
 
@@ -326,6 +328,7 @@ async def user_session_status(
 				"isAuthor": internal_user.is_author,
 				"requestedJoin": internal_user.requested_join,
 				"bookmarkedReferences": internal_user.bookmarked_references,
+				"ratedReferences": internal_user.rated_references,
 			}),
 		)
 
@@ -369,6 +372,29 @@ async def get_references(
 
 		response = JSONResponse(
 			content=jsonable_encoder({"references": references}),
+		)
+
+		return response
+
+
+@app.get("/get-user-references/")
+async def get_references(
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	""" API endpoint for getting the bookmarked and rated references of a user
+
+		Args:
+			internal_user: A user objects as defined in this application
+
+		Returns:
+			response: A JSON response including the references of the user
+	"""
+	async with exception_handling():
+		response = JSONResponse(
+			content=jsonable_encoder({
+				"bookmarkedReferences": internal_user.bookmarked_references,
+				"ratedReferences": internal_user.rated_references,
+			})
 		)
 
 		return response
@@ -533,6 +559,14 @@ async def delete_account(
 async def bookmark(
 	internal_user: InternalUser = Depends(access_token_cookie_scheme)
 ):
+	""" API endpoint for returning the user's bookmarked references.
+
+		Args:
+			internal_user: A user objects as defined in this application
+
+		Returns:
+			response: A JSON response with the bookmarked references
+	"""
 	async with exception_handling():
 		references = await db_client.find_bookmarked_by_author(internal_user)
 
@@ -545,16 +579,23 @@ async def bookmark(
 
 @app.put("/bookmark/")
 async def bookmark(
-	reference: Reference,
+	request: Request,
 	internal_user: InternalUser = Depends(access_token_cookie_scheme)
 ):
 	async with exception_handling():
-		inserted_count = await db_client.add_bookmark(reference, internal_user)
+		request_arguments = await request.json()
+
+		reference_id = request_arguments.get("reference_id")
+
+		if not reference_id:
+			return
+
+		inserted_count = await db_client.add_bookmark(reference_id, internal_user)
 
 		success = True if inserted_count else False
 
 		response = JSONResponse(
-			content=jsonable_encoder({"success": True}),
+			content=jsonable_encoder({"success": success}),
 		)
 
 		return response
@@ -562,13 +603,48 @@ async def bookmark(
 
 @app.delete("/bookmark/")
 async def bookmark(
-	reference: Reference,
+	request: Request,
 	internal_user: InternalUser = Depends(access_token_cookie_scheme)
 ):
 	async with exception_handling():
-		deleted_count = await db_client.remove_bookmark(reference, internal_user)
+		request_arguments = await request.json()
+
+		reference_id = request_arguments.get("reference_id")
+
+		if not reference_id:
+			return
+
+		deleted_count = await db_client.remove_bookmark(reference_id, internal_user)
 
 		success = True if deleted_count else False
+
+		response = JSONResponse(
+			content=jsonable_encoder({"success": success}),
+		)
+
+		return response
+
+
+@app.put("/rate-reference/")
+async def rate_reference(
+	request: Request,
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	async with exception_handling():
+		request_arguments = await request.json()
+
+		reference_id = request_arguments.get("reference_id")
+		rate_option = request_arguments.get("rate_option")
+
+		if not (reference_id and rate_option in RatingOptions.__members__):
+			logger.warning(
+				f"Cannot rate reference: reference_id={reference_id}, rate_option={rate_option}"
+			)
+			return
+
+		updated = await db_client.rate_reference(reference_id, rate_option, internal_user)
+
+		success = True if updated else False
 
 		response = JSONResponse(
 			content=jsonable_encoder({"success": success}),

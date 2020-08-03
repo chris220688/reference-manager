@@ -30,8 +30,8 @@ class Category(str, Enum):
 
 
 class Rating(BaseModel):
-	positive: conint(gt=0)
-	negative: conint(gt=0)
+	positive: conint(gt=-1)
+	negative: conint(gt=-1)
 
 
 class Reference(BaseModel):
@@ -41,7 +41,7 @@ class Reference(BaseModel):
 	category: Category
 	description: constr(min_length=30, max_length=600)
 	books: conlist(Book, min_items=1, max_items=50)
-	rating: Optional[Rating]
+	rating: Rating
 
 
 class ReferenceMetadata(BaseModel):

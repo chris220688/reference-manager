@@ -23,6 +23,7 @@ class Search extends Component {
 		userData: this.props.userData,
 		bookmarkedReferences: this.props.userData.bookmarkedReferences,
 		ratedReferences: this.props.userData.ratedReferences,
+		countNumRefs: {},
 		category: null,
 		categories: [],
 		categoriesStyle: {},
@@ -160,7 +161,6 @@ class Search extends Component {
 	}
 
 	rateReference = (referenceId, rateOption) => {
-		debugger
 		const request = {
 			reference_id: referenceId,
 			rate_option: rateOption,
@@ -178,38 +178,42 @@ class Search extends Component {
 			if (data['success']) {
 
 				var ratedReferences = this.state.ratedReferences
-
-				console.log(ratedReferences)
+				var likesCount = parseInt(this.state.countNumRefs['thumbs_up-' + referenceId].innerText)
+				var dislikesCount = parseInt(this.state.countNumRefs['thumbs_down-' + referenceId].innerText)
 
 				if (referenceId in ratedReferences) {
 					if (ratedReferences[referenceId] === rateOption) {
 						if (rateOption === 'thumbs_up') {
-							console.log("Remove color from thumbs up")
+							likesCount = likesCount - 1
 						} else if (rateOption === 'thumbs_down') {
-							console.log("Remove color from thumbs down")
+							dislikesCount = dislikesCount - 1
 						}
-						console.log("Delete reference from ratedReferences")
+
 						delete ratedReferences[referenceId]
 					} else {
 						if (ratedReferences[referenceId] === 'thumbs_up' && rateOption === 'thumbs_down') {
-							console.log("Remove color from thumbs up")
-							console.log("Add color to thumbs down")
+							likesCount = likesCount - 1
+							dislikesCount = dislikesCount + 1
 						} else {
-							console.log("Add color from thumbs up")
-							console.log("Remove color to thumbs down")
+							likesCount = likesCount + 1
+							dislikesCount = dislikesCount - 1
 						}
 						ratedReferences[referenceId] = rateOption
 					}
 				} else {
 					if (rateOption === 'thumbs_up') {
-						console.log("Add color to thumbs up")
+						likesCount = likesCount + 1
 					} else if (rateOption === 'thumbs_down') {
-						console.log("Add color to thumbs down")
+						dislikesCount = dislikesCount + 1
 					}
 					ratedReferences[referenceId] = rateOption
 				}
 
-				console.log(ratedReferences)
+				// Change the html span element that contains the total likes/dislikes
+				var likesSpan = this.state.countNumRefs['thumbs_up-' + referenceId]
+				likesSpan.innerText = likesCount
+				var dislikesSpan = this.state.countNumRefs['thumbs_down-' + referenceId]
+				dislikesSpan.innerText = dislikesCount
 
 				this.setState({
 					ratedReferences: ratedReferences,
@@ -218,6 +222,11 @@ class Search extends Component {
 			}
 		})
 		.catch(err => console.log(err))
+	}
+
+	setRefAttr = (referenceId, ref, prefix) => {
+		var countNumRefs = this.state.countNumRefs
+		countNumRefs[prefix + referenceId] = ref
 	}
 
 	render() {
@@ -409,13 +418,13 @@ class Search extends Component {
 																											<FiThumbsUp
 																												style={{"cursor": "pointer", "fill": "black"}}
 																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_up")}
-																											/> <span id={item.reference_id}>{item.rating.positive}</span>
+																											/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_up-")}>{item.rating.positive}</span>
 																										</span> :
 																										<span>
 																											<FiThumbsUp
 																												style={{"cursor": "pointer", "fill": "white"}}
 																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_up")}
-																											/> <span id={item.reference_id}>{item.rating.positive}</span>
+																											/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_up-")}>{item.rating.positive}</span>
 																										</span>
 																									}
 																								</span>
@@ -425,13 +434,13 @@ class Search extends Component {
 																											<FiThumbsDown
 																												style={{"cursor": "pointer", "fill": "black"}}
 																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_down")}
-																											/> <span id={item.reference_id}>{item.rating.negative}</span>
+																											/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_down-")}>{item.rating.negative}</span>
 																										</span> :
 																										<span>
 																											<FiThumbsDown
 																												style={{"cursor": "pointer", "fill": "white"}}
 																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_down")}
-																											/> <span id={item.reference_id}>{item.rating.negative}</span>
+																											/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_down-")}>{item.rating.negative}</span>
 																										</span>
 																									}
 																								</span>

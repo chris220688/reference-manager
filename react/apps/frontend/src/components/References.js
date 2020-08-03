@@ -296,7 +296,11 @@ class References extends Component {
 			title: this.state.title,
 			category: this.state.category,
 			description: this.state.description,
-			books: booksList
+			books: booksList,
+			rating: {
+				positive: 0,
+				negative: 0,
+			}
 		}
 
 		const request = {
@@ -529,7 +533,7 @@ class References extends Component {
 					</Tab>
 					{this.state.isAuthor ?
 					<Tab eventKey="references" title={t('references.myreferences')}>
-						<div fluid>
+						<div>
 							<Row>
 								<Col>
 									<br/>

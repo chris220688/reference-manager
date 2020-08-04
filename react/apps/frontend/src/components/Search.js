@@ -161,6 +161,10 @@ class Search extends Component {
 	}
 
 	rateReference = (referenceId, rateOption) => {
+		if (!this.props.userData.userLoggedIn) {
+			return
+		}
+
 		const request = {
 			reference_id: referenceId,
 			rate_option: rateOption,
@@ -413,7 +417,7 @@ class Search extends Component {
 																							</div>
 																							<div className="text-right">
 																								<span style={{marginRight: "10px"}}>
-																									{item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_up' ?
+																									{this.state.ratedReferences && item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_up' ?
 																										<span>
 																											<FiThumbsUp
 																												style={{"cursor": "pointer", "fill": "black"}}
@@ -429,7 +433,7 @@ class Search extends Component {
 																									}
 																								</span>
 																								<span>
-																									{item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_down' ?
+																									{this.state.ratedReferences && item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_down' ?
 																										<span>
 																											<FiThumbsDown
 																												style={{"cursor": "pointer", "fill": "black"}}

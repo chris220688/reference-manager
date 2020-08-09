@@ -7,6 +7,10 @@ import { Container } from 'react-bootstrap'
 
 class PrivacyPolicy extends Component {
 
+	componentDidMount() {
+		window.scrollTo(0, 0);
+	}
+
 	render() {
 		//const { t } = this.props
 		return (

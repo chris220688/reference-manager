@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 
 import { withTranslation } from 'react-i18next'
 
@@ -6,6 +6,11 @@ import { Container } from 'react-bootstrap'
 
 
 class Terms extends Component {
+
+	componentDidMount() {
+		window.scrollTo(0, 0);
+	}
+
 	render() {
 		//const { t } = this.props
 		return (

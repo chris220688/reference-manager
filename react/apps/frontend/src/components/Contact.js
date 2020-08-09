@@ -12,6 +12,10 @@ class Contact extends Component {
 		emailContact: this.props.emailContact,
 	}
 
+	componentDidMount() {
+		window.scrollTo(0, 0);
+	}
+
 	render() {
 		const { t } = this.props
 		const emailLink = "mailto:" + this.props.emailContact

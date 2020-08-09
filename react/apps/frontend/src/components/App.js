@@ -2,6 +2,7 @@ import React, { Suspense, Component, lazy } from 'react';
 
 import { withTranslation } from 'react-i18next'
 import i18n from './i18n';
+import { TiThMenu } from "react-icons/ti";
 import { MdLanguage } from "react-icons/md";
 import {
 	Alert, Container, Dropdown, Jumbotron, Navbar, Nav
@@ -360,7 +361,7 @@ class App extends Component {
 								alt="React Bootstrap logo"
 							/>
 						</Navbar.Brand>
-						<Navbar.Toggle aria-controls="basic-navbar-nav" />
+						<Navbar.Toggle aria-controls="basic-navbar-nav" style={{"color": "#fff", "borderColor": "#fff"}}><TiThMenu/></Navbar.Toggle>
 						<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end custom-nav-items">
 
 							<Nav className="mr-auto">
@@ -404,6 +405,7 @@ class App extends Component {
 						</Suspense> : null
 					}
 
+					{/**
 					{this.state.searchOn ?
 						<Jumbotron fluid className="custom-jumbotron">
 							<Container className="text-center">
@@ -412,6 +414,7 @@ class App extends Component {
 							</Container>
 						</Jumbotron> : null
 					}
+					**/}
 
 					<br/>
 					<Container className="main-container">

@@ -20,10 +20,13 @@ class References extends Component {
 		producerReferencesEndpoint: this.props.producerReferencesEndpoint,
 		producerCaregoriesEndpoint: this.props.producerCaregoriesEndpoint,
 		producerBookmarksEndpoint: this.props.producerBookmarksEndpoint,
+		activeTab: "bookmarked",
+		editReference: false,
 		isAuthor: this.props.isAuthor,
 		categories: [],
 		references: [],
 		bookmarkedReferences: [],
+		currentReferenceId: null,
 		books: {},
 		currentBook: '',
 		currentBookAuthor: '',
@@ -208,7 +211,7 @@ class References extends Component {
 		})
 	}
 
-	addReference = (event) => {
+	addReference = (event, editReference) => {
 		const { t } = this.props
 		const form = event.currentTarget;
 		if (form.checkValidity() === false) {
@@ -301,6 +304,11 @@ class References extends Component {
 				positive: 0,
 				negative: 0,
 			}
+		}
+
+		if (editReference) {
+			alert("Editing request for " + this.state.currentReferenceId)
+			return
 		}
 
 		const request = {
@@ -431,7 +439,67 @@ class References extends Component {
 			title: "",
 			category: "",
 			description: "",
+			editReference: false,
+			currentReferenceId: null,
 		})
+	}
+
+	changeTab = (eventKey) => {
+		if (eventKey !== "addReference") {
+			this.clearForm()
+		}
+		this.setState({
+			activeTab: eventKey
+		})
+	}
+
+	handleEdit = (reference) => {
+		debugger
+		var books = {}
+		var currentSections = {}
+		var currentBook = ''
+		var currentBookAuthor = ''
+
+		Object.keys(reference.books).forEach(function(bookIndex) {
+			var bookName = reference.books[bookIndex].name
+			var sections = []
+
+			Object.keys(reference.books[bookIndex].book_sections).forEach(function(sectionIndex) {
+				sections.push(
+					{
+						starting_page: reference.books[bookIndex].book_sections[sectionIndex].starting_page,
+						ending_page: reference.books[bookIndex].book_sections[sectionIndex].ending_page
+					}
+				)
+
+				currentSections[bookName] = {
+					startingPage: '',
+					endingPage: ''
+				}
+			})
+
+			currentBook = bookName
+			currentBookAuthor = reference.books[bookIndex].author
+
+			books[bookName] = {
+				author: reference.books[bookIndex].author,
+				sections: sections,
+			}
+		})
+
+		this.setState({
+			category: reference.category,
+			title: reference.title,
+			description: reference.description,
+			books: books,
+			currentBook: currentBook,
+			currentBookAuthor: currentBookAuthor,
+			currentSections: currentSections,
+			editReference: true,
+			currentReferenceId: reference.reference_id,
+		})
+
+		this.changeTab("addReference")
 	}
 
 	render() {
@@ -456,7 +524,7 @@ class References extends Component {
 
 		return (
 			<Container className="responsive-text">
-				<Tabs defaultActiveKey="bookmarked" className="reference-tabs">
+				<Tabs activeKey={this.state.activeTab} onSelect={(eventKey) => this.changeTab(eventKey)} className="reference-tabs">
 					<Tab eventKey="bookmarked" title={t('references.bookmarked')}>
 						<div>
 							<Row>
@@ -468,9 +536,7 @@ class References extends Component {
 
 							<Row>
 								<Col>
-									{this.state.bookmarkedReferencesLoading ? (
-										t('references.loading')
-									) : (
+									{this.state.bookmarkedReferencesLoading ? null : (
 										<ListGroup variant="flush">
 											{this.state.bookmarkedReferences.map((reference, index) => (
 												<ListGroup.Item key={index}>
@@ -543,9 +609,7 @@ class References extends Component {
 
 							<Row>
 								<Col>
-									{this.state.referencesLoading ? (
-										t('references.loading')
-									) : (
+									{this.state.referencesLoading ? null :
 										<ListGroup variant="flush">
 											{this.state.references.map((reference, index) => (
 												<ListGroup.Item key={index}>
@@ -589,6 +653,14 @@ class References extends Component {
 																<Button
 																	className="float-right"
 																	size="sm"
+																	variant="info"
+																	onClick={() => this.handleEdit(reference)}
+																>
+																	Edit
+																</Button>
+																<Button
+																	className="float-right"
+																	size="sm"
 																	variant="danger"
 																	onClick={() => this.deleteReference(reference)}
 																>
@@ -601,14 +673,14 @@ class References extends Component {
 												</ListGroup.Item>
 											))}
 										</ListGroup>
-									)}
+									}
 								</Col>
 							</Row>
 						</div>
 					</Tab> : null
 					}
 					{this.state.isAuthor ?
-					<Tab eventKey="addReference" title={t('references.addreference')}>
+					<Tab eventKey="addReference" title={this.state.editReference ? "Edit" : t('references.addreference')}>
 						<br/>
 							{this.state.error ?
 								<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
@@ -772,7 +844,7 @@ class References extends Component {
 							<hr/>
 							<Form.Row>
 								<Col>
-									<Button size="sm" variant="outline-dark" onClick={this.addReference}>{t('references.form.save')}</Button>
+									<Button size="sm" variant="outline-dark" onClick={(event) => this.addReference(event, this.state.editReference)}>{t('references.form.save')}</Button>
 								</Col>
 							</Form.Row>
 						</Form>

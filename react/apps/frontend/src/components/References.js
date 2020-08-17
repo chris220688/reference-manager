@@ -16,6 +16,7 @@ class References extends Component {
 
 	state = {
 		producerInsertEndpoint: this.props.producerInsertEndpoint,
+		producerEditReferenceEndpoint: this.props.producerEditReferenceEndpoint,
 		producerDeleteEndpoint: this.props.producerDeleteEndpoint,
 		producerReferencesEndpoint: this.props.producerReferencesEndpoint,
 		producerCaregoriesEndpoint: this.props.producerCaregoriesEndpoint,
@@ -211,7 +212,7 @@ class References extends Component {
 		})
 	}
 
-	addReference = (event, editReference) => {
+	addReference = (event) => {
 		const { t } = this.props
 		const form = event.currentTarget;
 		if (form.checkValidity() === false) {
@@ -295,20 +296,35 @@ class References extends Component {
 			})
 		}
 
-		var reference = {
-			title: this.state.title,
-			category: this.state.category,
-			description: this.state.description,
-			books: booksList,
-			rating: {
-				positive: 0,
-				negative: 0,
+		var endpoint
+		var reference
+		if (this.state.editReference) {
+			var references = this.state.references
+			var existingReferenceId = this.state.currentReferenceId
+			var existingReference = references.filter(
+				function(e) { return e.reference_id === existingReferenceId}
+			)[0]
+			reference = {
+				reference_id: existingReference['reference_id'],
+				title: this.state.title,
+				category: this.state.category,
+				description: this.state.description,
+				books: booksList,
+				rating: existingReference['rating']
 			}
-		}
-
-		if (editReference) {
-			alert("Editing request for " + this.state.currentReferenceId)
-			return
+			endpoint = this.state.producerEditReferenceEndpoint
+		} else {
+			reference = {
+				title: this.state.title,
+				category: this.state.category,
+				description: this.state.description,
+				books: booksList,
+				rating: {
+					positive: 0,
+					negative: 0,
+				}
+			}
+			endpoint = this.state.producerInsertEndpoint
 		}
 
 		const request = {
@@ -317,7 +333,7 @@ class References extends Component {
 			body: JSON.stringify(reference)
 		}
 
-		fetch(this.state.producerInsertEndpoint, request)
+		fetch(endpoint, request)
 		.then(response => {
 			if (!response.ok) {
 				if (response.status === 422) {
@@ -332,6 +348,14 @@ class References extends Component {
 		.then(data => {
 			if (data['reference']) {
 				var references = this.state.references
+
+				if (this.state.editReference) {
+					// Delete the old version of the reference from the state
+					references = references.filter(
+						function(e) { return e.reference_id !== data['reference']['reference_id']}
+					)
+				}
+
 				references.push(data['reference'])
 				this.setState({
 					references: references
@@ -454,7 +478,6 @@ class References extends Component {
 	}
 
 	handleEdit = (reference) => {
-		debugger
 		var books = {}
 		var currentSections = {}
 		var currentBook = ''
@@ -844,7 +867,7 @@ class References extends Component {
 							<hr/>
 							<Form.Row>
 								<Col>
-									<Button size="sm" variant="outline-dark" onClick={(event) => this.addReference(event, this.state.editReference)}>{t('references.form.save')}</Button>
+									<Button size="sm" variant="outline-dark" onClick={this.addReference}>{t('references.form.save')}</Button>
 								</Col>
 							</Form.Row>
 						</Form>

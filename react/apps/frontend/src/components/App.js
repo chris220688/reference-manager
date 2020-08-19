@@ -34,6 +34,7 @@ class App extends Component {
 		producerLogoutEndpoint: constants.producerLogoutEndpoint,
 		producerLoginCheckEndpoint: constants.producerLoginCheckEndpoint,
 		producerInsertEndpoint: constants.producerInsertEndpoint,
+		producerEditReferenceEndpoint: constants.producerEditReferenceEndpoint,
 		producerDeleteEndpoint: constants.producerDeleteEndpoint,
 		producerReferencesEndpoint: constants.producerReferencesEndpoint,
 		producerCaregoriesEndpoint: constants.producerCaregoriesEndpoint,
@@ -470,6 +471,7 @@ class App extends Component {
 							<Suspense fallback={null}>
 								<References
 									producerInsertEndpoint={this.state.producerInsertEndpoint}
+									producerEditReferenceEndpoint={this.state.producerEditReferenceEndpoint}
 									producerDeleteEndpoint={this.state.producerDeleteEndpoint}
 									producerReferencesEndpoint={this.state.producerReferencesEndpoint}
 									producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}

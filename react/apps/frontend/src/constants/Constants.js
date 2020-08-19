@@ -14,6 +14,7 @@ var producerLoginEndpoint = producerDomain + '/api/producer/login/'
 var producerLogoutEndpoint = producerDomain + '/api/producer/logout/'
 var producerLoginCheckEndpoint = producerDomain + '/api/producer/user-session-status/'
 var producerInsertEndpoint = producerDomain + '/api/producer/insert-reference/'
+var producerEditReferenceEndpoint = producerDomain + '/api/producer/edit-reference/'
 var producerDeleteEndpoint = producerDomain + '/api/producer/delete-reference/'
 var producerReferencesEndpoint = producerDomain + '/api/producer/get-references/'
 var producerCaregoriesEndpoint = producerDomain + '/api/producer/get-categories/'
@@ -32,6 +33,7 @@ if (localDeployment) {
 	producerLogoutEndpoint = producerDomain + '/logout/'
 	producerLoginCheckEndpoint = producerDomain + '/user-session-status/'
 	producerInsertEndpoint = producerDomain + '/insert-reference/'
+	producerEditReferenceEndpoint = producerDomain + '/edit-reference/'
 	producerDeleteEndpoint = producerDomain + '/delete-reference/'
 	producerReferencesEndpoint = producerDomain + '/get-references/'
 	producerCaregoriesEndpoint = producerDomain + '/get-categories/'
@@ -50,6 +52,7 @@ export const constants = {
 	producerLogoutEndpoint: producerLogoutEndpoint,
 	producerLoginCheckEndpoint: producerLoginCheckEndpoint,
 	producerInsertEndpoint: producerInsertEndpoint,
+	producerEditReferenceEndpoint: producerEditReferenceEndpoint,
 	producerDeleteEndpoint: producerDeleteEndpoint,
 	producerReferencesEndpoint: producerReferencesEndpoint,
 	producerCaregoriesEndpoint: producerCaregoriesEndpoint,

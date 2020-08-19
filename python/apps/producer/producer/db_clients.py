@@ -159,6 +159,18 @@ class DatabaseClient(ABC):
 		...
 
 	@abstractmethod
+	async def update_reference(self, document: Reference) -> Reference:
+		""" Updates a reference in the database.
+
+			Args:
+				document: A reference to update in the database
+
+			Returns:
+				reference_id: The id of the updated reference
+		"""
+		...
+
+	@abstractmethod
 	async def rate_reference(self, reference_id: int, rate_option: str, internal_user: InternalUser) -> bool:
 		""" Updates the reference status of a user's rated references.
 
@@ -413,6 +425,19 @@ class MongoDBClient(DatabaseClient):
 			inserted_reference = await self.find_by_id(result.inserted_id)
 
 		return inserted_reference
+
+	async def update_reference(self, document: Reference) -> Reference:
+		updated_reference = None
+
+		logger.info(f"Updating {document}")
+		result = await self._reference_manager_coll.update_one(
+			{'_id': document.reference_id}, {'$set': document.dict()}
+		)
+
+		if result.modified_count:
+			updated_reference = await self.find_by_id(document.reference_id)
+
+		return updated_reference
 
 	async def rate_reference(self, reference_id: int, rate_option: str, internal_user: InternalUser) -> bool:
 		reference_doc = await self._reference_manager_coll.find_one({'_id': reference_id})

@@ -443,6 +443,32 @@ async def insert_reference(
 		return response
 
 
+@app.put("/edit-reference/")
+async def edit_reference(
+	reference: Reference,
+	internal_user: InternalUser = Depends(access_token_cookie_scheme)
+):
+	""" API endpoint for editing an existing reference
+
+		Args:
+			reference: The new version of the reference document
+			internal_user: A user objects as defined in this application
+
+		Returns:
+			response: A JSON response with the edited reference
+	"""
+	async with exception_handling():
+		logger.info(f"Received edit request - {reference.dict()}")
+
+		updated_reference = await db_client.update_reference(reference)
+
+		response = JSONResponse(
+			content=jsonable_encoder({"reference": updated_reference}),
+		)
+
+		return response
+
+
 @app.delete("/delete-reference/")
 async def delete_reference(
 	reference: Reference,

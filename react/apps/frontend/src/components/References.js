@@ -7,7 +7,7 @@ import {
 	OverlayTrigger, Row, Tab, Tabs
 } from 'react-bootstrap'
 
-import { IoIosTrash, IoMdInformationCircle } from "react-icons/io";
+import { IoIosTrash, IoMdCreate, IoMdInformationCircle } from "react-icons/io";
 
 import '../styles/References.css'
 
@@ -480,8 +480,6 @@ class References extends Component {
 	handleEdit = (reference) => {
 		var books = {}
 		var currentSections = {}
-		var currentBook = ''
-		var currentBookAuthor = ''
 
 		Object.keys(reference.books).forEach(function(bookIndex) {
 			var bookName = reference.books[bookIndex].name
@@ -501,9 +499,6 @@ class References extends Component {
 				}
 			})
 
-			currentBook = bookName
-			currentBookAuthor = reference.books[bookIndex].author
-
 			books[bookName] = {
 				author: reference.books[bookIndex].author,
 				sections: sections,
@@ -515,8 +510,8 @@ class References extends Component {
 			title: reference.title,
 			description: reference.description,
 			books: books,
-			currentBook: currentBook,
-			currentBookAuthor: currentBookAuthor,
+			currentBook: '',
+			currentBookAuthor: '',
 			currentSections: currentSections,
 			editReference: true,
 			currentReferenceId: reference.reference_id,
@@ -676,18 +671,19 @@ class References extends Component {
 																<Button
 																	className="float-right"
 																	size="sm"
-																	variant="info"
-																	onClick={() => this.handleEdit(reference)}
+																	variant="danger"
+																	style={{"marginLeft": "10px"}}
+																	onClick={() => this.deleteReference(reference)}
 																>
-																	Edit
+																	<IoIosTrash/>
 																</Button>
 																<Button
 																	className="float-right"
 																	size="sm"
-																	variant="danger"
-																	onClick={() => this.deleteReference(reference)}
+																	variant="secondary"
+																	onClick={() => this.handleEdit(reference)}
 																>
-																	<IoIosTrash/>
+																	<IoMdCreate/>
 																</Button>
 															</Col>
 														</Row>

@@ -9,6 +9,8 @@ import {
 } from 'react-bootstrap'
 
 import '../styles/Search.css'
+import amazonLogo from '../icons/amazon.png'
+import bookdepositoryLogo from '../icons/bookdepository.svg'
 
 const { ResultListWrapper } = ReactiveList;
 
@@ -233,6 +235,11 @@ class Search extends Component {
 		countNumRefs[prefix + referenceId] = ref
 	}
 
+	getLinkSource = (linkType) => {
+		if (linkType === "amazon") return amazonLogo
+		if (linkType === "bookdepository") return bookdepositoryLogo
+	}
+
 	render() {
 		const { t } = this.props
 		return (
@@ -404,7 +411,7 @@ class Search extends Component {
 																			<Row>
 																				<Col>
 																					<ListGroup>
-																					{item.books.map(({ name, author, book_sections }, index) => (
+																					{item.books.map(({ name, author, book_sections, book_links }, index) => (
 																						<ListGroup.Item style={{border: "none"}} key={index}>
 																							<div>
 																								<span><b>{name}</b></span> - <span>{author}</span>
@@ -413,6 +420,17 @@ class Search extends Component {
 																								<span>{t('references.form.pages')}: </span>
 																								{book_sections.map(({ starting_page, ending_page }, index) => (
 																									<span key={index}>|{starting_page}-{ending_page}| </span>
+																								))}
+																							</div>
+																							<div className="text-right">
+																								{book_links.map(({ link_type, link_url }, index) => (
+																									<a href={link_url}>
+																										<img
+																											src={this.getLinkSource(link_type)}
+																											className={link_type}
+																											alt={link_type}
+																										/>
+																									</a>
 																								))}
 																							</div>
 																							<div className="text-right">

@@ -10,6 +10,8 @@ import {
 import { IoIosTrash, IoMdCreate, IoMdInformationCircle } from "react-icons/io";
 
 import '../styles/References.css'
+import amazon from '../icons/amazon.png'
+import bookdepository from '../icons/bookdepository.svg'
 
 
 class References extends Component {
@@ -601,7 +603,7 @@ class References extends Component {
 																	variant="danger"
 																	onClick={() => this.removeBookmark(reference)}
 																>
-																	{t('references.deletebookmark')}
+																	<IoIosTrash/>
 																</Button>
 															</Col>
 														</Row>
@@ -662,6 +664,7 @@ class References extends Component {
 																			))}
 																		</div>
 																	</ListGroup.Item>
+
 																))}
 																</ListGroup>
 															</Col>

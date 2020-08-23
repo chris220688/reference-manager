@@ -163,7 +163,7 @@ class Home extends Component {
 					<Row className="fourth-row">
 						<Col xs="12" sm="12" md="3" xl="4">
 							<div className="vertical-align">
-								<a href="https://opensource.appbase.io/reactive-manual/getting-started/reactivebase.html">
+								<a href="https://opensource.appbase.io/reactive-manual/getting-started/reactivebase.html" target="_blank">
 									<img
 										src={reactivesearch}
 										className="reactivesearch-icon"
@@ -174,7 +174,7 @@ class Home extends Component {
 						</Col>
 						<Col xs="12" sm="12" md="6" xl="4">
 							<div className="vertical-align">
-								<a href="https://fastapi.tiangolo.com/">
+								<a href="https://fastapi.tiangolo.com/" target="_blank">
 									<img
 										src={fastapi}
 										className="fastapi-icon"
@@ -185,7 +185,7 @@ class Home extends Component {
 						</Col>
 						<Col xs="12" sm="12" md="3" xl="4">
 							<div className="vertical-align">
-								<a href="https://www.mongodb.com/">
+								<a href="https://www.mongodb.com/" target="_blank">
 									<img
 										src={mongo}
 										className="mongo-icon"
@@ -202,7 +202,7 @@ class Home extends Component {
 						<Col className="d-xs-none d-sm-none d-md-block d-xl-block" md="1" xl="2"></Col>
 						<Col xs="12" sm="12" md="5" xl="4">
 							<div className="vertical-align">
-								<a href="https://reactjs.org/">
+								<a href="https://reactjs.org/" target="_blank">
 									<img
 										src={react}
 										className="react-icon"
@@ -213,7 +213,7 @@ class Home extends Component {
 						</Col>
 						<Col xs="12" sm="12" md="5" xl="4">
 							<div className="vertical-align">
-								<a href="https://www.elastic.co/">
+								<a href="https://www.elastic.co/" target="_blank">
 									<img
 										src={elasticsearch}
 										className="elasticsearch-icon"

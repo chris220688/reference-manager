@@ -434,7 +434,7 @@ class Search extends Component {
 																							{book_links ?
 																								<div className="text-right">
 																									{book_links.map(({ link_type, link_url }, index) => (
-																										<a href={link_url} style={{"marginLeft": "20px"}}>
+																										<a href={link_url} target="_blank" style={{"marginLeft": "20px"}}>
 																											<img
 																												src={this.getLinkSource(link_type)}
 																												className={link_type}

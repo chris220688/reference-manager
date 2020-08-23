@@ -24,6 +24,12 @@ class DocumentExists(DatabaseException):
 		self.title = title
 
 
+class DocumentDoesNotExist(DatabaseException):
+	def __init__(self, title):
+		super(DocumentDoesNotExist, self).__init__()
+		self.title = title
+
+
 class AuthenticationException(Exception):
 	pass
 
@@ -58,6 +64,10 @@ async def exception_handling():
 	except DocumentExists as exc:
 		logger.warning(f"Failed to insert document: {repr(exc)}")
 		raise HTTPException(status_code=409, detail=f"Reference '{exc.title}' exists.")
+	except DocumentDoesNotExist as exc:
+		logger.warning(f"Failed to update document: {repr(exc)}")
+		breakpoint()
+		raise HTTPException(status_code=404, detail=f"Reference '{exc.title}' does not exist.")
 	except UnauthorizedUser as exc:
 		logger.warning(f"Failed to authorize user: {repr(exc)}")
 		raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not authorized")

@@ -53,7 +53,7 @@ class Reference(BaseModel):
 	category: Category
 	description: constr(min_length=30, max_length=600)
 	books: conlist(Book, min_items=1, max_items=50)
-	rating: Rating
+	rating: Optional[Rating]
 
 
 class ReferenceMetadata(BaseModel):

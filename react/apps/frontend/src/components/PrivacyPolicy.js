@@ -178,7 +178,7 @@ class PrivacyPolicy extends Component {
 						In Short: We are not responsible for the safety of any information that you share with third-party providers who advertise, but are not affiliated with, our websites.  
 					</p>
 					<p>
-						We may contain advertisements from third parties that are not affiliated with us and which may link to other websites, online services or mobile applications. We cannot guarantee the safety and privacy of data you provide to any third parties. Any data collected by third parties is not covered by this privacy policy. We are not responsible for the content or privacy and security practices and policies of any third parties, including other websites, services or applications that may be linked to or from the . You should review the policies of such third parties and contact them directly to respond to your questions.
+						We may contain advertisements from third parties that are not affiliated with us and which may link to other websites, online services or mobile applications. We cannot guarantee the safety and privacy of data you provide to any third parties. Any data collected by third parties is not covered by this privacy policy. We are not responsible for the content or privacy and security practices and policies of any third parties, including other websites, services or applications that may be linked to or from {this.props.domainName}. You should review the policies of such third parties and contact them directly to respond to your questions.
 					</p>
 				</div>
 

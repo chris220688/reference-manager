@@ -26,7 +26,7 @@ const ImgWithFallback = ({
 	return (
 		<picture>
 			<source srcSet={src} type={type} />
-			<img src={fallback} {...delegated} className="iphone-image"/>
+			<img src={fallback} {...delegated} className="iphone-image" alt=""/>
 		</picture>
 	)
 }

@@ -10,8 +10,6 @@ import {
 import { IoIosTrash, IoMdCreate, IoMdInformationCircle } from "react-icons/io";
 
 import '../styles/References.css'
-import amazon from '../icons/amazon.png'
-import bookdepository from '../icons/bookdepository.svg'
 
 
 class References extends Component {
@@ -312,7 +310,6 @@ class References extends Component {
 				category: this.state.category,
 				description: this.state.description,
 				books: booksList,
-				rating: existingReference['rating']
 			}
 			endpoint = this.state.producerEditReferenceEndpoint
 		} else {
@@ -321,10 +318,6 @@ class References extends Component {
 				category: this.state.category,
 				description: this.state.description,
 				books: booksList,
-				rating: {
-					positive: 0,
-					negative: 0,
-				}
 			}
 			endpoint = this.state.producerInsertEndpoint
 		}
@@ -343,6 +336,9 @@ class References extends Component {
 				}
 				if (response.status === 409) {
 					this.addError(t('references.form.error.referenceexists'))
+				}
+				if (response.status === 404) {
+					this.addError(t('references.form.error.referencedoesnotexist'))
 				}
 			}
 			return response.json()

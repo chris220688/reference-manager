@@ -5,7 +5,7 @@ import i18n from './i18n';
 import { TiThMenu } from "react-icons/ti";
 import { MdLanguage } from "react-icons/md";
 import {
-	Alert, Container, Dropdown, Jumbotron, Navbar, Nav
+	Alert, Container, Dropdown, Navbar, Nav
 } from 'react-bootstrap'
 
 import { constants } from '../constants/Constants.js'
@@ -376,6 +376,7 @@ class App extends Component {
 								{this.state.userLoggedIn && !this.state.isAuthor && !this.state.requestedJoin ?
 									<Nav.Link onClick={this.openJoinus}>{t('joinus')}</Nav.Link> : null
 								}
+
 							</Nav>
 
 							<Nav>
@@ -405,17 +406,6 @@ class App extends Component {
 							<Home/>
 						</Suspense> : null
 					}
-
-					{/**
-					{this.state.searchOn ?
-						<Jumbotron fluid className="custom-jumbotron">
-							<Container className="text-center">
-								<h1>{t('banner.header')}</h1>
-								<p>{t('banner.paragraph')}</p>
-							</Container>
-						</Jumbotron> : null
-					}
-					**/}
 
 					<br/>
 					<Container className="main-container">

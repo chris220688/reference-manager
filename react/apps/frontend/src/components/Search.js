@@ -451,7 +451,7 @@ class Search extends Component {
 																			</Row>
 																			<Row>
 																				<Col>
-																					<div className="text-right">
+																					<div className="text-right" style={{paddingBottom: "10px"}}>
 																						<span style={{marginRight: "10px"}}>
 																							{this.state.ratedReferences && item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_up' ?
 																								<span>

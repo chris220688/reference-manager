@@ -1,5 +1,6 @@
-import React, { Suspense, Component, lazy } from 'react';
+import React, { Component } from 'react';
 
+import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import { withTranslation } from 'react-i18next'
 import i18n from './i18n';
 import { TiThMenu } from "react-icons/ti";
@@ -12,17 +13,16 @@ import { constants } from '../constants/Constants.js'
 import logo from '../icons/logo-white.svg'
 import '../styles/App.css'
 
-// Lazy load components
-const About = lazy(() => import('./About'));
-const Account = lazy(() => import('./Account'));
-const Search = lazy(() => import('./Search'));
-const Login = lazy(() => import('./Login'));
-const References = lazy(() => import('./References'));
-const JoinUs = lazy(() => import('./JoinUs'));
-const PrivacyPolicy = lazy(() => import('./PrivacyPolicy'));
-const Terms = lazy(() => import('./Terms'));
-const Contact = lazy(() => import('./Contact'));
-const Home = lazy(() => import('./Home'));
+import About from './About'
+import Account from './Account'
+import Search from './Search'
+import Login from './Login'
+import References from './References'
+import JoinUs from './JoinUs'
+import PrivacyPolicy from './PrivacyPolicy'
+import Terms from './Terms'
+import Contact from './Contact'
+import Home from './Home'
 
 
 class App extends Component {
@@ -50,15 +50,6 @@ class App extends Component {
 		userData: {},
 		userName: null,
 		permissions: [],
-		homeOn: true,
-		searchOn: false,
-		accountOn: false,
-		referencesOn: false,
-		joinUsOn: false,
-		aboutOn: false,
-		privacyPolicyOn: false,
-		termsOn: false,
-		contactOn: false,
 		isAuthor: false,
 		requestedJoin: false,
 		alertMessage: null,
@@ -172,148 +163,10 @@ class App extends Component {
 
 		fetch(this.state.producerLogoutEndpoint, request)
 		.then(response => response.json())
-		.then(data => {window.location.reload()})
+		.then(data => {
+			window.location.assign('/')
+		})
 		.catch(err => {})
-	}
-
-	openReferences = () => {
-		this.setState({
-			referencesOn: true,
-			homeOn: false,
-			accountOn: false,
-			searchOn: false,
-			joinUsOn: false,
-			aboutOn: false,
-			privacyPolicyOn: false,
-			termsOn: false,
-			contactOn: false,
-		})
-	}
-
-	openSearch = () => {
-		this.setState({
-			referencesOn: false,
-			homeOn: false,
-			accountOn: false,
-			searchOn: true,
-			joinUsOn: false,
-			aboutOn: false,
-			privacyPolicyOn: false,
-			termsOn: false,
-			contactOn: false,
-		})
-	}
-
-	openAccount = () => {
-		this.setState({
-			referencesOn: false,
-			homeOn: false,
-			accountOn: true,
-			searchOn: false,
-			joinUsOn: false,
-			aboutOn: false,
-			privacyPolicyOn: false,
-			termsOn: false,
-			contactOn: false,
-		})
-	}
-
-	openJoinus = () => {
-		this.setState({
-			referencesOn: false,
-			homeOn: false,
-			accountOn: false,
-			searchOn: false,
-			joinUsOn: true,
-			aboutOn: false,
-			privacyPolicyOn: false,
-			termsOn: false,
-			contactOn: false,
-		})
-	}
-
-	openAbout = () => {
-		this.setState({
-			referencesOn: false,
-			homeOn: false,
-			accountOn: false,
-			searchOn: false,
-			joinUsOn: false,
-			aboutOn: true,
-			privacyPolicyOn: false,
-			termsOn: false,
-			contactOn: false,
-		})
-	}
-
-	openPrivacyPolicy = () => {
-		this.setState({
-			referencesOn: false,
-			homeOn: false,
-			accountOn: false,
-			searchOn: false,
-			joinUsOn: false,
-			aboutOn: false,
-			privacyPolicyOn: true,
-			termsOn: false,
-			contactOn: false,
-		})
-	}
-
-	openTerms = () => {
-		this.setState({
-			referencesOn: false,
-			homeOn: false,
-			accountOn: false,
-			searchOn: false,
-			joinUsOn: false,
-			aboutOn: false,
-			privacyPolicyOn: false,
-			termsOn: true,
-			contactOn: false,
-		})
-	}
-
-	openContact = () => {
-		this.setState({
-			referencesOn: false,
-			homeOn: false,
-			accountOn: false,
-			searchOn: false,
-			joinUsOn: false,
-			aboutOn: false,
-			privacyPolicyOn: false,
-			termsOn: false,
-			contactOn: true,
-		})
-	}
-
-	setSearchOn = () => {
-		this.setState({
-			referencesOn: false,
-			homeOn: false,
-			accountOn: false,
-			searchOn: true,
-			joinUsOn: false,
-			aboutOn: false,
-			privacyPolicyOn: false,
-			termsOn: false,
-			contactOn: false,
-		})
-	}
-
-	openHome = () => {
-		this.setState({
-			referencesOn: false,
-			homeOn: true,
-			accountOn: false,
-			searchOn: false,
-			joinUsOn: false,
-			aboutOn: false,
-			privacyPolicyOn: false,
-			termsOn: false,
-			contactOn: false,
-		})
 	}
 
 	setRequestedJoin = (requestedJoin) => {
@@ -351,40 +204,41 @@ class App extends Component {
 
 		return (
 			<section id="page-container">
-				<div id="content-wrap">
+				<BrowserRouter>
 					<Navbar bg="dark" expand="md" sticky="top">
-						<Navbar.Brand onClick={this.openHome}>
-							<img
-								src={logo}
-								width="35"
-								height="35"
-								className="d-inline-block align-top navbar-brand-img"
-								alt="React Bootstrap logo"
-							/>
+						<Navbar.Brand>
+							<Link to={'/'}>
+								<img
+									src={logo}
+									width="35"
+									height="35"
+									className="d-inline-block align-top navbar-brand-img"
+									alt="React Bootstrap logo"
+								/>
+							</Link>
 						</Navbar.Brand>
 						<Navbar.Toggle aria-controls="basic-navbar-nav" style={{"color": "#fff", "borderColor": "#fff"}}><TiThMenu/></Navbar.Toggle>
 						<Navbar.Collapse id="basic-navbar-nav" className="justify-content-end custom-nav-items">
 
 							<Nav className="mr-auto">
 								{this.state.userLoggedIn ?
-									<Nav.Link onClick={this.openAccount}>{t('myaccount')}</Nav.Link> : null
+									<Link to={'/account'} className="nav-link">{t('myaccount')}</Link> : null
 								}
-								<Nav.Link onClick={this.openSearch}>{t('search.search')}</Nav.Link>
+								{this.state.consumerSearchEndpoint ?
+									<Link to={'/search'} className="nav-link">{t('search.search')}</Link>  : null
+								}
 								{this.state.userLoggedIn ?
-									<Nav.Link style={{color:"white"}} onClick={this.openReferences}>{t('search.references')}</Nav.Link> : null
+									<Link to={'/references'} className="nav-link">{t('search.references')}</Link> : null
 								}
 								{this.state.userLoggedIn && !this.state.isAuthor && !this.state.requestedJoin ?
-									<Nav.Link onClick={this.openJoinus}>{t('joinus')}</Nav.Link> : null
+									<Link to={'/joinus'} className="nav-link">{t('joinus')}</Link> : null
 								}
-
 							</Nav>
 
 							<Nav>
 								{this.state.userLoggedIn ?
 									<Nav.Link onClick={this.logout}>{t('search.logout')}</Nav.Link> :
-									<Suspense fallback={null}>
-										<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
-									</Suspense>
+									<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
 								}
 
 								<Dropdown drop="left" className="language-dropdown">
@@ -401,13 +255,6 @@ class App extends Component {
 						</Navbar.Collapse>
 					</Navbar>
 
-					{this.state.homeOn ?
-						<Suspense fallback={null}>
-							<Home/>
-						</Suspense> : null
-					}
-
-					<br/>
 					<Container className="main-container">
 						{this.state.error ?
 							<Container className="responsive-text">
@@ -427,93 +274,79 @@ class App extends Component {
 								</Alert>
 							</Container> : null
 						}
-						{this.state.accountOn ?
-							<Suspense fallback={null}>
-								<Account
-									producerAccountDetailsEndpoint={this.state.producerAccountDetailsEndpoint}
-									producerDeleteAccountEndpoint={this.state.producerDeleteAccountEndpoint}
-								/>
-							</Suspense> : null
-						}
-						{this.state.searchOn && this.state.consumerSearchEndpoint ?
-							<Suspense fallback={null}>
-								<Search
-									producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
-									producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
-									producerRateReferenceEndpoint={this.state.producerRateReferenceEndpoint}
-									consumerSearchEndpoint={this.state.consumerSearchEndpoint}
-									userLoggedIn={this.state.userLoggedIn}
-									userData={this.state.userData}
-								/>
-							</Suspense> : null
-						}
-						{this.state.userLoggedIn && !this.state.isAuthor && this.state.joinUsOn ?
-							<Suspense fallback={null}>
-								<JoinUs
-									producerJoinEndpoint={this.state.producerJoinEndpoint}
-									setSearchOn={this.setSearchOn}
-									setRequestedJoin={this.setRequestedJoin}
-									setAlert={this.setAlert}
-								/>
-							</Suspense> : null
-						}
-						{this.state.userLoggedIn && this.state.referencesOn ?
-							<Suspense fallback={null}>
-								<References
-									producerInsertEndpoint={this.state.producerInsertEndpoint}
-									producerEditReferenceEndpoint={this.state.producerEditReferenceEndpoint}
-									producerDeleteEndpoint={this.state.producerDeleteEndpoint}
-									producerReferencesEndpoint={this.state.producerReferencesEndpoint}
-									producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
-									producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
-									isAuthor={this.state.isAuthor}
-								/>
-							</Suspense> : null
-						}
-						{this.state.aboutOn ?
-							<Suspense fallback={null}>
-								<About/>
-							</Suspense> : null }
-						{this.state.contactOn ?
-							<Suspense fallback={null}>
-								<Contact
-									emailContact={this.state.emailContact}
-								/>
-							</Suspense> : null
-						}
-						{this.state.privacyPolicyOn ?
-							<Suspense fallback={null}>
-								<PrivacyPolicy
-									emailContact={this.state.emailContact}
-									domainName={this.state.domainName}
-									serversLocation={this.state.serversLocation}
-								/>
-							</Suspense> : null
-						}
-						{this.state.termsOn ?
-							<Suspense fallback={null}>
-								<Terms
-									emailContact={this.state.emailContact}
-									domainName={this.state.domainName}
-								/>
-							</Suspense> : null
-						}
 					</Container>
-				</div>
 
-				<footer id="page-footer">
-					<div className="footer-container responsive-text">
-						<hr/>
-						<Navbar sticky="bottom" className="justify-content-end">
-							<Nav>
-								<Nav.Link onClick={this.openAbout}>{t('about')}</Nav.Link>
-								<Nav.Link onClick={this.openContact}>{t('contact')}</Nav.Link>
-								<Nav.Link onClick={this.openTerms}>{t('terms')}</Nav.Link>
-								<Nav.Link onClick={this.openPrivacyPolicy}>{t('privacypolicy')}</Nav.Link>
-							</Nav>
-						</Navbar>
-					</div>
-				</footer>
+					<footer id="page-footer">
+						<div className="footer-container responsive-text">
+							<hr/>
+							<Navbar sticky="bottom" className="justify-content-end">
+								<Nav>
+									<Link to={'/about'} className="nav-link">{t('about')}</Link>
+									<Link to={'/contact'} className="nav-link">{t('contact')}</Link>
+									<Link to={'/terms'} className="nav-link">{t('terms')}</Link>
+									<Link to={'/privacy-policy'} className="nav-link">{t('privacypolicy')}</Link>
+								</Nav>
+							</Navbar>
+						</div>
+					</footer>
+
+					<Switch>
+						<Route exact path='/' component={Home} />
+						<Route path='/account' component={
+							() => 	<Account
+										producerAccountDetailsEndpoint={this.state.producerAccountDetailsEndpoint}
+										producerDeleteAccountEndpoint={this.state.producerDeleteAccountEndpoint}
+									/>
+							} />
+						<Route path='/about' component={About} />
+						<Route path='/references' component={
+							() => 	<References
+										producerInsertEndpoint={this.state.producerInsertEndpoint}
+										producerEditReferenceEndpoint={this.state.producerEditReferenceEndpoint}
+										producerDeleteEndpoint={this.state.producerDeleteEndpoint}
+										producerReferencesEndpoint={this.state.producerReferencesEndpoint}
+										producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+										producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
+										isAuthor={this.state.isAuthor}
+									/>
+							} />
+						<Route path='/search' component={
+							() => 	<Search
+										producerCaregoriesEndpoint={this.state.producerCaregoriesEndpoint}
+										producerBookmarksEndpoint={this.state.producerBookmarksEndpoint}
+										producerRateReferenceEndpoint={this.state.producerRateReferenceEndpoint}
+										consumerSearchEndpoint={this.state.consumerSearchEndpoint}
+										userLoggedIn={this.state.userLoggedIn}
+										userData={this.state.userData}
+									/>
+							} />
+						<Route path='/joinus' component={
+							() => 	<JoinUs
+										producerJoinEndpoint={this.state.producerJoinEndpoint}
+										setRequestedJoin={this.setRequestedJoin}
+										setAlert={this.setAlert}
+									/>
+							} />
+						<Route path='/privacy-policy' component={
+							() => 	<PrivacyPolicy
+										emailContact={this.state.emailContact}
+										domainName={this.state.domainName}
+										serversLocation={this.state.serversLocation}
+									/>
+							} />
+						<Route path='/terms' component={
+							() => 	<Terms
+										emailContact={this.state.emailContact}
+										domainName={this.state.domainName}
+									/>
+							} />
+						<Route path='/contact' component={
+							() => 	<Contact
+										emailContact={this.state.emailContact}
+									/>
+							} />
+					</Switch>
+				</BrowserRouter>
 			</section>
 		);
 	}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import { withRouter } from "react-router-dom";
 import { withTranslation } from 'react-i18next'
 
 import { Alert, Button, Jumbotron, Container } from 'react-bootstrap'
@@ -9,7 +10,6 @@ class JoinUs extends Component {
 
 	state = {
 		producerJoinEndpoint: this.props.producerJoinEndpoint,
-		setSearchOn: this.props.setSearchOn,
 		setRequestedJoin: this.props.setRequestedJoin,
 		setAlert: this.props.setAlert,
 		requested: false,
@@ -39,7 +39,7 @@ class JoinUs extends Component {
 			if (data['requested']) {
 				this.state.setAlert(t('joinus.alert'))
 				this.state.setRequestedJoin(true)
-				this.state.setSearchOn()
+				this.props.history.push('/search');
 			}
 		})
 		.catch(err => {
@@ -76,4 +76,4 @@ class JoinUs extends Component {
 	}
 }
 
-export default withTranslation()(JoinUs);
+export default withRouter(withTranslation()(JoinUs));

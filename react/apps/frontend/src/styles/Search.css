@@ -11,6 +11,18 @@
    white-space: pre-wrap !important;
 }
 
+.results-list {
+	border-left: none !important;
+	border-right: none !important;
+	border-top: none !important;
+	padding: unset !important;
+	padding-top: 10px !important;
+}
+
+.results-list:hover {
+	background-color: #fff !important;
+}
+
 .css-16nr2ca {
 	top: 8px !important;
 }
@@ -98,4 +110,46 @@
 	background-color: #7f7f7f;
 	color: #fff;
 	border-color: #7f7f7f;
+}
+
+@media (min-width: 100px) and (max-width:544px) {
+	.amazon {
+		height: 20px;
+	}
+
+	.bookdepository {
+		height: 20px;
+	}
+}
+
+@media (min-width: 545px) and (max-width:1199px) {
+	.amazon {
+		height: 30px;
+	}
+
+	.bookdepository {
+		height: 30px;
+	}
+}
+
+@media (min-width: 1200px) {
+	.amazon {
+		height: 30px;
+	}
+
+	.bookdepository {
+		height: 30px;
+	}
+}
+
+.quote-box {
+  border: dashed 1px black;
+  background-color: #e7e4e4;
+  border-radius: 30px;
+  margin-bottom: 10px;
+  font-size: 8px;
+}
+
+.quote-box p {
+	margin: 10px 50px 10px 50px;
 }

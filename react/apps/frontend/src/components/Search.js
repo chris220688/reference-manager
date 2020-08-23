@@ -9,6 +9,8 @@ import {
 } from 'react-bootstrap'
 
 import '../styles/Search.css'
+import amazonLogo from '../icons/amazon.png'
+import bookdepositoryLogo from '../icons/bookdepository.svg'
 
 const { ResultListWrapper } = ReactiveList;
 
@@ -233,6 +235,11 @@ class Search extends Component {
 		countNumRefs[prefix + referenceId] = ref
 	}
 
+	getLinkSource = (linkType) => {
+		if (linkType === "amazon") return amazonLogo
+		if (linkType === "bookdepository") return bookdepositoryLogo
+	}
+
 	render() {
 		const { t } = this.props
 		return (
@@ -242,6 +249,15 @@ class Search extends Component {
 					url={this.state.consumerSearchEndpoint}
 				>
 					<div>
+						<Row>
+							<Col className="d-xs-none d-sm-none d-md-none d-lg-block" lg="3"></Col>
+							<Col xs="12" sm="12" md="12" lg="7">
+								<div className="quote-box">
+									<p><i>{t('search.affiliatesdisclaimer')}</i></p>
+								</div>
+							</Col>
+							<Col className="d-xs-none d-sm-none d-md-none d-lg-block" lg="2"></Col>
+						</Row>
 						<Row>
 							<Col xs="12" sm="12" md="12" lg="3">
 								<div className="responsive-text">
@@ -373,7 +389,7 @@ class Search extends Component {
 												<ResultListWrapper>
 													{
 														data.map((item, index) => (
-															<ResultList key={index} style={{borderLeft: "none", borderRight: "none", borderTop: "none", "padding": "unset", "paddingTop": "10px"}}>
+															<ResultList key={index} className="results-list">
 																<ResultList.Content>
 																	<ResultList.Title>
 																		<Row>
@@ -404,7 +420,7 @@ class Search extends Component {
 																			<Row>
 																				<Col>
 																					<ListGroup>
-																					{item.books.map(({ name, author, book_sections }, index) => (
+																					{item.books.map(({ name, author, book_sections, book_links }, index) => (
 																						<ListGroup.Item style={{border: "none"}} key={index}>
 																							<div>
 																								<span><b>{name}</b></span> - <span>{author}</span>
@@ -415,43 +431,60 @@ class Search extends Component {
 																									<span key={index}>|{starting_page}-{ending_page}| </span>
 																								))}
 																							</div>
-																							<div className="text-right">
-																								<span style={{marginRight: "10px"}}>
-																									{this.state.ratedReferences && item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_up' ?
-																										<span>
-																											<FiThumbsUp
-																												style={{"cursor": "pointer", "fill": "black"}}
-																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_up")}
-																											/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_up-")}>{item.rating.positive}</span>
-																										</span> :
-																										<span>
-																											<FiThumbsUp
-																												style={{"cursor": "pointer", "fill": "white"}}
-																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_up")}
-																											/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_up-")}>{item.rating.positive}</span>
-																										</span>
-																									}
-																								</span>
-																								<span>
-																									{this.state.ratedReferences && item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_down' ?
-																										<span>
-																											<FiThumbsDown
-																												style={{"cursor": "pointer", "fill": "black"}}
-																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_down")}
-																											/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_down-")}>{item.rating.negative}</span>
-																										</span> :
-																										<span>
-																											<FiThumbsDown
-																												style={{"cursor": "pointer", "fill": "white"}}
-																												onClick={(e) => this.rateReference(item.reference_id, "thumbs_down")}
-																											/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_down-")}>{item.rating.negative}</span>
-																										</span>
-																									}
-																								</span>
-																							</div>
+																							{book_links ?
+																								<div className="text-right">
+																									{book_links.map(({ link_type, link_url }, index) => (
+																										<a href={link_url} style={{"marginLeft": "20px"}}>
+																											<img
+																												src={this.getLinkSource(link_type)}
+																												className={link_type}
+																												alt={link_type}
+																											/>
+																										</a>
+																									))}
+																								</div> : null
+																							}
 																						</ListGroup.Item>
 																					))}
 																					</ListGroup>
+																				</Col>
+																			</Row>
+																			<Row>
+																				<Col>
+																					<div className="text-right">
+																						<span style={{marginRight: "10px"}}>
+																							{this.state.ratedReferences && item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_up' ?
+																								<span>
+																									<FiThumbsUp
+																										style={{"cursor": "pointer", "fill": "black"}}
+																										onClick={(e) => this.rateReference(item.reference_id, "thumbs_up")}
+																									/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_up-")}>{item.rating.positive}</span>
+																								</span> :
+																								<span>
+																									<FiThumbsUp
+																										style={{"cursor": "pointer", "fill": "white"}}
+																										onClick={(e) => this.rateReference(item.reference_id, "thumbs_up")}
+																									/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_up-")}>{item.rating.positive}</span>
+																								</span>
+																							}
+																						</span>
+																						<span>
+																							{this.state.ratedReferences && item.reference_id in this.state.ratedReferences && this.state.ratedReferences[item.reference_id] === 'thumbs_down' ?
+																								<span>
+																									<FiThumbsDown
+																										style={{"cursor": "pointer", "fill": "black"}}
+																										onClick={(e) => this.rateReference(item.reference_id, "thumbs_down")}
+																									/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_down-")}>{item.rating.negative}</span>
+																								</span> :
+																								<span>
+																									<FiThumbsDown
+																										style={{"cursor": "pointer", "fill": "white"}}
+																										onClick={(e) => this.rateReference(item.reference_id, "thumbs_down")}
+																									/> <span ref={(ref) => this.setRefAttr(item.reference_id, ref, "thumbs_down-")}>{item.rating.negative}</span>
+																								</span>
+																							}
+																						</span>
+																					</div>
 																				</Col>
 																			</Row>
 																		</div>

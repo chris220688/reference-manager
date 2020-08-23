@@ -11,11 +11,23 @@ class BookSection(BaseModel):
 	ending_page: conint(gt=0, lt=10000)
 
 
+class BookLinkType(str, Enum):
+	amazon = "amazon"
+	book_depository = "bookdepository"
+
+
+class BookLink(BaseModel):
+	""" An affiliate link for the book """
+	link_type: BookLinkType
+	link_url: str
+
+
 class Book(BaseModel):
 	""" A book containing a reference """
 	name: constr(min_length=5, max_length=100)
 	author: constr(min_length=5, max_length=50)
 	book_sections: conlist(BookSection, min_items=1, max_items=100)
+	book_links: Optional[conlist(BookLink)]
 
 
 class Category(str, Enum):
@@ -41,7 +53,7 @@ class Reference(BaseModel):
 	category: Category
 	description: constr(min_length=30, max_length=600)
 	books: conlist(Book, min_items=1, max_items=50)
-	rating: Rating
+	rating: Optional[Rating]
 
 
 class ReferenceMetadata(BaseModel):

@@ -425,7 +425,7 @@ async def insert_reference(
 
 		if existing_references:
 			for ref in existing_references:
-				if reference.title == ref.title:
+				if title == ref.title:
 					raise DocumentExists(title)
 
 		# Inject metadata related to the reference

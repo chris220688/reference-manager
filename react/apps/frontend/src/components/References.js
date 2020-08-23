@@ -310,7 +310,6 @@ class References extends Component {
 				category: this.state.category,
 				description: this.state.description,
 				books: booksList,
-				rating: existingReference['rating']
 			}
 			endpoint = this.state.producerEditReferenceEndpoint
 		} else {
@@ -319,10 +318,6 @@ class References extends Component {
 				category: this.state.category,
 				description: this.state.description,
 				books: booksList,
-				rating: {
-					positive: 0,
-					negative: 0,
-				}
 			}
 			endpoint = this.state.producerInsertEndpoint
 		}
@@ -341,6 +336,9 @@ class References extends Component {
 				}
 				if (response.status === 409) {
 					this.addError(t('references.form.error.referenceexists'))
+				}
+				if (response.status === 404) {
+					this.addError(t('references.form.error.referencedoesnotexist'))
 				}
 			}
 			return response.json()
@@ -601,7 +599,7 @@ class References extends Component {
 																	variant="danger"
 																	onClick={() => this.removeBookmark(reference)}
 																>
-																	{t('references.deletebookmark')}
+																	<IoIosTrash/>
 																</Button>
 															</Col>
 														</Row>
@@ -662,6 +660,7 @@ class References extends Component {
 																			))}
 																		</div>
 																	</ListGroup.Item>
+
 																))}
 																</ListGroup>
 															</Col>

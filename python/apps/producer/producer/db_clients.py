@@ -15,10 +15,12 @@ from contextlog import contextlog
 from producer import config
 from producer.exceptions import (
 	DatabaseConnectionError,
+	DocumentDoesNotExist,
 	UnknownDatabaseType,
 )
 from producer.models.db_models import (
 	InternalUser,
+	Rating,
 	RatingOptions,
 	Reference,
 	ReferenceMetadata,
@@ -417,6 +419,7 @@ class MongoDBClient(DatabaseClient):
 		document["_id"] = str(uuid4())
 		document["reference_id"] = document["_id"]
 		document["metadata"] = metadata.dict()
+		document["rating"] = dict(positive=0, negative=0)
 
 		logger.info(f"Inserting {document}")
 		result = await self._reference_manager_coll.insert_one(document)
@@ -430,6 +433,22 @@ class MongoDBClient(DatabaseClient):
 		updated_reference = None
 
 		logger.info(f"Updating {document}")
+
+		existing_reference = await self.find_by_id(document.reference_id)
+
+		if existing_reference is None:
+			raise DocumentDoesNotExist(document.title)
+
+		# Updating affiliate links should never be available via the API
+		for existing_book in existing_reference.books:
+			for book in document.books:
+				if existing_book.name == book.name:
+					book.book_links = existing_book.book_links
+					break
+
+		# Updating reference rating should never be available via the API
+		document.rating = existing_reference.rating
+
 		result = await self._reference_manager_coll.update_one(
 			{'_id': document.reference_id}, {'$set': document.dict()}
 		)

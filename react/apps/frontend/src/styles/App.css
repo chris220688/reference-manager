@@ -37,10 +37,6 @@
   }
 }
 
-.main-container {
-  max-width: none;
-}
-
 .footer-container nav {
   font-size: 15px;
   padding: 0px;
@@ -133,6 +129,14 @@
   background-color: #343a40;
   margin-bottom: 0px;
   font-family: 'Hoefler Text';
+}
+
+.error-container {
+  padding-top: 20px;
+}
+
+.alert-container {
+  padding-top: 20px;
 }
 
 @media (min-width: 100px) and (max-width:320px) {

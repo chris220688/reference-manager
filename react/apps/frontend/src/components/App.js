@@ -100,7 +100,11 @@ class App extends Component {
 		const { t } = this.props
 		var authToken = (window.location.search.match(/authToken=([^&]+)/) || [])[1]
 		var error = (window.location.search.match(/error=([^&]+)/) || [])[1]
-		window.history.pushState('object', document.title, "/");
+
+		if (authToken) {
+			// Clear token from the url
+			window.history.pushState('object', document.title, "/")
+		}
 
 		if (error === "401") {
 			// Coming back from a redirect after failing to authenticate
@@ -255,26 +259,24 @@ class App extends Component {
 						</Navbar.Collapse>
 					</Navbar>
 
-					<Container className="main-container">
-						{this.state.error ?
-							<Container className="responsive-text">
-								<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
-									{this.state.error}
-								</Alert>
-							</Container> : null
-						}
+					{this.state.error ?
+						<Container className="responsive-text error-container">
+							<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
+								{this.state.error}
+							</Alert>
+						</Container> : null
+					}
 
-						{this.state.alertMessage ?
-							<Container className="responsive-text">
-								<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
-									<Alert.Heading>{t('joinus.fantastic')}</Alert.Heading>
-										<p>
-											{this.state.alertMessage}
-										</p>
-								</Alert>
-							</Container> : null
-						}
-					</Container>
+					{this.state.alertMessage ?
+						<Container className="responsive-text alert-container">
+							<Alert variant="success" onClose={() => this.setAlert(null)} dismissible>
+								<Alert.Heading>{t('joinus.fantastic')}</Alert.Heading>
+									<p>
+										{this.state.alertMessage}
+									</p>
+							</Alert>
+						</Container> : null
+					}
 
 					<footer id="page-footer">
 						<div className="footer-container responsive-text">

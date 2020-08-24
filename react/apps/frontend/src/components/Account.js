@@ -75,7 +75,7 @@ class Account extends Component {
 	render() {
 		const { t } = this.props
 		return (
-			<Container className="responsive-text">
+			<Container className="responsive-text" style={{"marginTop": "20px"}}>
 				<Row className="text-center">
 					<Col xs="1" sm="2" md="3" xl="4"></Col>
 					<Col xs ="10" sm="8" md="6" xl="4">

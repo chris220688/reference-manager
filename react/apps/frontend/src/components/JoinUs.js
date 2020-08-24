@@ -50,7 +50,7 @@ class JoinUs extends Component {
 	render() {
 		const { t } = this.props
 		return (
-			<Container className="responsive-text">
+			<Container className="responsive-text" style={{"marginTop": "20px"}}>
 				{this.state.error ?
 					<Alert variant="danger" onClose={() => this.addError(null)} dismissible>
 						{this.state.error}

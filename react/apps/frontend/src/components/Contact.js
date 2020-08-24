@@ -21,7 +21,7 @@ class Contact extends Component {
 		const emailLink = "mailto:" + this.props.emailContact
 
 		return (
-			<Container>
+			<Container style={{"marginTop": "20px"}}>
 				<Row className="text-center responsive-text">
 					<Col xs="1" sm="2" md="3" xl="4"></Col>
 					<Col xs ="10" sm="8" md="6" xl="4">

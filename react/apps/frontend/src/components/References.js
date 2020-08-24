@@ -41,6 +41,8 @@ class References extends Component {
 	}
 
 	componentDidMount() {
+		window.scrollTo(0, 0);
+
 		const { t } = this.props
 
 		if ( this.props.isAuthor ) {
@@ -539,7 +541,7 @@ class References extends Component {
 		)
 
 		return (
-			<Container className="responsive-text">
+			<Container className="responsive-text" style={{"marginTop": "20px"}}>
 				<Tabs activeKey={this.state.activeTab} onSelect={(eventKey) => this.changeTab(eventKey)} className="reference-tabs">
 					<Tab eventKey="bookmarked" title={t('references.bookmarked')}>
 						<div>

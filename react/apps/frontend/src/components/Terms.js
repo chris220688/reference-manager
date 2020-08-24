@@ -14,7 +14,7 @@ class Terms extends Component {
 	render() {
 		//const { t } = this.props
 		return (
-			<Container className="responsive-text">
+			<Container className="responsive-text" style={{"marginTop": "20px"}}>
 				<h1>TERMS AND CONDITIONS</h1>
 
 				<h2>Last Updated 07 June  2020</h2>

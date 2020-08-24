@@ -33,6 +33,8 @@ class Search extends Component {
 	}
 
 	componentDidMount() {
+		window.scrollTo(0, 0);
+
 		const categoriesRequest = {
 			method: 'GET'
 		}
@@ -243,7 +245,7 @@ class Search extends Component {
 	render() {
 		const { t } = this.props
 		return (
-			<section>
+			<section style={{"marginTop": "20px"}}>
 				<ReactiveBase
 					app="referencemanager"
 					url={this.state.consumerSearchEndpoint}
@@ -252,7 +254,7 @@ class Search extends Component {
 						<Row>
 							<Col className="d-xs-none d-sm-none d-md-none d-lg-block" lg="3"></Col>
 							<Col xs="12" sm="12" md="12" lg="7">
-								<div className="quote-box">
+								<div className="disclaimer-box">
 									<p><i>{t('search.affiliatesdisclaimer')}</i></p>
 								</div>
 							</Col>
@@ -434,7 +436,7 @@ class Search extends Component {
 																							{book_links ?
 																								<div className="text-right">
 																									{book_links.map(({ link_type, link_url }, index) => (
-																										<a href={link_url} target="_blank" style={{"marginLeft": "20px"}}>
+																										<a href={link_url} target="_blank" rel="noopener noreferrer" style={{"marginLeft": "20px"}}>
 																											<img
 																												src={this.getLinkSource(link_type)}
 																												className={link_type}

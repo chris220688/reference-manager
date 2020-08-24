@@ -18,7 +18,7 @@ class About extends Component {
 	render() {
 		const { t } = this.props
 		return (
-			<Container className="text-center responsive-text">
+			<Container className="text-center responsive-text" style={{"marginTop": "20px"}}>
 				<Row>
 					<Col sm="1"></Col>
 					<Col sm ="10">

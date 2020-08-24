@@ -37,10 +37,6 @@
   }
 }
 
-.main-container {
-  max-width: none;
-}
-
 .footer-container nav {
   font-size: 15px;
   padding: 0px;
@@ -117,10 +113,6 @@
   min-height: 90vh;
 }
 
-#content-wrap {
-  padding-bottom: 2.5rem;
-}
-
 #page-footer {
   position: absolute;
   bottom: 0;
@@ -139,10 +131,19 @@
   font-family: 'Hoefler Text';
 }
 
+.error-container {
+  padding-top: 20px;
+}
+
+.alert-container {
+  padding-top: 20px;
+}
+
 @media (min-width: 100px) and (max-width:320px) {
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:15px;}
   .custom-jumbotron p {font-size:12px;}
+  .footer-container a {padding-right: 5px;}
 }
 
 /* Small devices (landscape phones, 544px and up) */
@@ -150,18 +151,19 @@
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:22px;}
   .custom-jumbotron p {font-size:13px;}
+  .footer-container a {padding-right: 20px;}
 }
 
 @media (min-width: 544px) and (max-width:768px) {
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:30px;}
   .custom-jumbotron p {font-size:14px;}
-  .footer-container nav {padding-right: 100px;}
+  .footer-container a {padding-right: 20px;}
 }
 
 @media (min-width: 769px) {
   .custom-jumbotron {padding: 4rem 2rem;}
   .custom-jumbotron h1 {font-size:40px;}
   .custom-jumbotron p {font-size:17px;}
-  .footer-container nav {padding-right: 100px;}
+  .footer-container a {padding-right: 20px;}
 }

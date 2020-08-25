@@ -143,7 +143,6 @@
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:15px;}
   .custom-jumbotron p {font-size:12px;}
-  .footer-container a {padding-right: 5px;}
 }
 
 /* Small devices (landscape phones, 544px and up) */
@@ -151,19 +150,18 @@
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:22px;}
   .custom-jumbotron p {font-size:13px;}
-  .footer-container a {padding-right: 20px;}
 }
 
 @media (min-width: 544px) and (max-width:768px) {
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:30px;}
   .custom-jumbotron p {font-size:14px;}
-  .footer-container a {padding-right: 20px;}
+  .footer-container .navbar-nav {padding-right: 100px;}
 }
 
 @media (min-width: 769px) {
   .custom-jumbotron {padding: 4rem 2rem;}
   .custom-jumbotron h1 {font-size:40px;}
   .custom-jumbotron p {font-size:17px;}
-  .footer-container a {padding-right: 20px;}
+  .footer-container .navbar-nav {padding-right: 100px;}
 }

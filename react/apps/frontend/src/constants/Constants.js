@@ -1,4 +1,4 @@
-var localDeployment = false
+var localDeployment = true
 
 var emailContact = 'findbooksources@gmail.com'
 var serversLocation = 'United Kingdom'

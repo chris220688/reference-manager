@@ -245,7 +245,7 @@ class Search extends Component {
 	render() {
 		const { t } = this.props
 		return (
-			<section style={{"marginTop": "20px"}}>
+			<Container style={{"marginTop": "20px"}}>
 				<ReactiveBase
 					app="referencemanager"
 					url={this.state.consumerSearchEndpoint}
@@ -505,7 +505,7 @@ class Search extends Component {
 						</Row>
 					</div>
 				</ReactiveBase>
-			</section>
+			</Container>
 		)
 	}
 }

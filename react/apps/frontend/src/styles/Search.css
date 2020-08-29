@@ -129,6 +129,10 @@
 		height: 20px;
 	}
 
+	.waterstones {
+		height: 20px;
+	}
+
 	.disclaimer-box p {
 		margin: 10px 10px 10px 10px;
 	}
@@ -143,6 +147,10 @@
 		height: 30px;
 	}
 
+	.waterstones {
+		height: 30px;
+	}
+
 	.disclaimer-box p {
 		margin: 10px 50px 10px 50px;
 	}
@@ -154,6 +162,10 @@
 	}
 
 	.bookdepository {
+		height: 30px;
+	}
+
+	.waterstones {
 		height: 30px;
 	}
 

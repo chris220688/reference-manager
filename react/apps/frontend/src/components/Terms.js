@@ -341,7 +341,7 @@ class Terms extends Component {
 						</li>
 						<li>
 							<p>
-								8.4 {this.props.domainName} is a participant in affiliate advertising programs, such as the Amazon Services LLC Associates program and The Book Depository affiliate program.
+								8.4 {this.props.domainName} is a participant in affiliate advertising programs, such as the Amazon Services LLC Associates program and Waterstones affiliates program.
 							</p>
 							<p>
 								As such, the site may contain (or you may be sent through the site) links to other websites or content belonging to or originating from third parties or links to websites and features in banners or other advertising. Such external links are not investigated, monitored, or checked for accuracy, adequacy, validity, reliability, availability or completeness by us.

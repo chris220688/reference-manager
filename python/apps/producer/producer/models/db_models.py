@@ -14,6 +14,7 @@ class BookSection(BaseModel):
 class BookLinkType(str, Enum):
 	amazon = "amazon"
 	book_depository = "bookdepository"
+	waterstones = "waterstones"
 
 
 class BookLink(BaseModel):

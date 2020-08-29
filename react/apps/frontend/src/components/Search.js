@@ -10,6 +10,7 @@ import {
 
 import '../styles/Search.css'
 import amazonLogo from '../icons/amazon.png'
+import waterstonesLogo from '../icons/waterstones.png'
 import bookdepositoryLogo from '../icons/bookdepository.svg'
 
 const { ResultListWrapper } = ReactiveList;
@@ -240,6 +241,7 @@ class Search extends Component {
 	getLinkSource = (linkType) => {
 		if (linkType === "amazon") return amazonLogo
 		if (linkType === "bookdepository") return bookdepositoryLogo
+		if (linkType === "waterstones") return waterstonesLogo
 	}
 
 	render() {

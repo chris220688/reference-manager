@@ -36,7 +36,7 @@ from contextlog import contextlog
 
 logger = contextlog.get_contextlog()
 
-app = FastAPI()
+app = FastAPI(docs_url="/documentation", redoc_url=None)
 
 
 # Allow CORS only locally

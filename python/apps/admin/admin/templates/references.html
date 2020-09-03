@@ -1,0 +1,15 @@
+<html>
+	<head>
+		<title>References</title>
+	</head>
+	<body>
+		<h1>References</h1>
+		<ul>
+			{% for reference in references %}
+			<li>
+				<a href="/reference?reference_id={{ reference.reference_id }}">{{ reference.title }}</a>
+			</li>
+			{% endfor %}
+		</ul>
+	</body>
+</html>

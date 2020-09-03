@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<title>User Filters</title>
+	</head>
+	<body>
+		<h1>User Filters</h1>
+		<form action="/users" method="get">
+			Requested join:
+			<div>
+				<input type="radio" id="requested_join_yes" name="requested_join" value="1">
+				<label for="requested_join_yes">Yes</label>
+				<input type="radio" id="requested_join_no" name="requested_join" value="2">
+				<label for="requested_join_no">No</label>
+			</div>
+			Is Author: 
+			<div>
+				<input type="radio" id="is_author_yes" name="is_author" value="1">
+				<label for="is_author_yes">Yes</label>
+				<input type="radio" id="is_author_no" name="is_author" value="2">
+				<label for="is_author_no">No</label>
+			</div>
+			<input type="submit" value="Submit">
+		</form>
+	</body>
+</html>

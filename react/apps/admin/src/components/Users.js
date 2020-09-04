@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-	Alert, Button, ButtonGroup, Col, Container, Dropdown,
-	DropdownButton, Form, ListGroup, Popover,
-	OverlayTrigger, Row, Tab, Tabs, Table
+	Col, Container, Dropdown, DropdownButton, Form, Row, Table
 } from 'react-bootstrap'
 
 import '../styles/Users.css'

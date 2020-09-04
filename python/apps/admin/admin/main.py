@@ -38,8 +38,10 @@ from admin.auth import (
 from admin.models.auth_models import (
 	AccessTokenData,
 	AdminUser,
+	FilterReferencesRequest,
 	FilterUsersRequest,
 	LoginRequest,
+	UpdateReferenceRequest,
 	UpdateUserRequest,
 )
 from admin.models.db_models import (
@@ -175,7 +177,6 @@ async def get_users(
 	admin_user: AdminUser = Depends(access_token_cookie_scheme),
 ):
 	async with exception_handling():
-
 		users = await db_client.get_users(
 			requested_join=filter_users_request.requested_join,
 			is_author=filter_users_request.is_author
@@ -192,15 +193,14 @@ async def get_users(
 
 @app.post("/user")
 async def update_user(
-	request: UpdateUserRequest,
+	update_user_request: UpdateUserRequest,
 	admin_user: AdminUser = Depends(access_token_cookie_scheme),
 ):
 	async with exception_handling():
-
 		modified = await db_client.update_user(
-			internal_sub_id=request.internal_sub_id,
-			requested_join=request.requested_join,
-			is_author=request.is_author,
+			internal_sub_id=update_user_request.internal_sub_id,
+			requested_join=update_user_request.requested_join,
+			is_author=update_user_request.is_author,
 		)
 
 		response = JSONResponse(
@@ -212,113 +212,44 @@ async def update_user(
 		return response
 
 
+@app.post("/references")
+async def get_references(
+	filter_references_request: FilterReferencesRequest,
+	admin_user: AdminUser = Depends(access_token_cookie_scheme),
+):
+	async with exception_handling():
+		references = await db_client.get_references(
+			has_amazon_links=filter_references_request.has_amazon_links,
+			has_waterstones_links=filter_references_request.has_waterstones_links,
+			has_bookdepository_links=filter_references_request.has_bookdepository_links,
+		)
+
+		response = JSONResponse(
+			content=jsonable_encoder({
+				"references": references,
+			}),
+		)
+
+		return response
 
 
+@app.post("/reference")
+async def update_reference(
+	update_reference_request: UpdateReferenceRequest,
+	admin_user: AdminUser = Depends(access_token_cookie_scheme),
+):
+	async with exception_handling():
+		modified = await db_client.update_reference(
+			reference_id=update_reference_request.reference_id,
+			has_amazon_links=update_reference_request.has_amazon_links,
+			has_waterstones_links=update_reference_request.has_waterstones_links,
+			has_bookdepository_links=update_reference_request.has_bookdepository_links,
+		)
 
-# @app.get("/user")
-# async def get_user(
-# 	request: Request,
-# 	admin_user: AdminUser = Depends(access_token_cookie_scheme),
-# 	internal_sub_id: str = None,
-# ):
-# 	async with exception_handling():
-# 		if admin_user is None:
-# 			response = RedirectResponse(url=config.LOGIN_URL)
-# 			return response
+		response = JSONResponse(
+			content=jsonable_encoder({
+				"success": modified,
+			}),
+		)
 
-# 		user = await db_client.get_user_by_id(internal_sub_id=internal_sub_id)
-
-# 		return templates.TemplateResponse("user.html", {"request": request, "user": user})
-
-
-# @app.post("/user")
-# async def update_user(
-# 	request: Request,
-# 	admin_user: AdminUser = Depends(access_token_cookie_scheme),
-# 	internal_sub_id: str = Form(...),
-# 	requested_join: Optional[bool] = Form(False),
-# 	is_author: Optional[bool] = Form(False),
-# ):
-# 	async with exception_handling():
-# 		if admin_user is None:
-# 			response = RedirectResponse(url=config.LOGIN_URL)
-# 			return response
-
-# 		await db_client.update_user(internal_sub_id=internal_sub_id, requested_join=requested_join, is_author=is_author)
-
-# 		return templates.TemplateResponse("user-filters.html", {"request": request})
-
-
-# @app.get("/reference-filters")
-# async def reference_filters(
-# 	request: Request,
-# 	admin_user: AdminUser = Depends(access_token_cookie_scheme)
-# ):
-# 	async with exception_handling():
-# 		if admin_user is None:
-# 			response = RedirectResponse(url=config.LOGIN_URL)
-# 			return response
-
-# 		return templates.TemplateResponse("reference-filters.html", {"request": request})
-
-
-# @app.get("/references")
-# async def get_references(
-# 	request: Request,
-# 	admin_user: AdminUser = Depends(access_token_cookie_scheme),
-# 	has_amazon_links: Optional[int] = None,
-# 	has_waterstones_links: Optional[int] = None,
-# 	has_bookdepository_links: Optional[int] = None,
-# ):
-# 	async with exception_handling():
-# 		if admin_user is None:
-# 			response = RedirectResponse(url=config.LOGIN_URL)
-# 			return response
-
-# 		references = await db_client.get_references(
-# 			has_amazon_links=has_amazon_links,
-# 			has_waterstones_links=has_waterstones_links,
-# 			has_bookdepository_links=has_bookdepository_links,
-# 		)
-
-# 		return templates.TemplateResponse("references.html", {"request": request, "references": references})
-
-
-# @app.get("/reference")
-# async def get_reference(
-# 	request: Request,
-# 	admin_user: AdminUser = Depends(access_token_cookie_scheme),
-# 	reference_id: str = None,
-# ):
-# 	async with exception_handling():
-# 		if admin_user is None:
-# 			response = RedirectResponse(url=config.LOGIN_URL)
-# 			return response
-
-# 		reference = await db_client.get_reference_by_id(reference_id=reference_id)
-
-# 		return templates.TemplateResponse("reference.html", {"request": request, "reference": reference})
-
-
-# @app.post("/reference")
-# async def update_reference(
-# 	request: Request,
-# 	admin_user: AdminUser = Depends(access_token_cookie_scheme),
-# 	reference_id: str = Form(...),
-# 	has_amazon_links: Optional[bool] = False,
-# 	has_waterstones_links: Optional[bool] = False,
-# 	has_bookdepository_links: Optional[bool] = False,
-# ):
-# 	async with exception_handling():
-# 		if admin_user is None:
-# 			response = RedirectResponse(url=config.LOGIN_URL)
-# 			return response
-
-# 		await db_client.update_reference(
-# 			reference_id=reference_id,
-# 			has_amazon_links=has_amazon_links,
-# 			has_waterstones_links=has_waterstones_links,
-# 			has_bookdepository_links=has_bookdepository_links,
-# 		)
-
-# 		return templates.TemplateResponse("reference-filters.html", {"request": request})
+		return response

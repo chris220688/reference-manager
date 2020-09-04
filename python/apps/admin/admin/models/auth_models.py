@@ -31,3 +31,16 @@ class UpdateUserRequest(BaseModel):
 	internal_sub_id: constr(min_length=36)
 	requested_join: Optional[bool]
 	is_author: Optional[bool]
+
+
+class FilterReferencesRequest(BaseModel):
+	has_amazon_links: Optional[int]
+	has_waterstones_links: Optional[int]
+	has_bookdepository_links: Optional[int]
+
+
+class UpdateReferenceRequest(BaseModel):
+	reference_id: constr(min_length=36)
+	has_amazon_links: Optional[bool]
+	has_waterstones_links: Optional[bool]
+	has_bookdepository_links: Optional[bool]

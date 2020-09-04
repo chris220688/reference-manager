@@ -21,6 +21,8 @@ class App extends Component {
 		adminLogoutEndpoint: "http://localhost:8000/logout",
 		adminUsersEndpoint: "http://localhost:8000/users",
 		adminUserEndpoint: "http://localhost:8000/user",
+		adminReferencesEndpoint: "http://localhost:8000/references",
+		adminReferenceEndpoint: "http://localhost:8000/reference",
 		userLoggedIn: false,
 	}
 
@@ -97,7 +99,8 @@ class App extends Component {
 						{this.state.userLoggedIn ?
 						<Route path='/references' component={
 							() => 	<References
-
+										adminReferencesEndpoint={this.state.adminReferencesEndpoint}
+										adminReferenceEndpoint={this.state.adminReferenceEndpoint}
 									/>
 							} /> : null
 						}

@@ -374,9 +374,12 @@ class MongoDBClient(DatabaseClient):
 		if bookdepository_filter:
 			aggregations.append(bookdepository_filter)
 
-		filters = {
-			"$and": aggregations
-		}
+		if aggregations:
+			filters = {
+				"$and": aggregations
+			}
+		else:
+			filters = {}
 
 		references = []
 		async for document in self._reference_manager_coll.find(filters):

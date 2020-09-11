@@ -128,6 +128,10 @@ class DatabaseClient(ABC):
 		""" Searches for references in the database """
 		...
 
+	async def update_reference_link(self, reference_id: str, book_name: str, link_type: str, link_url: str) -> int:
+		""" Updates the link of a specific book for a given reference """
+		...
+
 	@abstractmethod
 	async def get_reference_by_id(self, reference_id: str) -> Reference:
 		""" Returns a reference from the database, based on the reference id
@@ -389,3 +393,37 @@ class MongoDBClient(DatabaseClient):
 			references.append(Reference(**document))
 
 		return references
+
+	async def update_reference_link(self, reference_id: str, book_name: str, link_type: str, link_url: str) -> int:
+		reference_doc = await self._reference_manager_coll.find_one({"_id": reference_id})
+
+		for book in reference_doc.get("books"):
+			if book.get("name") == book_name:
+				has_links = False
+				for link in book.get("book_links"):
+					if link.get("link_type") == link_type:
+						has_links = True
+						break
+
+				if has_links:
+					for i, link in enumerate(book.get("book_links")):
+						if link.get("link_type") == link_type:
+							if link_url == "":
+								del book["book_links"][i]
+							else:
+								link["link_url"] = link_url
+							break
+				else:
+					book["book_links"].append(
+						dict(
+							link_type=link_type,
+							link_url=link_url,
+						)
+					)
+
+		result = await self._reference_manager_coll.update_one(
+			{'_id': reference_id},
+			{'$set': reference_doc}
+		)
+
+		return result.modified_count

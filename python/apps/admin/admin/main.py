@@ -41,7 +41,7 @@ from admin.models.auth_models import (
 	FilterReferencesRequest,
 	FilterUsersRequest,
 	LoginRequest,
-	UpdateReferenceRequest,
+	UpdateReferenceLinkRequest,
 	UpdateUserRequest,
 )
 from admin.models.db_models import (
@@ -234,16 +234,16 @@ async def get_references(
 
 
 @app.post("/reference")
-async def update_reference(
-	update_reference_request: UpdateReferenceRequest,
+async def update_reference_link(
+	update_reference_link_request: UpdateReferenceLinkRequest,
 	admin_user: AdminUser = Depends(access_token_cookie_scheme),
 ):
 	async with exception_handling():
-		modified = await db_client.update_reference(
-			reference_id=update_reference_request.reference_id,
-			has_amazon_links=update_reference_request.has_amazon_links,
-			has_waterstones_links=update_reference_request.has_waterstones_links,
-			has_bookdepository_links=update_reference_request.has_bookdepository_links,
+		modified = await db_client.update_reference_link(
+			reference_id=update_reference_link_request.reference_id,
+			book_name=update_reference_link_request.book_name,
+			link_type=update_reference_link_request.link_type,
+			link_url=update_reference_link_request.link_url,
 		)
 
 		response = JSONResponse(

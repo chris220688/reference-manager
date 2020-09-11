@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Button, Container, Col, Form, Row, Modal, Nav, } from 'react-bootstrap'
+import { Button, Container, Form, Modal, Nav, } from 'react-bootstrap'
 
 import '../styles/Login.css'
 

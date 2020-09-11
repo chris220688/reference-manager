@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import {
-	Alert, Container, Dropdown, Navbar, Nav
+	Navbar, Nav
 } from 'react-bootstrap'
 
 import '../styles/App.css'

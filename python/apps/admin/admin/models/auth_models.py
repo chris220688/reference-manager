@@ -39,8 +39,8 @@ class FilterReferencesRequest(BaseModel):
 	has_bookdepository_links: Optional[int]
 
 
-class UpdateReferenceRequest(BaseModel):
+class UpdateReferenceLinkRequest(BaseModel):
 	reference_id: constr(min_length=36)
-	has_amazon_links: Optional[bool]
-	has_waterstones_links: Optional[bool]
-	has_bookdepository_links: Optional[bool]
+	book_name: str
+	link_type: str
+	link_url: str

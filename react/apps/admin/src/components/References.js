@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-	Col, Container, Dropdown, DropdownButton, Form, Row, Table
+	Container, Dropdown, DropdownButton, Form, Table
 } from 'react-bootstrap'
 
 import '../styles/References.css'
@@ -110,70 +110,47 @@ class References extends Component {
 		if ( bookdepository_filter === 2) { return "No"}
 	}
 
-	updateAmazon = (event, reference) => {
-		const updateReferenceRequest = {
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({
-				reference_id: reference.reference_id,
-				has_amazon_links: event.target.checked,
-			})
+	setLinkInput = (reference, book, linkType) => {
+		const bookLinks = book.book_links.filter(function(linkDict) {return linkDict.link_type === linkType})
+
+		if (bookLinks.length > 0) {
+			return <Form.Control
+				type="text"
+				value={bookLinks[0].link_url}
+				onChange={
+					(event) => this.updateReferenceLink(event, reference, book.name, linkType)
+				}
+			/>
 		}
 
-		fetch(this.state.adminReferenceEndpoint, updateReferenceRequest)
-		.then(response => response.json())
-		.then(data => {
-			if ( data.success ) {
-				this.handleFilter(
-					this.state.amazon,
-					this.state.waterstones_filter,
-					this.state.bookdepository_filter
-				)
+		return <Form.Control
+			type="text"
+			value=""
+			placeholder="New link"
+			onChange={
+				(event) => this.updateReferenceLink(event, reference, book.name, linkType)
 			}
-		})
-		.catch(err => {})
+		/>
 	}
 
-	updateWaterstones = (event, reference) => {
-		const updateReferenceRequest = {
+	updateReferenceLink = (event, reference, bookName, linkType) => {
+		const updateReferenceLink = {
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({
 				reference_id: reference.reference_id,
-				has_waterstones_links: event.target.checked,
+				book_name: bookName,
+				link_type: linkType,
+				link_url: event.target.value,
 			})
 		}
 
-		fetch(this.state.adminReferenceEndpoint, updateReferenceRequest)
+		fetch(this.state.adminReferenceEndpoint, updateReferenceLink)
 		.then(response => response.json())
 		.then(data => {
 			if ( data.success ) {
 				this.handleFilter(
-					this.state.amazon,
-					this.state.waterstones_filter,
-					this.state.bookdepository_filter
-				)
-			}
-		})
-		.catch(err => {})
-	}
-
-	updateAmazon = (event, reference) => {
-		const updateReferenceRequest = {
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({
-				reference_id: reference.reference_id,
-				has_bookdepository_links: event.target.checked,
-			})
-		}
-
-		fetch(this.state.adminReferenceEndpoint, updateReferenceRequest)
-		.then(response => response.json())
-		.then(data => {
-			if ( data.success ) {
-				this.handleFilter(
-					this.state.amazon,
+					this.state.amazon_filter,
 					this.state.waterstones_filter,
 					this.state.bookdepository_filter
 				)
@@ -185,82 +162,76 @@ class References extends Component {
 	render() {
 		return (
 			<Container>
-				<Row>
-					<Col>
-						<label for="amazon-dropdown">Has Amazon links</label>
-						<DropdownButton
-							size="sm"
-							variant="secondary"
-							id="amazon-dropdown"
-							title={this.getAmazonFilterOption()}
-						>
-							<Dropdown.Item
-								eventKey="1"
-								onSelect={(eventKey, event) => this.handleAmazonFilter(eventKey)}
-							>Yes</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="2"
-								onSelect={(eventKey, event) => this.handleAmazonFilter(eventKey)}
-							>No</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="0"
-								onSelect={(eventKey, event) => this.handleAmazonFilter(eventKey)}
-							>-</Dropdown.Item>
-						</DropdownButton>
-					</Col>
-					<Col>
-						<label for="waterstones-dropdown">Has Waterstones links</label>
-						<DropdownButton
-							size="sm"
-							variant="secondary"
-							id="waterstones-dropdown"
-							title={this.getWaterstonesFilterOption()}
-						>
-							<Dropdown.Item
-								eventKey="1"
-								onSelect={(eventKey, event) => this.handleWaterstonesFilter(eventKey)}
-							>Yes</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="2"
-								onSelect={(eventKey, event) => this.handleWaterstonesFilter(eventKey)}
-							>No</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="0"
-								onSelect={(eventKey, event) => this.handleWaterstonesFilter(eventKey)}
-							>-</Dropdown.Item>
-						</DropdownButton>
-					</Col>
-					<Col>
-						<label for="bookdepository-dropdown">Has Book Depository links</label>
-						<DropdownButton
-							size="sm"
-							variant="secondary"
-							id="bookdepository-dropdown"
-							title={this.getBookDepositoryFilterOption()}
-						>
-							<Dropdown.Item
-								eventKey="1"
-								onSelect={(eventKey, event) => this.handleBookDepositoryFilter(eventKey)}
-							>Yes</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="2"
-								onSelect={(eventKey, event) => this.handleBookDepositoryFilter(eventKey)}
-							>No</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="0"
-								onSelect={(eventKey, event) => this.handleBookDepositoryFilter(eventKey)}
-							>-</Dropdown.Item>
-						</DropdownButton>
-					</Col>
-				</Row>
-
 				<Table striped bordered hover>
 					<thead>
 						<tr>
 							<th>Title</th>
-							<th>Amazon links</th>
-							<th>Waterstones links</th>
-							<th>Bookdepository links</th>
+							<th>
+								Amazon links
+								<DropdownButton
+									size="sm"
+									variant="secondary"
+									id="amazon-dropdown"
+									title={this.getAmazonFilterOption()}
+								>
+									<Dropdown.Item
+										eventKey="1"
+										onSelect={(eventKey, event) => this.handleAmazonFilter(eventKey)}
+									>Yes</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="2"
+										onSelect={(eventKey, event) => this.handleAmazonFilter(eventKey)}
+									>No</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="0"
+										onSelect={(eventKey, event) => this.handleAmazonFilter(eventKey)}
+									>-</Dropdown.Item>
+								</DropdownButton>
+							</th>
+							<th>
+								Waterstones links
+								<DropdownButton
+									size="sm"
+									variant="secondary"
+									id="waterstones-dropdown"
+									title={this.getWaterstonesFilterOption()}
+								>
+									<Dropdown.Item
+										eventKey="1"
+										onSelect={(eventKey, event) => this.handleWaterstonesFilter(eventKey)}
+									>Yes</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="2"
+										onSelect={(eventKey, event) => this.handleWaterstonesFilter(eventKey)}
+									>No</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="0"
+										onSelect={(eventKey, event) => this.handleWaterstonesFilter(eventKey)}
+									>-</Dropdown.Item>
+								</DropdownButton>
+							</th>
+							<th>
+								Book Depository links
+								<DropdownButton
+									size="sm"
+									variant="secondary"
+									id="bookdepository-dropdown"
+									title={this.getBookDepositoryFilterOption()}
+								>
+									<Dropdown.Item
+										eventKey="1"
+										onSelect={(eventKey, event) => this.handleBookDepositoryFilter(eventKey)}
+									>Yes</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="2"
+										onSelect={(eventKey, event) => this.handleBookDepositoryFilter(eventKey)}
+									>No</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="0"
+										onSelect={(eventKey, event) => this.handleBookDepositoryFilter(eventKey)}
+									>-</Dropdown.Item>
+								</DropdownButton>
+							</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -268,43 +239,37 @@ class References extends Component {
 						<tr key={index}>
 							<td>{reference.title}</td>
 							<td>
-								{reference.books.map((book, index) => (
-									<div>
+								{reference.books.map((book, bookIndex) => (
+									<div key={bookIndex}>
 										<div>{book.name}</div>
 										<div>
-											{book.book_links.map((book_link, index) => (
-												<span>
-													{book_link.link_type === "amazon" ? book_link.link_url : null }
-												</span>
-											))}
+											<span>
+												{this.setLinkInput(reference, book, "amazon")}
+											</span>
 										</div>
 									</div>
 								))}
 							</td>
 							<td>
-								{reference.books.map((book, index) => (
-									<div>
+								{reference.books.map((book, bookIndex) => (
+									<div key={bookIndex}>
 										<div>{book.name}</div>
 										<div>
-											{book.book_links.map((book_link, index) => (
-												<span>
-													{book_link.link_type === "waterstones" ? book_link.link_url : null }
-												</span>
-											))}
+											<span>
+												{this.setLinkInput(reference, book, "waterstones")}
+											</span>
 										</div>
 									</div>
 								))}
 							</td>
 							<td>
-								{reference.books.map((book, index) => (
-									<div>
+								{reference.books.map((book, bookIndex) => (
+									<div key={bookIndex}>
 										<div>{book.name}</div>
 										<div>
-											{book.book_links.map((book_link, index) => (
-												<span>
-													{book_link.link_type === "bookdepository" ? book_link.link_url : null }
-												</span>
-											))}
+											<span>
+												{this.setLinkInput(reference, book, "bookdepository")}
+											</span>
 										</div>
 									</div>
 								))}

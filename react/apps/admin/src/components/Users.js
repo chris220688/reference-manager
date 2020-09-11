@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-	Col, Container, Dropdown, DropdownButton, Form, Row, Table
+	Container, Dropdown, DropdownButton, Form, Table
 } from 'react-bootstrap'
 
 import '../styles/Users.css'
@@ -124,59 +124,54 @@ class Users extends Component {
 	render() {
 		return (
 			<Container>
-				<Row>
-					<Col>
-						<label for="request-join-dropdown">Requested Join</label>
-						<DropdownButton
-							size="sm"
-							variant="secondary"
-							id="request-join-dropdown"
-							title={this.getRequestJoinFilterOption()}
-						>
-							<Dropdown.Item
-								eventKey="1"
-								onSelect={(eventKey, event) => this.handleRequestJoinFilter(eventKey)}
-							>Yes</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="2"
-								onSelect={(eventKey, event) => this.handleRequestJoinFilter(eventKey)}
-							>No</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="0"
-								onSelect={(eventKey, event) => this.handleRequestJoinFilter(eventKey)}
-							>-</Dropdown.Item>
-						</DropdownButton>
-					</Col>
-					<Col>
-						<label for="is-author-dropdown">Is Author</label>
-						<DropdownButton
-							size="sm"
-							variant="secondary"
-							id="is-author-dropdown"
-							title={this.getIsAuthorFilterOption()}
-						>
-							<Dropdown.Item
-								eventKey="1"
-								onSelect={(eventKey, event) => this.handleIsAuthorFilter(eventKey)}
-							>Yes</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="2"
-								onSelect={(eventKey, event) => this.handleIsAuthorFilter(eventKey)}
-							>No</Dropdown.Item>
-							<Dropdown.Item
-								eventKey="0"
-								onSelect={(eventKey, event) => this.handleIsAuthorFilter(eventKey)}
-							>-</Dropdown.Item>
-						</DropdownButton>
-					</Col>
-				</Row>
-
 				<Table striped bordered hover>
 					<thead>
 						<tr>
 							<th>Username</th>
-							<th>Requested Join</th>
-							<th>Is author</th>
+							<th>
+								<label for="request-join-dropdown">Requested Join</label>
+								<DropdownButton
+									size="sm"
+									variant="secondary"
+									id="request-join-dropdown"
+									title={this.getRequestJoinFilterOption()}
+								>
+									<Dropdown.Item
+										eventKey="1"
+										onSelect={(eventKey, event) => this.handleRequestJoinFilter(eventKey)}
+									>Yes</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="2"
+										onSelect={(eventKey, event) => this.handleRequestJoinFilter(eventKey)}
+									>No</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="0"
+										onSelect={(eventKey, event) => this.handleRequestJoinFilter(eventKey)}
+									>-</Dropdown.Item>
+								</DropdownButton>
+							</th>
+							<th>
+								<label for="is-author-dropdown">Is Author</label>
+								<DropdownButton
+									size="sm"
+									variant="secondary"
+									id="is-author-dropdown"
+									title={this.getIsAuthorFilterOption()}
+								>
+									<Dropdown.Item
+										eventKey="1"
+										onSelect={(eventKey, event) => this.handleIsAuthorFilter(eventKey)}
+									>Yes</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="2"
+										onSelect={(eventKey, event) => this.handleIsAuthorFilter(eventKey)}
+									>No</Dropdown.Item>
+									<Dropdown.Item
+										eventKey="0"
+										onSelect={(eventKey, event) => this.handleIsAuthorFilter(eventKey)}
+									>-</Dropdown.Item>
+								</DropdownButton>
+							</th>
 						</tr>
 					</thead>
 					<tbody>

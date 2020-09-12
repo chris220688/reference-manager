@@ -16,6 +16,7 @@ aiofiles = "*"
 python-jose = {extras = ["cryptography"],version = "*"}
 pyjwt = "*"
 python-multipart = "*"
+motor = "*"
 
 [requires]
 python_version = "3.7"

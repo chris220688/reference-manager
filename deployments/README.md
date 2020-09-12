@@ -39,6 +39,10 @@ kubectl create -f deployments/producer-secrets.yaml
 ```sh
 kubectl create -f deployments/consumer-secrets.yaml
 ```
+####  Create admin secrets
+```sh
+kubectl create -f deployments/admin-secrets.yaml
+```
 ####  Create mongo secrets
 ```sh
 kubectl create -f deployments/mongo-secrets.yaml
@@ -135,12 +139,42 @@ kubectl create -f deployments/consumer.yaml
 kubectl create -f deployments/producer.yaml
 ```
 
-# 11. Create frontend
+# 11.Create admin
+```sh
+kubectl create -f deployments/admin.yaml
+```
+
+# 12. Create frontend
 ```sh
 kubectl create -f deployments/frontend.yaml
 ```
 
-# 12. Create the ingresses to expose the apps and establish the redirects
+# 13. Create admin-frontend
+```sh
+kubectl create -f deployments/admin-frontend.yaml
+```
+Run  admin/encrypt.py script to generate a hashed password for the admin user.
+```
+pipenv run python admin/encrypt.py
+```
+Create a new collection in mongo with the name "operators" and manually add the user details you just created
+```
+{
+    "username" : "test@gmail.com",
+    "password" : "hashed-password"
+}
+```
+Port forward to the admin-frontend application
+```
+kubectl port-forward admin-frontend-7998c76678-psvtg 3000:3000
+```
+
+# 14. Create admin-frontend
+```sh
+kubectl create -f deployments/admin-frontend.yaml
+```
+
+# 15. Create the ingresses to expose the apps and establish the redirects
 ```sh
 kubectl create -f deployments/ingress.yaml
 ```
@@ -157,7 +191,7 @@ Check that all the certificates have been created (findsources-kubernetes-tls, v
 6. http://www.vrespiges.gr -> https://findsources.co.uk
 7. https://www.vrespiges.gr -> https://findsources.co.uk
 
-# 13. Backup mongo with volume snapshots
+# 16. Backup mongo with volume snapshots
 You can achieve the same from the Digital Ocean UI but be careful to use the correct names for the snapshots.
 
 Delete the existing snapshot (we always keep the latest snapshot in the Digital Ocean account)
@@ -173,7 +207,7 @@ Check snapshot has been created
 kubectl get volumesnapshot
 ```
 
-# 14. Restore mongo volume from snapshot
+# 17. Restore mongo volume from snapshot
 This will require some short downtime as we need to take down the producer and mongo.
 The rest of the apps (including monstache) will not be affected if mongo is down.
 

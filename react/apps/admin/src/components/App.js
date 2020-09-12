@@ -11,18 +11,19 @@ import Home from './Home'
 import Login from './Login'
 import Users from './Users'
 import References from './References'
+import { constants } from '../constants/Constants.js'
 
 
 class App extends Component {
 
 	state = {
-		adminLoginEndpoint: "http://localhost:8000/login",
-		adminLoginCheckEndpoint: "http://localhost:8000/user-session-status",
-		adminLogoutEndpoint: "http://localhost:8000/logout",
-		adminUsersEndpoint: "http://localhost:8000/users",
-		adminUserEndpoint: "http://localhost:8000/user",
-		adminReferencesEndpoint: "http://localhost:8000/references",
-		adminReferenceEndpoint: "http://localhost:8000/reference",
+		adminLoginEndpoint: constants.adminDomain + "/login",
+		adminLoginCheckEndpoint: constants.adminDomain + "/user-session-status",
+		adminLogoutEndpoint: constants.adminDomain + "/logout",
+		adminUsersEndpoint: constants.adminDomain + "/users",
+		adminUserEndpoint: constants.adminDomain + "/user",
+		adminReferencesEndpoint: constants.adminDomain + "/references",
+		adminReferenceEndpoint: constants.adminDomain + "/reference",
 		userLoggedIn: false,
 	}
 

@@ -20,9 +20,13 @@ images:
 	docker build -t findsources/producer:latest --file python/apps/producer/Dockerfile .
 	docker build -t findsources/consumer:latest --file python/apps/consumer/Dockerfile .
 	docker build -t findsources/monstache:latest --file monstache/Dockerfile .
+	docker build -t findsources/admin-frontend:latest --file react/apps/admin/Dockerfile .
+	docker build -t findsources/admin:latest --file python/apps/admin/Dockerfile .
 
 push-images:
 	docker push findsources/frontend
+	docker push findsources/admin-frontend
 	docker push findsources/producer
 	docker push findsources/consumer
+	docker push findsources/admin
 	docker push findsources/monstache

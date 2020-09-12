@@ -15,6 +15,7 @@ aiofiles = "*"
 pyjwt = "*"
 motor = "*"
 passlib = "*"
+bcrypt = "*"
 
 [requires]
 python_version = "3.7"

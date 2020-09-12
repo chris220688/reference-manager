@@ -24,6 +24,8 @@ spec:
       labels:
         app: admin-frontend
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: admin-frontend
         image: findsources/admin-frontend:latest

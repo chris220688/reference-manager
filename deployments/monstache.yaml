@@ -12,6 +12,8 @@ spec:
       labels:
         app: monstache
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: monstache
         image: findsources/monstache:latest

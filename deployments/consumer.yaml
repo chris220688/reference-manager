@@ -24,6 +24,8 @@ spec:
       labels:
         app: consumer
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: consumer
         image: findsources/consumer:latest

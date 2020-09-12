@@ -11,11 +11,8 @@ uvicorn = "*"
 pymongo = "*"
 contextlog = {path = "./../../shared/contextlog"}
 sentry-sdk = "*"
-jinja2 = "*"
 aiofiles = "*"
-python-jose = {extras = ["cryptography"],version = "*"}
 pyjwt = "*"
-python-multipart = "*"
 motor = "*"
 passlib = "*"
 

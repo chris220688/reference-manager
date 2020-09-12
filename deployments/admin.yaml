@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+  selector:
+    app: admin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: admin
+        image: findsources/admin:latest
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
+        args: ["-c", "pipenv run uvicorn admin.main:app --host 0.0.0.0"]
+        ports:
+        - containerPort: 8000
+        env:
+        - name: APP_NAME
+          value: 'admin'
+        - name: DATABASE_HOST
+          value: 'replica-set-mongodb'
+        - name: DATABASE_PORT
+          value: '27017'
+        - name: DATABASE_TYPE
+          value: 'mongodb'
+        - name: DATABASE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: admin-secrets
+              key: db_username
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: admin-secrets
+              key: db_password
+        - name: DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: admin-secrets
+              key: db_name
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: admin-secrets
+              key: jwt_secret_key
+        - name: ALGORITHM
+          valueFrom:
+            secretKeyRef:
+              name: admin-secrets
+              key: algorithm
+        - name: ACCESS_TOKEN_EXPIRE_MINUTES
+          value: '15'
+        - name: ACCESS_COOKIE_EXPIRE_SECONDS
+          value: '900'

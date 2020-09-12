@@ -46,6 +46,10 @@ class UnauthorizedUser(AuthorizationException):
 	pass
 
 
+class UserDoesNotExist(AuthorizationException):
+	pass
+
+
 class DiscoveryDocumentError(AuthorizationException):
 	pass
 

@@ -1,4 +1,4 @@
-var localDeployment = false
+var localDeployment = true
 
 var adminDomain = 'http://admin:8000'
 

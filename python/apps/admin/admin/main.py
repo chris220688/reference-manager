@@ -132,12 +132,12 @@ async def login(
 
 		response = RedirectResponse(url=config.HOME_URL, status_code=status.HTTP_302_FOUND)
 
-		secure_cookie = False if config.LOCAL_DEPLOYMENT else True
+		#secure_cookie = False if config.LOCAL_DEPLOYMENT else True
 		response.set_cookie(
 			key="access_token",
 			value=f"Bearer {access_token}",
 			httponly=True,
-			secure=secure_cookie,
+			secure=False,
 			max_age=config.ACCESS_COOKIE_EXPIRE_SECONDS,
 		)
 

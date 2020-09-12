@@ -17,6 +17,7 @@ python-jose = {extras = ["cryptography"],version = "*"}
 pyjwt = "*"
 python-multipart = "*"
 motor = "*"
+passlib = "*"
 
 [requires]
 python_version = "3.7"

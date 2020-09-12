@@ -1,6 +1,6 @@
 var localDeployment = false
 
-var adminDomain = 'admin:8000'
+var adminDomain = 'http://admin:8000'
 
 if (localDeployment) {
 	adminDomain = 'http://localhost:8000'

@@ -166,7 +166,7 @@ Create a new collection in mongo with the name "operators" and manually add the 
 ```
 Port forward to the admin-frontend application
 ```
-kubectl port-forward admin-frontend-7998c76678-psvtg 3000:3000
+export ADMIN_POD=`kubectl get pods -l app=admin-frontend | awk 'FNR == 2 {print}' | awk '{print $1}'` && kubectl port-forward $ADMIN_POD 3000:3000
 ```
 
 # 14. Create admin-frontend

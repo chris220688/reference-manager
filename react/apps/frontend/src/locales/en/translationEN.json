@@ -147,7 +147,10 @@
 	"home.secondrow.text": "Simply, type what you are looking for and we'll try to find you some books!",
 	"home.third.title": "Join Us!",
 	"home.third.p1": "Do you want to go further?",
-	"home.third.p2": "Request to become an author so that you can create your own references and share them with the rest of the world.",
+	"home.third.p2": "Sign in and request to become an author so that you can create your own references and share them with the rest of the world.",
 	"home.third.p3": "Read, publish, share!",
-	"home.fourth.title": "Powered by"
+	"home.fourth.title": "Ready to search?",
+	"home.fourth.p1": "Navigate to the Search menu at the top of your screen.",
+	"home.fourth.p2": "Additionaly, Sign In with one of your favorite providers to access extra features such as adding your own bookmarks and rating references!",
+	"home.fifth.title": "Powered by"
 }

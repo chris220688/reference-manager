@@ -32,12 +32,17 @@ class Book(BaseModel):
 
 
 class Category(str, Enum):
-	history = "history"
-	sciences = "sciences"
-	computer_science = "computer_science"
-	literature = "literature"
 	arts = "arts"
+	business = "business"
+	computer_science = "computer_science"
+	food_drinks = "food_drinks"
+	health = "health"
+	history = "history"
+	literature = "literature"
+	sciences = "sciences"
+	social_sciences = "social_sciences"
 	sports = "sports"
+	technology = "technology"
 	travel = "travel"
 	other = "other"
 

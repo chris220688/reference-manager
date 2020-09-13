@@ -5,6 +5,7 @@ import { withTranslation } from 'react-i18next'
 import {
 	Col, Container, Row
 } from 'react-bootstrap'
+import { Link } from 'react-router-dom';
 
 import '../styles/Home.css'
 import logo from '../icons/logo-black.svg'
@@ -62,11 +63,13 @@ class Home extends Component {
 						</Col>
 						<Col xs="12" sm="12" md="12" xl="4">
 							<div className="first-row-middle vertical-align">
-								<img
-									src={logo}
-									className="centered-logo "
-									alt="logo"
-								/>
+								<Link to={'/search'} className="nav-link">
+									<img
+										src={logo}
+										className="centered-logo "
+										alt="logo"
+									/>
+								</Link>
 							</div>
 						</Col>
 						<Col xs="12" sm="12" md="12" xl="3">
@@ -150,17 +153,52 @@ class Home extends Component {
 					</Row>
 				</Container>
 
+				<Container fluid>
+					<Row className="fourth-row">
+						<Col className="d-xs-none d-sm-none d-md-block d-xl-block" md="2" xl="3" ></Col>
+						<Col xs="12" sm="12" md="8" xl="6">
+							<div>
+								<div>
+									<div>
+										<p>
+											<h1>
+												<b>
+													{t('home.fourth.title')}
+												</b>
+											</h1>
+										</p>
+									</div>
+								</div>
+								<div>
+									<p>
+										{t('home.fourth.p1')}
+									</p>
+								</div>
+								<div>
+									<p>
+										{t('home.fourth.p2')}
+									</p>
+									<p>
+										🥳&nbsp;🎉&nbsp;🥳&nbsp;🎉
+									</p>
+								</div>
+							</div>
+						</Col>
+						<Col className="d-xs-none d-sm-none d-md-block d-xl-block" md="2" xl="3" ></Col>
+					</Row>
+				</Container>
+
 				<Container>
 					<div className="powered">
 						<div>
 							<h1>
 								<b>
-									{t('home.fourth.title')}
+									{t('home.fifth.title')}
 								</b>
 							</h1>
 						</div>
 					</div>
-					<Row className="fourth-row">
+					<Row className="fifth-row">
 						<Col xs="12" sm="12" md="3" xl="4">
 							<div className="vertical-align">
 								<a href="https://opensource.appbase.io/reactive-manual/getting-started/reactivebase.html" target="_blank" rel="noopener noreferrer">
@@ -198,7 +236,7 @@ class Home extends Component {
 				</Container>
 
 				<Container>
-					<Row className="fifth-row">
+					<Row className="sixth-row">
 						<Col className="d-xs-none d-sm-none d-md-block d-xl-block" md="1" xl="2"></Col>
 						<Col xs="12" sm="12" md="5" xl="4">
 							<div className="vertical-align">

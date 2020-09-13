@@ -31,6 +31,11 @@
 	color: #261421;
 }
 
+.fourth-row {
+	background-color: #ec6266;
+	text-align: center;
+}
+
 @media (min-width: 100px) and (max-width:544px) {
 	.first-row-right {
 		height: 250px;
@@ -69,6 +74,11 @@
 	}
 
 	.fourth-row {
+		height: 400px;
+		font-size: 20px;
+	}
+
+	.fifth-row {
 		font-size: 20px;
 		padding-top: 30px;
 	}
@@ -133,6 +143,12 @@
 	}
 
 	.fourth-row {
+		height: 500px;
+		font-size: 25px;
+		padding-top: 100px;
+	}
+
+	.fifth-row {
 		font-size: 25px;
 		padding-top: 20px;
 	}
@@ -194,6 +210,12 @@
 	}
 
 	.fourth-row {
+		height: 500px;
+		font-size: 27px;
+		padding-top: 100px;
+	}
+
+	.fifth-row {
 		font-size: 27px;
 		padding-top: 40px;
 	}
@@ -220,13 +242,13 @@
 	}
 }
 
-.fourth-row {
+.fifth-row {
 	background-color: #fff;
 	text-align: center;
 	margin-top: 50px;
 }
 
-.fifth-row {
+.sixth-row {
 	background-color: #fff;
 	text-align: center;
 }

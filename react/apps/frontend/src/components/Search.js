@@ -276,7 +276,7 @@ class Search extends Component {
 									</Row>
 									<Row>
 										<Col xs="2" sm="2" md="1"></Col>
-										<Col xs="8" sm="8" md="10">
+										<Col xs="8" sm="8" md="10" style={{paddingLeft: "1px", paddingRight: "1px"}}>
 											<div className="toggle-categories-btn">
 												<ToggleButton
 													componentId="categoryFilter"

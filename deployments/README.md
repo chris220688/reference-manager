@@ -143,17 +143,7 @@ kubectl create -f deployments/producer.yaml
 ```sh
 kubectl create -f deployments/admin.yaml
 ```
-
-# 12. Create frontend
-```sh
-kubectl create -f deployments/frontend.yaml
-```
-
-# 13. Create admin-frontend
-```sh
-kubectl create -f deployments/admin-frontend.yaml
-```
-Run  admin/encrypt.py script to generate a hashed password for the admin user.
+Run admin/encrypt.py script to generate a hashed password for the admin user.
 ```
 pipenv run python admin/encrypt.py
 ```
@@ -164,9 +154,23 @@ Create a new collection in mongo with the name "operators" and manually add the 
     "password" : "hashed-password"
 }
 ```
+Port forward to the admin application
+```
+export ADMIN_POD=`kubectl get pods -l app=admin | awk 'FNR == 2 {print}' | awk '{print $1}'` && kubectl port-forward $ADMIN_POD 8000:8000
+```
+
+# 12. Create frontend
+```sh
+kubectl create -f deployments/frontend.yaml
+```
+
+# 13. Create admin-frontend
+```sh
+kubectl create -f deployments/admin-frontend.yaml
+```
 Port forward to the admin-frontend application
 ```
-export ADMIN_POD=`kubectl get pods -l app=admin-frontend | awk 'FNR == 2 {print}' | awk '{print $1}'` && kubectl port-forward $ADMIN_POD 3000:3000
+export ADMIN_FRONTEND_POD=`kubectl get pods -l app=admin-frontend | awk 'FNR == 2 {print}' | awk '{print $1}'` && kubectl port-forward $ADMIN_FRONTEND_POD 3000:3000
 ```
 
 # 14. Create admin-frontend

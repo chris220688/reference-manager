@@ -111,16 +111,18 @@ class References extends Component {
 	}
 
 	setLinkInput = (reference, book, linkType) => {
-		const bookLinks = book.book_links.filter(function(linkDict) {return linkDict.link_type === linkType})
+		if (book.book_links) {
+			const bookLinks = book.book_links.filter(function(linkDict) {return linkDict.link_type === linkType})
 
-		if (bookLinks.length > 0) {
-			return <Form.Control
-				type="text"
-				value={bookLinks[0].link_url}
-				onChange={
-					(event) => this.updateReferenceLink(event, reference, book.name, linkType)
-				}
-			/>
+			if (bookLinks.length > 0) {
+				return <Form.Control
+					type="text"
+					value={bookLinks[0].link_url}
+					onChange={
+						(event) => this.updateReferenceLink(event, reference, book.name, linkType)
+					}
+				/>
+			}
 		}
 
 		return <Form.Control

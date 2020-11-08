@@ -304,7 +304,7 @@ class References extends Component {
 			var references = this.state.references
 			var existingReferenceId = this.state.currentReferenceId
 			var existingReference = references.filter(
-				function(e) { return e.reference_id === existingReferenceId}
+				reference => reference.reference_id === existingReferenceId
 			)[0]
 			reference = {
 				reference_id: existingReference['reference_id'],
@@ -352,7 +352,7 @@ class References extends Component {
 				if (this.state.editReference) {
 					// Delete the old version of the reference from the state
 					references = references.filter(
-						function(e) { return e.reference_id !== data['reference']['reference_id']}
+						reference => reference.reference_id !== data['reference']['reference_id']
 					)
 				}
 
@@ -403,7 +403,9 @@ class References extends Component {
 		.then(data => {
 			if (data.deleted) {
 				var references = this.state.references
-				var filteredReferences = references.filter(function(e) { return e !== reference })
+				var filteredReferences = references.filter(
+					reference => reference !== reference
+				)
 				this.setState({
 					references: filteredReferences
 				})
@@ -446,7 +448,9 @@ class References extends Component {
 		.then(data => {
 			if ( data.success ) {
 				var bookmarkedReferences = this.state.bookmarkedReferences
-				var filteredBookmarkedReferences = bookmarkedReferences.filter(function(e) { return e.reference_id !== reference.reference_id })
+				var filteredBookmarkedReferences = bookmarkedReferences.filter(
+					reference => reference.reference_id !== reference.reference_id
+				)
 				this.setState({
 					bookmarkedReferences: filteredBookmarkedReferences,
 				})

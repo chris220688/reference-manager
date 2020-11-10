@@ -302,6 +302,7 @@ class Search extends Component {
 										debounce={100}
 										fuzziness="AUTO"
 										showFilter={true}
+										showClear={true}
 										innerClass={{
 											input: 'searchbar-input',
 											list: 'searchbar-list',
@@ -321,6 +322,22 @@ class Search extends Component {
 											componentId="searchResult"
 											pagination={true}
 											size={10}
+											onQueryChange={(prevQuery, nextQuery) => {
+												// These options have to do with the reactive search rendering.
+												// We need these to avoid 'flashing' all the results in between queries
+
+												if ('match_all' in nextQuery['query']) {
+													nextQuery['query'] = { match_none: {} }
+												}
+
+												if (
+													prevQuery && prevQuery.query.bool.must[0].bool.must.length === 2 &&
+													nextQuery.query.bool.must[0].bool.must.length === 1
+												) {
+													nextQuery['query'] = { match_none: {} }
+												}
+											}}
+											renderNoResults={() => t('search.noresults')}
 											renderResultStats={(stats) => {
 												return (
 													<Container>

@@ -33,6 +33,7 @@
 	"myaccount.error.delete": "We did not manage to delete your account. Please try again. If the issue persists, please contact us using the contact details at the bottom of the page.",
 	"search.searchbar": "Search",
 	"search.results.stats": "Found {{numberOfResults}} results in {{time}} ms",
+	"search.noresults": "No results found",
 	"search.language.greek": "Greek",
 	"search.language.english": "English",
 	"search.logout": "Log out",

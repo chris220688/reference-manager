@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Container, Col, Row, Modal, Nav, } from 'react-bootstrap'
 
@@ -97,7 +98,10 @@ export default function Login(props) {
 				<Modal.Footer>
 					<div className="login-footer-text">
 						<p>
-							{t('login.notification')}
+							{t('login.notification.t1')}
+							<Link to={'/terms'}>{t('login.notification.t2')}</Link>
+							{t('login.notification.t3')}
+							<Link to={'/privacy-policy'}>{t('login.notification.t4')}</Link>
 						</p>
 					</div>
 				</Modal.Footer>

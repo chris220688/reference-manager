@@ -352,6 +352,8 @@ class Search extends Component {
 													</Container>
 												)
 											}}
+											scrollOnChange={false}
+											onData={() => window.scrollTo(0, 0)}
 											renderPagination={({ pages, totalPages, currentPage, setPage, fragmentName }) => {
 												let active = currentPage
 												let items = []

@@ -294,7 +294,7 @@ class App extends Component {
 
 					{!this.state.hideCookieNotice ?
 						<div class="fixed-bottom cookie-notice-footer">
-							<div class="cookie-notice">
+							<div class="cookie-notice cooke-notice-extra">
 								<Container fluid >
 									<Row>
 										<Col xs="11" style={{ paddingRight: 0 }} >

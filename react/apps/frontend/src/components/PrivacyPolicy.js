@@ -138,7 +138,7 @@ class PrivacyPolicy extends Component {
 						In Short: We may use cookies and other tracking technologies to collect and store your information.
 					</p>
 					<p>
-						We may use cookies and similar tracking technologies (like web beacons and pixels) to access or store information. Specific information about how we use such technologies and how you can refuse certain cookies is set out in our Cookie Policy.
+						These cookies are primarily used for authentication and language preferences.
 					</p>
 				</div>
 

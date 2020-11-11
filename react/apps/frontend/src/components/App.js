@@ -4,9 +4,9 @@ import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import { withTranslation } from 'react-i18next'
 import i18n from './i18n';
 import { TiThMenu } from "react-icons/ti";
-import { MdLanguage } from "react-icons/md";
+import { MdLanguage, MdClose } from "react-icons/md";
 import {
-	Alert, Container, Dropdown, Navbar, Nav
+	Alert, Container, Col, Dropdown, Navbar, Nav, Row
 } from 'react-bootstrap'
 
 import { constants } from '../constants/Constants.js'
@@ -55,6 +55,7 @@ class App extends Component {
 		alertMessage: null,
 		currentLanguage: 'EN',
 		error: null,
+		hideCookieNotice: false,
 	}
 
 	componentDidMount() {
@@ -62,6 +63,12 @@ class App extends Component {
 		var language = this.getCookie("language")
 		if (language !== "en") {
 			this.changeLanguage(language)
+		}
+		var hideCookieNotice = this.getCookie("hideCookieNotice")
+		if (hideCookieNotice === "true") {
+			this.setState({'hideCookieNotice': true})
+		} else {
+			this.setState({'hideCookieNotice': false})
 		}
 
 		this.authenticate()
@@ -203,6 +210,13 @@ class App extends Component {
 		})
 	}
 
+	hideCookieNotice = () => {
+		this.setCookie("hideCookieNotice", "true", 30)
+		this.setState({
+			hideCookieNotice: true
+		})
+	}
+
 	render() {
 		const { t } = this.props
 
@@ -276,6 +290,26 @@ class App extends Component {
 									</p>
 							</Alert>
 						</Container> : null
+					}
+
+					{!this.state.hideCookieNotice ?
+						<div class="fixed-bottom cookie-notice-footer">
+							<div class="cookie-notice">
+								<Container fluid >
+									<Row>
+										<Col xs="11" style={{ paddingRight: 0 }} >
+											{t('app.cookienotice.t1')}
+											<Link to={'/privacy-policy'}>{t('app.cookienotice.t2')}</Link>
+										</Col>
+										<Col xs="1" style={{ paddingLeft: 0, display: 'flex', verticalAlign: 'center' }}>
+											<div class="cookie-notice-close" onClick={() => this.hideCookieNotice()}>
+												<MdClose/>
+											</div>
+										</Col>
+									</Row>
+								</Container>
+							</div>
+						</div> : null
 					}
 
 					<footer id="page-footer">

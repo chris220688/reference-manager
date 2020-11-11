@@ -149,9 +149,12 @@
   border-radius: 100px;
   box-shadow: inset 0 -3em 3em rgba(0,0,0,0.1), 0.3em 0.3em 1em rgba(0,0,0,0.3);
   padding: 10px 0px 10px 5px;
-  width: 350px;
   background-color: white;
   font-size: 12px;
+}
+
+.cooke-notice-extra {
+  width: 350px;
 }
 
 .cookie-notice-close {
@@ -159,13 +162,16 @@
   align-items: center;
   font-size: 15px;
   cursor: pointer;
-  width:200px;
 }
+
 
 @media (min-width: 100px) and (max-width:320px) {
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:15px;}
   .custom-jumbotron p {font-size:12px;}
+  .cooke-notice-extra {
+    width: 200px;
+  }
 }
 
 /* Small devices (landscape phones, 544px and up) */
@@ -173,6 +179,9 @@
   .custom-jumbotron {padding: 2rem 2rem;}
   .custom-jumbotron h1 {font-size:22px;}
   .custom-jumbotron p {font-size:13px;}
+  .cooke-notice-extra {
+    width: 250px;
+  }
 }
 
 @media (min-width: 544px) and (max-width:768px) {

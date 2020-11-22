@@ -120,6 +120,17 @@
   font-size: 8px;
 }
 
+.disclaimer-box p {
+	margin: 10px 0px 10px 10px;
+}
+
+.disclaimer-box-dismiss {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  cursor: pointer;
+}
+
 @media (min-width: 100px) and (max-width:544px) {
 	.amazon {
 		height: 20px;
@@ -133,8 +144,10 @@
 		height: 20px;
 	}
 
-	.disclaimer-box p {
-		margin: 10px 10px 10px 10px;
+	.topdiv {
+		position: fixed;
+		z-index: 1;
+		background-color: white;
 	}
 }
 
@@ -151,8 +164,10 @@
 		height: 30px;
 	}
 
-	.disclaimer-box p {
-		margin: 10px 50px 10px 50px;
+	.topdiv {
+		position: fixed;
+		z-index: 1;
+		background-color: white;
 	}
 }
 
@@ -167,9 +182,5 @@
 
 	.waterstones {
 		height: 30px;
-	}
-
-	.disclaimer-box p {
-		margin: 10px 50px 10px 50px;
 	}
 }

@@ -354,6 +354,8 @@ class App extends Component {
 										consumerSearchEndpoint={this.state.consumerSearchEndpoint}
 										userLoggedIn={this.state.userLoggedIn}
 										userData={this.state.userData}
+										getCookie={this.getCookie}
+										setCookie={this.setCookie}
 									/>
 							} />
 						<Route path='/joinus' component={

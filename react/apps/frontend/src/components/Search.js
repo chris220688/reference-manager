@@ -32,7 +32,7 @@ class Search extends Component {
 		countNumRefs: {},
 		category: null,
 		categories: [],
-		categoriesStyle: {},
+		categoriesStyle: {'display': 'none'},
 		showSearchResults: false,
 		hideAffiliatesDisclaimer: false,
 	}

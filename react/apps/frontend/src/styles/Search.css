@@ -131,6 +131,25 @@
   cursor: pointer;
 }
 
+@media (min-width: 0px) and (max-width:991px) {
+	.topdiv {
+		position: fixed;
+		z-index: 1;
+		position: absolute;
+		background-color: white;
+		text-align: center;
+		border-radius: 25px;
+		border: 1px solid !important;
+	}
+
+	.topdiv a {
+		background-color: white !important;
+		max-width: 200px;
+		margin: 5px 0px 5px 0px;
+		border-radius: 25px;
+	}
+}
+
 @media (min-width: 100px) and (max-width:544px) {
 	.amazon {
 		height: 20px;
@@ -142,12 +161,6 @@
 
 	.waterstones {
 		height: 20px;
-	}
-
-	.topdiv {
-		position: fixed;
-		z-index: 1;
-		background-color: white;
 	}
 }
 
@@ -162,12 +175,6 @@
 
 	.waterstones {
 		height: 30px;
-	}
-
-	.topdiv {
-		position: fixed;
-		z-index: 1;
-		background-color: white;
 	}
 }
 

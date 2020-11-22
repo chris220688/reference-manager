@@ -4,6 +4,7 @@ import { withTranslation } from 'react-i18next'
 import { ReactiveBase, ReactiveList, DataSearch, ResultList, ToggleButton } from '@appbaseio/reactivesearch';
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { FiThumbsUp, FiThumbsDown } from "react-icons/fi";
+import { MdClose } from "react-icons/md";
 import {
 	Button, Col, Container, ListGroup, Pagination, Row
 } from 'react-bootstrap'
@@ -26,15 +27,25 @@ class Search extends Component {
 		userData: this.props.userData,
 		bookmarkedReferences: this.props.userData.bookmarkedReferences,
 		ratedReferences: this.props.userData.ratedReferences,
+		getCookie: this.props.getCookie,
+		setCookie: this.props.setCookie,
 		countNumRefs: {},
 		category: null,
 		categories: [],
-		categoriesStyle: {},
+		categoriesStyle: {'display': 'none'},
 		showSearchResults: false,
+		hideAffiliatesDisclaimer: false,
 	}
 
 	componentDidMount() {
 		window.scrollTo(0, 0);
+
+		var hideAffiliatesDisclaimer = this.state.getCookie("hideAffiliatesDisclaimer")
+		if (hideAffiliatesDisclaimer === "true") {
+			this.setState({'hideAffiliatesDisclaimer': true})
+		} else {
+			this.setState({'hideAffiliatesDisclaimer': false})
+		}
 
 		const categoriesRequest = {
 			method: 'GET'
@@ -244,6 +255,13 @@ class Search extends Component {
 		if (linkType === "waterstones") return waterstonesLogo
 	}
 
+	hideAffiliatesDisclaimer = () => {
+		this.state.setCookie("hideAffiliatesDisclaimer", "true", 30)
+		this.setState({
+			hideAffiliatesDisclaimer: true,
+		})
+	}
+
 	render() {
 		const { t } = this.props
 		return (
@@ -253,15 +271,30 @@ class Search extends Component {
 					url={this.state.consumerSearchEndpoint}
 				>
 					<div>
+						{!this.state.hideAffiliatesDisclaimer ?
 						<Row>
 							<Col className="d-xs-none d-sm-none d-md-none d-lg-block" lg="3"></Col>
 							<Col xs="12" sm="12" md="12" lg="7">
 								<div className="disclaimer-box">
-									<p><i>{t('search.affiliatesdisclaimer')}</i></p>
+									<Row>
+										<Col xs="11" sm="11" md="11" lg="11">
+											<div>
+												<p>
+													<span><i>{t('search.affiliatesdisclaimer')}</i></span>
+												</p>
+											</div>
+										</Col>
+										<Col xs="1" sm="1" md="1" lg="1" style={{ paddingLeft: 0, display: 'flex', verticalAlign: 'center' }}>
+											<div className="disclaimer-box-dismiss" onClick={() => this.hideAffiliatesDisclaimer()}>
+												<MdClose/>
+											</div>
+										</Col>
+									</Row>
 								</div>
 							</Col>
 							<Col className="d-xs-none d-sm-none d-md-none d-lg-block" lg="2"></Col>
-						</Row>
+						</Row> : null
+						}
 						<Row>
 							<Col xs="12" sm="12" md="12" lg="3">
 								<div className="responsive-text">
@@ -282,7 +315,7 @@ class Search extends Component {
 													componentId="categoryFilter"
 													dataField="category"
 													data={this.state.categories}
-													className="search-toggle"
+													className="search-toggle topdiv"
 													style={this.state.categoriesStyle}
 													onValueChange={(value) => this.handleSearchCategoryResults(value)}
 												/>
@@ -293,7 +326,7 @@ class Search extends Component {
 								</div>
 							</Col>
 							<Col xs="12" sm="12" md="12" lg="7">
-								<div className="responsive-text">
+								<div className="responsive-text divBlocking">
 									<DataSearch
 										componentId="searchBox"
 										dataField={["title"]}

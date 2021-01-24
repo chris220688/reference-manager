@@ -13,6 +13,8 @@ import '../styles/Search.css'
 import amazonLogo from '../icons/amazon.png'
 import waterstonesLogo from '../icons/waterstones.png'
 import bookdepositoryLogo from '../icons/bookdepository.svg'
+import detective from '../icons/detective.svg'
+
 
 const { ResultListWrapper } = ReactiveList;
 
@@ -39,6 +41,13 @@ class Search extends Component {
 
 	componentDidMount() {
 		window.scrollTo(0, 0);
+
+		// Make categories appear if the width is large enough
+		if (document.documentElement.clientWidth > 991) {
+			this.setState({
+				categoriesStyle: {},
+			})
+		}
 
 		var hideAffiliatesDisclaimer = this.state.getCookie("hideAffiliatesDisclaimer")
 		if (hideAffiliatesDisclaimer === "true") {
@@ -551,7 +560,45 @@ class Search extends Component {
 													}
 												</ResultListWrapper>
 											)}
-										/> : null
+										/> :
+										<div style={{marginTop: '100px'}}>
+											<hr className="line" />
+											<Row className="empty-search">
+												<Col xs="4" style={{paddingRight: '0px'}}>
+													<div>
+														<img
+															src={detective}
+															className="detective"
+															alt="logo"
+														/>
+													</div>
+												</Col>
+												<Col xs="8" style={{paddingLeft: '0px'}}>
+													<Row>
+														<Col xs="8">
+															<h2>
+																You're one step away from finding your book ...
+															</h2>
+														</Col>
+														<Col xs="4"></Col>
+													</Row>
+													<Row>
+														<hr className="line" />
+													</Row>
+													<Row>
+														<Col xs="4">
+
+														</Col>
+														<Col xs="8">
+															<h2>
+																Begin by typing something in the search box!
+															</h2>
+														</Col>
+													</Row>
+												</Col>
+											</Row>
+											<hr className="line" />
+										</div>
 									}
 								</div>
 							</Col>

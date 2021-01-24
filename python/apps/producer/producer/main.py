@@ -460,6 +460,9 @@ async def edit_reference(
 	async with exception_handling():
 		logger.info(f"Received edit request - {reference.dict()}")
 
+		if not internal_user.is_author:
+			raise UnauthorizedUser()
+
 		updated_reference = await db_client.update_reference(reference)
 
 		response = JSONResponse(

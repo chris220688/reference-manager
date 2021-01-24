@@ -150,6 +150,28 @@
 	}
 }
 
+.empty-search {
+	font-family: "Hoefler Text";
+	text-align: center;
+}
+
+.empty-search h2 {
+	font-family: "Hoefler Text";
+	text-align: center;
+}
+
+.line{
+	border-top: 1px solid #343a40;
+}
+
+.detective{
+	max-width: 100%;
+	height: auto;
+	height: 130px;
+	border-radius: 2%;
+	filter: invert(20%) sepia(7%) saturate(957%) hue-rotate(169deg) brightness(95%) contrast(90%);
+}
+
 @media (min-width: 100px) and (max-width:544px) {
 	.amazon {
 		height: 20px;

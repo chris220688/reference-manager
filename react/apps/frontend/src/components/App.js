@@ -16,7 +16,7 @@ import '../styles/App.css'
 import About from './About'
 import Account from './Account'
 import Search from './Search'
-import Login from './Login'
+import LoginModal from './LoginModal'
 import References from './References'
 import JoinUs from './JoinUs'
 import PrivacyPolicy from './PrivacyPolicy'
@@ -256,7 +256,7 @@ class App extends Component {
 							<Nav>
 								{this.state.userLoggedIn ?
 									<Nav.Link onClick={this.logout}>{t('search.logout')}</Nav.Link> :
-									<Login producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
+									<LoginModal producerLoginRedirectEndpoint={this.state.producerLoginRedirectEndpoint}/>
 								}
 
 								<Dropdown drop="left" className="language-dropdown">
@@ -293,8 +293,8 @@ class App extends Component {
 					}
 
 					{!this.state.hideCookieNotice ?
-						<div class="fixed-bottom cookie-notice-footer">
-							<div class="cookie-notice cooke-notice-extra">
+						<div className="fixed-bottom cookie-notice-footer">
+							<div className="cookie-notice cooke-notice-extra">
 								<Container fluid >
 									<Row>
 										<Col xs="11" style={{ paddingRight: 0 }} >
@@ -302,7 +302,7 @@ class App extends Component {
 											<Link to={'/privacy-policy'}>{t('app.cookienotice.t2')}</Link>
 										</Col>
 										<Col xs="1" style={{ paddingLeft: 0, display: 'flex', verticalAlign: 'center' }}>
-											<div class="cookie-notice-close" onClick={() => this.hideCookieNotice()}>
+											<div className="cookie-notice-close" onClick={() => this.hideCookieNotice()}>
 												<MdClose/>
 											</div>
 										</Col>

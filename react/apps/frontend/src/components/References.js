@@ -404,7 +404,7 @@ class References extends Component {
 			if (data.deleted) {
 				var references = this.state.references
 				var filteredReferences = references.filter(
-					reference => reference !== reference
+					ref => ref !== reference
 				)
 				this.setState({
 					references: filteredReferences
@@ -449,7 +449,7 @@ class References extends Component {
 			if ( data.success ) {
 				var bookmarkedReferences = this.state.bookmarkedReferences
 				var filteredBookmarkedReferences = bookmarkedReferences.filter(
-					reference => reference.reference_id !== reference.reference_id
+					ref => ref.reference_id !== reference.reference_id
 				)
 				this.setState({
 					bookmarkedReferences: filteredBookmarkedReferences,

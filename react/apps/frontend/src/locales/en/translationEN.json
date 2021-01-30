@@ -67,6 +67,8 @@
 	"search.categories.social_sciences": "Social Sciences",
 	"search.categories.technology": "Technology",
 	"search.categories.other": "Other",
+	"search.emptycontent.h2.1": "You're one step away from finding your book ...",
+	"search.emptycontent.h2.2": "Begin by typing something in the search box!",
 	"references.categories.history": "History",
 	"references.categories.literature": "Literature",
 	"references.categories.sciences": "Science",
@@ -132,7 +134,7 @@
 	"about.vision.p2": "Google has been indexing books for years by physically scanning their content. Complex algorithms allow the users to type something on their browser and get results that could match the content of these books.",
 	"about.vision.p3": "This is great, but this is Google. We can't do that! And that's why we rely solely on you, the users!",
 	"about.vision.p4": "The purpose of this website is to offer a free service for searching books based on references that were created by the users. A reference is simply a note taken upon reading a book, accompanied by a link to the title and the page of the book. The more references we have, the more results you get!",
-	"about.vision.p5": "Read a book, publish your favorite highlights and let the rest of the world know where to find them!",
+	"about.vision.p5": "Read a book, publish your favourite highlights and let the rest of the world know where to find them!",
 	"about.vision.p6": "Join us and let's have this journey together!",
 	"about.whoweare": "Who are we",
 	"about.whoweare.p1": "We are a small team of... one developer. We are trying constantly to improve your experience with our website, but we ask for your patience since we might not respond in a lightning fast manner.",
@@ -158,6 +160,12 @@
 	"home.third.p3": "Read, publish, share!",
 	"home.fourth.title": "Ready to search?",
 	"home.fourth.p1": "Navigate to the Search menu at the top of your screen.",
-	"home.fourth.p2": "Additionaly, Sign In with one of your favorite providers to access extra features such as adding your own bookmarks and rating references!",
-	"home.fifth.title": "Powered by"
+	"home.fourth.p2": "Additionaly, Sign In with one of your favourite providers to access extra features such as adding your own bookmarks and rating references!",
+	"home.fifth.title": "Powered by",
+	"lowcontent.header": "Welcome!",
+	"lowcontent.body.p1": "If you are here, it means you are looking for books! Unfortunately, it hasn't been long since we launched and we are running low on content..",
+	"lowcontent.body.p2": "That's why we need your help!",
+	"lowcontent.body.p3": "If you think this is something interesting, sign in and submit a request to become an author.",
+	"lowcontent.body.p4": "We count on you!",
+	"lowcontent.footer": "Joining as an author is free and it comes without commitments. Read your books and add your favourite references at your own pace"
 }

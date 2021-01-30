@@ -10,6 +10,7 @@ import {
 } from 'react-bootstrap'
 
 import '../styles/Search.css'
+import LowContentModal from './LowContentModal'
 import amazonLogo from '../icons/amazon.png'
 import waterstonesLogo from '../icons/waterstones.png'
 import bookdepositoryLogo from '../icons/bookdepository.svg'
@@ -37,6 +38,7 @@ class Search extends Component {
 		categoriesStyle: {'display': 'none'},
 		showSearchResults: false,
 		hideAffiliatesDisclaimer: false,
+		hideLowContentPopup: false,
 	}
 
 	componentDidMount() {
@@ -54,6 +56,14 @@ class Search extends Component {
 			this.setState({'hideAffiliatesDisclaimer': true})
 		} else {
 			this.setState({'hideAffiliatesDisclaimer': false})
+		}
+
+		var hideLowContentPopup = this.state.getCookie("hideLowContentPopup")
+		if (hideLowContentPopup === "true") {
+			this.setState({'hideLowContentPopup': true})
+		} else {
+			this.setState({'hideLowContentPopup': false})
+			this.state.setCookie("hideLowContentPopup", "true", 3)
 		}
 
 		const categoriesRequest = {
@@ -271,10 +281,14 @@ class Search extends Component {
 		})
 	}
 
+
 	render() {
 		const { t } = this.props
 		return (
 			<Container style={{"marginTop": "20px"}}>
+				{!this.state.hideLowContentPopup ?
+					<LowContentModal /> : null
+				}
 				<ReactiveBase
 					app="referencemanager"
 					url={this.state.consumerSearchEndpoint}
@@ -577,7 +591,7 @@ class Search extends Component {
 													<Row>
 														<Col xs="8">
 															<h2>
-																You're one step away from finding your book ...
+																{t('search.emptycontent.h2.1')}
 															</h2>
 														</Col>
 														<Col xs="4"></Col>
@@ -591,7 +605,7 @@ class Search extends Component {
 														</Col>
 														<Col xs="8">
 															<h2>
-																Begin by typing something in the search box!
+																{t('search.emptycontent.h2.2')}
 															</h2>
 														</Col>
 													</Row>

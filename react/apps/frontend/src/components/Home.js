@@ -160,13 +160,11 @@ class Home extends Component {
 							<div>
 								<div>
 									<div>
-										<p>
-											<h1>
-												<b>
-													{t('home.fourth.title')}
-												</b>
-											</h1>
-										</p>
+										<h1>
+											<b>
+												{t('home.fourth.title')}
+											</b>
+										</h1>
 									</div>
 								</div>
 								<div>
@@ -179,7 +177,10 @@ class Home extends Component {
 										{t('home.fourth.p2')}
 									</p>
 									<p>
-										🥳&nbsp;🎉&nbsp;🥳&nbsp;🎉
+										<span role='img' aria-label="partyingFace">🥳</span>&nbsp;
+										<span role='img' aria-label="partyPopper">🎉</span>&nbsp;
+										<span role='img' aria-label="partyingFace">🥳</span>&nbsp;
+										<span role='img' aria-label="partyPopper">🎉</span>
 									</p>
 								</div>
 							</div>

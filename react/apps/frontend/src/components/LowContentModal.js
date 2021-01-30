@@ -14,19 +14,19 @@ export default function LowContentModal(props) {
 		<Row>
 			<Col xs="2"></Col>
 			<Col xs="8">
-				<div class="newsletter-section">
-					<div class="page-width">
+				<div className="newsletter-section">
+					<div className="page-width">
 						<div id="confettis">
-							<div class="confetti"></div>
-							<div class="confetti"></div>
-							<div class="confetti"></div>
-							<div class="confetti"></div>
-							<div class="confetti"></div>
-							<div class="confetti"></div>
-							<div class="confetti"></div>
-							<div class="confetti"></div>
-							<div class="confetti"></div>
-							<div class="confetti"></div>
+							<div className="confetti"></div>
+							<div className="confetti"></div>
+							<div className="confetti"></div>
+							<div className="confetti"></div>
+							<div className="confetti"></div>
+							<div className="confetti"></div>
+							<div className="confetti"></div>
+							<div className="confetti"></div>
+							<div className="confetti"></div>
+							<div className="confetti"></div>
 						</div>
 						<div className="low-content-icon">
 							<span role='img' aria-label="partyPopper">🎉</span>
